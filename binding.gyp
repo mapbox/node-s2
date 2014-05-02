@@ -4,10 +4,12 @@
       "target_name": "_s2",
       "sources": [
         "./s2.cc",
+        "./geometry/s2.cc",
         "./geometry/s1interval.cc",
 	    "./geometry/s2cap.cc",
 	    "./geometry/s2cell.cc",
 	    "./geometry/s2cellunion.cc",
+	    "./geometry/s2cellid.cc",
 	    "./geometry/s2edgeindex.cc",
 	    "./geometry/s2edgeutil.cc",
 	    "./geometry/s2latlngrect.cc",
