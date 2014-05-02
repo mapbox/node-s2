@@ -1,0 +1,5 @@
+{
+    "name": "s2",
+    "version": "0.0.0",
+    "main": "./build/Release/s2"
+}
