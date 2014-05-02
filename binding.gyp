@@ -4,6 +4,7 @@
       "target_name": "_s2",
       "sources": [
         "./s2.cc",
+        "./geometry/s2.cc",
         "./geometry/strings/*.cc",
         "./geometry/strings/*.cc",
         "./geometry/util/coding/*.cc",
@@ -21,6 +22,9 @@
         "./geometry/s2r2rect.cc",
         "./geometry/s2region.cc",
         "./geometry/s2regionunion.cc",
+      ],
+      "defines": [
+        'NDEBUG'
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
