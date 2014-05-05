@@ -25,3 +25,13 @@ Construct a new latlng object
 ## cell.exactArea() -> number
 
 ## cell.averageArea(level:number) -> number
+
+## cell.level() -> number
+
+## cell.face() -> number
+
+## cell.orientation() -> number
+
+## cell.isLeaf() -> boolean
+
+# s2.CellId()
