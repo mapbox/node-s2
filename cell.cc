@@ -5,9 +5,11 @@
 
 #include "s2.h"
 #include "s2cell.h"
+#include "s2cellid.h"
 #include "s2latlng.h"
 #include "latlng.h"
 #include "cell.h"
+#include "cellid.h"
 
 using namespace v8;
 
@@ -25,6 +27,11 @@ void Cell::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "approxArea", ApproxArea);
     NODE_SET_PROTOTYPE_METHOD(constructor, "exactArea", ExactArea);
     NODE_SET_PROTOTYPE_METHOD(constructor, "averageArea", AverageArea);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "face", Face);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "level", Level);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "orientation", Orientation);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isLeaf", IsLeaf);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -52,8 +59,6 @@ Handle<Value> Cell::New(const Arguments& args) {
         return NanThrowError("(latlng) required");
     }
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "approxArea", ApproxArea);
-
     Cell* obj = new Cell();
 
     obj->Wrap(args.This());
@@ -68,6 +73,15 @@ Handle<Value> Cell::New(S2Cell s2cell) {
     NanScope();
     Cell* obj = new Cell();
     obj->this_ = s2cell;
+    Handle<Value> ext = External::New(obj);
+    Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
+    return scope.Close(handleObject);
+}
+
+Handle<Value> Cell::New(S2CellId s2cellid) {
+    NanScope();
+    Cell* obj = new Cell();
+    obj->this_ = S2Cell(s2cellid);
     Handle<Value> ext = External::New(obj);
     Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
     return scope.Close(handleObject);
@@ -89,4 +103,35 @@ NAN_METHOD(Cell::AverageArea) {
     NanScope();
     Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
     NanReturnValue(NanNew<Number>(obj->this_.AverageArea(args[0]->ToNumber()->Value())));
+}
+
+NAN_METHOD(Cell::Face) {
+    NanScope();
+    Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(NanNew<Number>(obj->this_.face()));
+}
+
+NAN_METHOD(Cell::Level) {
+    NanScope();
+    Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(NanNew<Number>(obj->this_.level()));
+}
+
+NAN_METHOD(Cell::Orientation) {
+    NanScope();
+    Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(NanNew<Number>(obj->this_.orientation()));
+}
+
+NAN_METHOD(Cell::IsLeaf) {
+    NanScope();
+    Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(NanNew<Boolean>(obj->this_.is_leaf()));
+}
+
+NAN_METHOD(Cell::Id) {
+    NanScope();
+    Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(CellId::New());
+    // return scope.Close(CellId::New(obj->this_.id()));
 }

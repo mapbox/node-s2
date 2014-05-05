@@ -5,6 +5,7 @@
       "sources": [
         "./latlng.cc",
         "./cell.cc",
+        "./cellid.cc",
         "./point.cc",
         "./geometry/s2.cc",
         "./geometry/s1interval.cc",

@@ -43,9 +43,7 @@ NAN_METHOD(GetCover) {
         coverer.GetCovering(polygon, &cellids_vector);
         Local<Array> out = Array::New(cellids_vector.size());
         for (int i = 0; i < cellids_vector.size(); i++) {
-            S2Cell cell(cellids_vector.at(i));
-            S2LatLng center(cell.id().ToPoint());
-            out->Set(i, LatLng::New(center));
+            out->Set(i, Cell::New(cellids_vector.at(i)));
         }
         NanReturnValue(out);
     }

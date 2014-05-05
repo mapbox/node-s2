@@ -12,8 +12,7 @@ test('getCover', function(t) {
 
     var cover = s2.getCover(points);
 
-    t.equal(cover[1].lat(), 5.040252729758283, 'pt1.lat()');
-    t.equal(cover[1].lng(), 5.059868846264116, 'pt1.lng()');
+    t.ok(cover[1] instanceof s2.Cell, 'creates cells');
 
     t.end();
 });
