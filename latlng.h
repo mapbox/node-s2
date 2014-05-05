@@ -2,6 +2,7 @@
 #define NODES2LATLNG_HPP
 
 #include <node.h>
+#include <nan.h>
 #include "s2latlng.h"
 
 class LatLng : public node::ObjectWrap {
@@ -19,6 +20,7 @@ protected:
     static v8::Handle<v8::Value> Lng(const v8::Arguments& args);
     static v8::Handle<v8::Value> IsValid(const v8::Arguments& args);
     static v8::Handle<v8::Value> Normalized(const v8::Arguments& args);
+    static v8::Handle<v8::Value> ToPoint(const v8::Arguments& args);
 
     S2LatLng this_;
 };

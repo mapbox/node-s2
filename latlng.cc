@@ -6,6 +6,7 @@
 #include "s2.h"
 #include "s2latlng.h"
 #include "latlng.h"
+#include "point.h"
 
 using namespace v8;
 
@@ -24,7 +25,8 @@ void LatLng::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "lat", Lat);
     NODE_SET_PROTOTYPE_METHOD(constructor, "lng", Lng);
     NODE_SET_PROTOTYPE_METHOD(constructor, "normalized", Normalized);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "is_valid", IsValid);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -96,4 +98,10 @@ NAN_METHOD(LatLng::Normalized) {
     NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
     return scope.Close(LatLng::New(obj->this_.Normalized()));
+}
+
+NAN_METHOD(LatLng::ToPoint) {
+    NanScope();
+    LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
+    return scope.Close(Point::New(obj->this_.ToPoint()));
 }

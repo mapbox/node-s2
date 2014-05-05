@@ -4,6 +4,8 @@
       "target_name": "_s2",
       "sources": [
         "./latlng.cc",
+        "./cell.cc",
+        "./point.cc",
         "./geometry/s2.cc",
         "./geometry/s1interval.cc",
         "./geometry/util/math/exactfloat/exactfloat.cc",
