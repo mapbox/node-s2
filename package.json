@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap --tap test/*.js"
   },
   "dependencies": {
-    "nan": "~0.8.0",
+    "nan": "~1.0.0",
     "tap": "~0.4.9"
   },
   "author": "Tom MacWright <tom@macwright.org> (http://macwright.org/)",

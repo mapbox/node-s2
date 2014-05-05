@@ -1,16 +1,18 @@
 #include <node.h>
+#include <nan.h>
 #include "node_object_wrap.h"           // for ObjectWrap
 #include "v8.h"                         // for Handle, String, Integer, etc
 
 #include "s2.h"
 #include "s2latlng.h"
+#include "latlng.h"
 
 using namespace v8;
 
 Persistent<FunctionTemplate> LatLng::constructor;
 
 void LatLng::Init(Handle<Object> target) {
-    HandleScope scope;
+    NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(LatLng::New));
     Local<String> name = String::NewSymbol("LatLng");
@@ -34,12 +36,10 @@ LatLng::LatLng()
       this_() {}
 
 Handle<Value> LatLng::New(const Arguments& args) {
-    HandleScope scope;
+    NanScope();
 
     if (!args.IsConstructCall()) {
-        return ThrowException(Exception::TypeError(
-            String::New("Use the new operator to create instances of this object."))
-        );
+        return NanThrowError("Use the new operator to create instances of this object.");
     }
 
     if (args[0]->IsExternal()) {
@@ -51,8 +51,7 @@ Handle<Value> LatLng::New(const Arguments& args) {
     }
 
     if (args.Length() != 2) {
-        return ThrowException(Exception::TypeError(
-            String::New("(number, number) required")));
+        return NanThrowError("(number, number) required");
     }
 
     LatLng* obj = new LatLng();
@@ -67,7 +66,7 @@ Handle<Value> LatLng::New(const Arguments& args) {
 }
 
 Handle<Value> LatLng::New(S2LatLng s2latlng) {
-    HandleScope scope;
+    NanScope();
     LatLng* obj = new LatLng();
     obj->this_ = s2latlng;
     Handle<Value> ext = External::New(obj);
@@ -75,26 +74,26 @@ Handle<Value> LatLng::New(S2LatLng s2latlng) {
     return scope.Close(handleObject);
 }
 
-Handle<Value> LatLng::Lat(const Arguments& args) {
-    HandleScope scope;
+NAN_METHOD(LatLng::Lat) {
+    NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
-    return scope.Close(Number::New(obj->this_.lat().degrees()));
+    NanReturnValue(NanNew<Number>(obj->this_.lat().degrees()));
 }
 
-Handle<Value> LatLng::Lng(const Arguments& args) {
-    HandleScope scope;
+NAN_METHOD(LatLng::Lng) {
+    NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
-    return scope.Close(Number::New(obj->this_.lng().degrees()));
+    NanReturnValue(NanNew<Number>(obj->this_.lng().degrees()));
 }
 
-Handle<Value> LatLng::IsValid(const Arguments& args) {
-    HandleScope scope;
+NAN_METHOD(LatLng::IsValid) {
+    NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
-    return scope.Close(Boolean::New(obj->this_.is_valid()));
+    NanReturnValue(NanNew<Boolean>(obj->this_.is_valid()));
 }
 
-Handle<Value> LatLng::Normalized(const Arguments& args) {
-    HandleScope scope;
+NAN_METHOD(LatLng::Normalized) {
+    NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
     return scope.Close(LatLng::New(obj->this_.Normalized()));
 }

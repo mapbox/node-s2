@@ -1,8 +1,8 @@
 #include <node.h>
+#include <nan.h>
 #include "node_object_wrap.h"           // for ObjectWrap
 #include "v8.h"                         // for Handle, String, Integer, etc
 
-#include "s2.h"
 #include "s2latlng.h"
 #include "s2cellid.h"
 #include "s2cell.h"
@@ -10,29 +10,51 @@
 #include "s2loop.h"
 #include "s2polygonbuilder.h"
 #include "s2regioncoverer.h"
+#include "latlng.h"
 
 using namespace v8;
 
-Handle<Value> GetCover(const Arguments& args) {
-    HandleScope scope;
-    scoped_ptr<S2PolygonBuilder> builder(
-        new S2PolygonBuilder(
-            S2PolygonBuilderOptions::DIRECTED_XOR()));
+NAN_METHOD(GetCover) {
+    NanScope();
 
-    if (args.Length() < 1) {
-        return ThrowException(Exception::TypeError(
-            String::New("(array) required")));
+    scoped_ptr<S2PolygonBuilder> builder(
+            new S2PolygonBuilder(S2PolygonBuilderOptions::DIRECTED_XOR()));
+
+    if (args.Length() < 1) { return NanThrowError("(array) required"); }
+
+    if (args[0]->IsArray()) {
+        Handle<Array> array = Handle<Array>::Cast(args[0]);
+        for (uint32_t i = 0; i < array->Length(); i++) {
+            Local<Object> obj = array->Get(i)->ToObject();
+            if (NanHasInstance(LatLng::constructor, obj)) {
+                LatLng *a = node::ObjectWrap::Unwrap<LatLng>(array->Get(i)->ToObject());
+                LatLng *b = node::ObjectWrap::Unwrap<LatLng>(array->Get((i + 1) % array->Length())->ToObject());
+                builder->AddEdge(a->get().ToPoint(), b->get().ToPoint());
+            }
+        }
+        S2Polygon polygon;
+        typedef vector<pair<S2Point, S2Point> > EdgeList;
+        EdgeList edgeList;
+        builder->AssemblePolygon(&polygon, &edgeList);
+        S2RegionCoverer coverer;
+        std::vector<S2CellId> cellids_vector;
+        coverer.GetCovering(polygon, &cellids_vector);
+        Local<Array> out = Array::New(cellids_vector.size());
+        for (int i = 0; i < cellids_vector.size(); i++) {
+            S2Cell cell(cellids_vector.at(i));
+            S2LatLng center(cell.id().ToPoint());
+            out->Set(i, LatLng::New(center));
+        }
+        NanReturnValue(out);
     }
 
-    // Array points = args[0]->ToArray();
-
-    return scope.Close(Integer::New(0));
+    NanReturnValue(NanNew<String>("hi"));
 }
 
-void RegisterModule(Handle<Object> target) {
-    LatLng::Init(target);
-    target->Set(String::NewSymbol("getCover"),
-        FunctionTemplate::New(GetCover)->GetFunction());
+void RegisterModule(Handle<Object> exports) {
+    LatLng::Init(exports);
+    exports->Set(NanSymbol("getCover"),
+            NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }
 
 NODE_MODULE(_s2, RegisterModule);

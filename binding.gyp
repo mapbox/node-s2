@@ -6,6 +6,7 @@
         "./latlng.cc",
         "./geometry/s2.cc",
         "./geometry/s1interval.cc",
+        "./geometry/util/math/exactfloat/exactfloat.cc",
 	    "./geometry/s2cap.cc",
 	    "./geometry/s2cell.cc",
 	    "./geometry/s2cellunion.cc",
