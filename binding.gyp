@@ -3,7 +3,7 @@
     {
       "target_name": "_s2",
       "sources": [
-        "./s2.cc",
+        "./latlng.cc",
         "./geometry/s2.cc",
         "./geometry/s1interval.cc",
 	    "./geometry/s2cap.cc",
@@ -15,6 +15,7 @@
 	    "./geometry/s2latlngrect.cc",
 	    "./geometry/s2loop.cc",
 	    "./geometry/s2pointregion.cc",
+	    "./geometry/s2latlng.cc",
 	    "./geometry/s2polygon.cc",
 	    "./geometry/s2polygonbuilder.cc",
 	    "./geometry/s2polyline.cc",
@@ -22,7 +23,7 @@
 	    "./geometry/s2region.cc",
 	    "./geometry/s2regioncoverer.cc",
 	    "./geometry/s2regionintersection.cc",
-	    "./geometry/s2regionunion.cc"
+        "./s2.cc",
       ],
       "defines": [
         'NDEBUG'

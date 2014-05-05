@@ -1,8 +1,21 @@
 {
   "name": "s2",
   "version": "0.0.0",
-  "main": "./build/Release/s2",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
   "dependencies": {
-    "nan": "~0.8.0"
-  }
+    "nan": "~0.8.0",
+    "tap": "~0.4.9"
+  },
+  "author": "Tom MacWright <tom@macwright.org> (http://macwright.org/)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mapbox/node-s2.git"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "license": "ISC"
 }
