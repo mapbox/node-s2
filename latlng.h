@@ -21,6 +21,7 @@ protected:
     static v8::Handle<v8::Value> IsValid(const v8::Arguments& args);
     static v8::Handle<v8::Value> Normalized(const v8::Arguments& args);
     static v8::Handle<v8::Value> ToPoint(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Distance(const v8::Arguments& args);
 
     S2LatLng this_;
 };

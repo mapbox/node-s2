@@ -25,6 +25,8 @@ protected:
     static v8::Handle<v8::Value> AverageArea(const v8::Arguments& args);
     static v8::Handle<v8::Value> Orientation(const v8::Arguments& args);
     static v8::Handle<v8::Value> IsLeaf(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetCapBound(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetCenter(const v8::Arguments& args);
 
     S2Cell this_;
 };

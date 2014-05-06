@@ -27,6 +27,7 @@ void LatLng::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "normalized", Normalized);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Distance);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -104,4 +105,11 @@ NAN_METHOD(LatLng::ToPoint) {
     NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
     return scope.Close(Point::New(obj->this_.ToPoint()));
+}
+
+NAN_METHOD(LatLng::Distance) {
+    NanScope();
+    LatLng* latlng = node::ObjectWrap::Unwrap<LatLng>(args.This());
+    S2LatLng other = node::ObjectWrap::Unwrap<LatLng>(args[0]->ToObject())->get();
+    NanReturnValue(NanNew<Number>(latlng->this_.GetDistance(other).degrees()));
 }

@@ -9,6 +9,7 @@
 #include "latlngrect.h"
 #include "latlng.h"
 #include "cell.h"
+#include "cap.h"
 #include "cellid.h"
 
 using namespace v8;
@@ -28,6 +29,7 @@ void LatLngRect::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "size", GetSize);
     NODE_SET_PROTOTYPE_METHOD(constructor, "area", GetArea);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getVertex", GetVertex);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getCapBound", GetCapBound);
     NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
 
     target->Set(name, constructor->GetFunction());
@@ -79,6 +81,12 @@ NAN_METHOD(LatLngRect::GetCenter) {
     NanScope();
     LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
     NanReturnValue(LatLng::New(latlngrect->this_.GetCenter()));
+}
+
+NAN_METHOD(LatLngRect::GetCapBound) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    NanReturnValue(Cap::New(latlngrect->this_.GetCapBound()));
 }
 
 NAN_METHOD(LatLngRect::GetSize) {

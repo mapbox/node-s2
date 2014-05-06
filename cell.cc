@@ -9,6 +9,8 @@
 #include "s2latlng.h"
 #include "latlng.h"
 #include "cell.h"
+#include "point.h"
+#include "cap.h"
 #include "cellid.h"
 
 using namespace v8;
@@ -31,6 +33,8 @@ void Cell::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "level", Level);
     NODE_SET_PROTOTYPE_METHOD(constructor, "orientation", Orientation);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isLeaf", IsLeaf);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getCapBound", GetCapBound);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getCenter", GetCenter);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -126,4 +130,16 @@ NAN_METHOD(Cell::IsLeaf) {
     NanScope();
     Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
     NanReturnValue(NanNew<Boolean>(obj->this_.is_leaf()));
+}
+
+NAN_METHOD(Cell::GetCapBound) {
+    NanScope();
+    Cell* obj = node::ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(Cap::New(obj->this_.GetCapBound()));
+}
+
+NAN_METHOD(Cell::GetCenter) {
+    NanScope();
+    Cell* obj = node::ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(Point::New(obj->this_.GetCenterRaw()));
 }

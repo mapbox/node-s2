@@ -34,4 +34,42 @@ Construct a new latlng object
 
 ## cell.isLeaf() -> boolean
 
+## cell.getCapBound() -> s2.Cap
+
 # s2.CellId()
+
+# s2.LatLngRect(ll:s2.LatLng)
+
+## latLngRect.area() -> number
+
+## latLngRect.center() -> latlng
+
+## latLngRect.size() -> latlng
+
+## latLngRect.getVertex(n:number) -> s2.LatLng
+
+## latLngRect.getCapBound() -> s2.Cap
+
+## latLngRect.contains(ll:latlng) -> boolean
+
+# s2.Cap()
+
+## cap.complement() -> s2.Cap
+
+## cap.contains(other:s2.Cap) -> boolean
+
+## cap.intersects(other:s2.Cap) -> boolean
+
+## cap.getRectBound() -> s2.LatLngRect
+
+# s2.Angle(a:s2.Point, b:s2.Point)
+
+# s2.Interval(value:number)
+
+## interval.length() -> number
+
+## interval.hi() -> number
+
+## interval.lo() -> number
+
+## interval.complementLength() -> number

@@ -14,5 +14,9 @@ test('LatLng', function(t) {
     t.equal(invalid.isValid(), false, 'isValid()');
     t.equal(invalid.normalized().lat(), 90, 'normalized()');
 
+    var a = new s2.LatLng(10, 20);
+    var b = new s2.LatLng(10, 40);
+    t.ok(a.distance(b), '.distance');
+
     t.end();
 });

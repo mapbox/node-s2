@@ -13,7 +13,10 @@
 #include "latlng.h"
 #include "latlngrect.h"
 #include "cell.h"
+#include "interval.h"
 #include "point.h"
+#include "cap.h"
+#include "angle.h"
 
 using namespace v8;
 
@@ -55,8 +58,11 @@ NAN_METHOD(GetCover) {
 void RegisterModule(Handle<Object> exports) {
     LatLng::Init(exports);
     LatLngRect::Init(exports);
+    Cap::Init(exports);
+    Angle::Init(exports);
     Cell::Init(exports);
     Point::Init(exports);
+    Interval::Init(exports);
     exports->Set(NanSymbol("_getCover"),
             NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }

@@ -20,6 +20,7 @@ protected:
     static v8::Handle<v8::Value> GetSize(const v8::Arguments& args);
     static v8::Handle<v8::Value> GetArea(const v8::Arguments& args);
     static v8::Handle<v8::Value> GetVertex(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetCapBound(const v8::Arguments& args);
     static v8::Handle<v8::Value> Contains(const v8::Arguments& args);
 
     S2LatLngRect this_;
