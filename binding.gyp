@@ -4,6 +4,7 @@
       "target_name": "_s2",
       "sources": [
         "./latlng.cc",
+        "./latlngrect.cc",
         "./cell.cc",
         "./cellid.cc",
         "./point.cc",

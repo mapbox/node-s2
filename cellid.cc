@@ -23,7 +23,6 @@ void CellId::Init(Handle<Object> target) {
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);
 
-    // NODE_SET_PROTOTYPE_METHOD(constructor, "averageArea", AverageArea);
 
     target->Set(name, constructor->GetFunction());
 }

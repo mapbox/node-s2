@@ -12,7 +12,6 @@ test('Cell', function(t) {
     t.equal(cell.orientation(), 3, 'level');
     t.equal(typeof cell.averageArea(1), 'number');
     t.equal(cell.isLeaf(), true, 'number');
-    t.equal(typeof cell.id(), 'number');
 
     t.end();
 });

@@ -11,6 +11,7 @@
 #include "s2polygonbuilder.h"
 #include "s2regioncoverer.h"
 #include "latlng.h"
+#include "latlngrect.h"
 #include "cell.h"
 #include "point.h"
 
@@ -53,9 +54,10 @@ NAN_METHOD(GetCover) {
 
 void RegisterModule(Handle<Object> exports) {
     LatLng::Init(exports);
+    LatLngRect::Init(exports);
     Cell::Init(exports);
     Point::Init(exports);
-    exports->Set(NanSymbol("getCover"),
+    exports->Set(NanSymbol("_getCover"),
             NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }
 

@@ -31,7 +31,6 @@ void Cell::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "level", Level);
     NODE_SET_PROTOTYPE_METHOD(constructor, "orientation", Orientation);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isLeaf", IsLeaf);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -127,11 +126,4 @@ NAN_METHOD(Cell::IsLeaf) {
     NanScope();
     Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
     NanReturnValue(NanNew<Boolean>(obj->this_.is_leaf()));
-}
-
-NAN_METHOD(Cell::Id) {
-    NanScope();
-    Cell* obj = ObjectWrap::Unwrap<Cell>(args.This());
-    NanReturnValue(CellId::New());
-    // return scope.Close(CellId::New(obj->this_.id()));
 }

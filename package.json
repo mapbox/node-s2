@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "nan": "~1.0.0",
-    "tap": "~0.4.9"
+    "tap": "~0.4.9",
+    "geojson-normalize": "0.0.0"
   },
   "author": "Tom MacWright <tom@macwright.org> (http://macwright.org/)",
   "repository": {

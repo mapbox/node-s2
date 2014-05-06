@@ -23,7 +23,6 @@ protected:
     static v8::Handle<v8::Value> Face(const v8::Arguments& args);
     static v8::Handle<v8::Value> Level(const v8::Arguments& args);
     static v8::Handle<v8::Value> AverageArea(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Id(const v8::Arguments& args);
     static v8::Handle<v8::Value> Orientation(const v8::Arguments& args);
     static v8::Handle<v8::Value> IsLeaf(const v8::Arguments& args);
 
