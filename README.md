@@ -8,6 +8,11 @@ Bindings for the [S2 Geometry Library](https://code.google.com/p/s2-geometry-lib
 S2 is a library that does spherical math over the world, and supports a very
 fancy Hilbert curve-related indexing scheme. S2 has no documentation besides
 source comments and [this presentation](https://cloudup.com/cVR0jOEufLR).
+Notably it's used for [MongoDB](https://www.mongodb.org/)'s [2dsphere index](http://docs.mongodb.org/manual/core/2dsphere/),
+as well as in [viewfinderco](https://github.com/viewfinderco/viewfinder)'s
+[DynamoDB](http://aws.amazon.com/dynamodb/)-powered database. [s2map.com](http://s2map.com/)
+also demonstrates one of the killer features of the library, 'coverings', which
+are intelligently computed groups of cells that can be used to index geometries.
 
 ## Example
 
