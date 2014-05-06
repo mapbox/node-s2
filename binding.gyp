@@ -49,8 +49,7 @@
         "-Wignored-qualifiers"
       ],
       'conditions': [
-        ['OS=="win"', {},
-        {
+        ['OS=="mac"', {
             'xcode_settings': {
               'OTHER_CPLUSPLUSFLAGS':[
                 '-Wno-deprecated',
@@ -60,6 +59,12 @@
               'GCC_ENABLE_CPP_RTTI': 'YES',
               'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
             }
+        }],
+        ['OS=="linux"', {
+            'cflags_cc' : [
+              '-Wno-deprecated',
+              '-DARCH_K8 -DS2_USE_EXACTFLOAT'
+            ],
         }]
       ]
     }

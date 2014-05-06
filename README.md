@@ -2,7 +2,12 @@
 
 # node-s2
 
-Bindings for [S2](https://code.google.com/p/s2-geometry-library/) into [node.js](http://nodejs.org/).
+Bindings for the [S2 Geometry Library](https://code.google.com/p/s2-geometry-library/) into
+[node.js](http://nodejs.org/).
+
+S2 is a library that does spherical math over the world, and supports a very
+fancy Hilbert curve-related indexing scheme. S2 has no documentation besides
+source comments and [this presentation](https://cloudup.com/cVR0jOEufLR).
 
 ## Example
 
@@ -26,3 +31,4 @@ var pt = ll.toPoint();
 ## See Also
 
 * [s2-geometry-javascript](https://github.com/jonatkins/s2-geometry-javascript) - an incomplete port of S2 to JavaScript.
+* [gos2](https://code.google.com/p/gos2/) - very incomplete port to Go
