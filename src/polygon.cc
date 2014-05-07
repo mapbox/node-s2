@@ -23,7 +23,7 @@ void Polygon::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Polygon::New));
-    Local<String> name = String::NewSymbol("Polygon");
+    Local<String> name = String::NewSymbol("S2Polygon");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

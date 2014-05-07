@@ -19,7 +19,7 @@ void CellId::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(CellId::New));
-    Local<String> name = String::NewSymbol("CellId");
+    Local<String> name = String::NewSymbol("S2CellId");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

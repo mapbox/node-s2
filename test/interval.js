@@ -1,9 +1,9 @@
 var test = require('tap').test,
     s2 = require('../');
 
-test('Interval', function(t) {
+test('S1Interval', function(t) {
 
-    var ll = new s2.Interval(0);
+    var ll = new s2.S1Interval(0);
     t.ok(ll, 'generates angle object');
     t.equal(ll.hi(), 0, 'hi');
     t.equal(ll.lo(), 0, 'lo');

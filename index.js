@@ -10,7 +10,7 @@ module.exports.getCover = function(gj) {
         .geometry
         .coordinates[0]
         .map(function(_) {
-            return new module.exports.LatLng(_[1], _[1]);
+            return new module.exports.S2LatLng(_[1], _[1]);
         });
 
     return module.exports._getCover(latLngs);

@@ -14,7 +14,7 @@ void Point::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Point::New));
-    Local<String> name = String::NewSymbol("Point");
+    Local<String> name = String::NewSymbol("S2Point");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

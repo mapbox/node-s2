@@ -21,7 +21,7 @@ void Cell::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Cell::New));
-    Local<String> name = String::NewSymbol("Cell");
+    Local<String> name = String::NewSymbol("S2Cell");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

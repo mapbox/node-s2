@@ -17,7 +17,7 @@ void Angle::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Angle::New));
-    Local<String> name = String::NewSymbol("Angle");
+    Local<String> name = String::NewSymbol("S1Angle");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

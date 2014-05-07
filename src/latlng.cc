@@ -16,7 +16,7 @@ void LatLng::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(LatLng::New));
-    Local<String> name = String::NewSymbol("LatLng");
+    Local<String> name = String::NewSymbol("S2LatLng");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

@@ -17,7 +17,7 @@ void Interval::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Interval::New));
-    Local<String> name = String::NewSymbol("Interval");
+    Local<String> name = String::NewSymbol("S1Interval");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

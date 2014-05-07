@@ -37,15 +37,15 @@ var dc = {
 test('_getCover', function(t) {
 
     var points = [
-        new s2.LatLng(0, 0),
-        new s2.LatLng(10, 0),
-        new s2.LatLng(10, 10),
-        new s2.LatLng(0, 10),
-        new s2.LatLng(0, 0)];
+        new s2.S2LatLng(0, 0),
+        new s2.S2LatLng(10, 0),
+        new s2.S2LatLng(10, 10),
+        new s2.S2LatLng(0, 10),
+        new s2.S2LatLng(0, 0)];
 
     var cover = s2._getCover(points);
 
-    t.ok(cover[1] instanceof s2.Cell, 'creates cells');
+    t.ok(cover[1] instanceof s2.S2Cell, 'creates cells');
 
     t.end();
 });
@@ -54,7 +54,7 @@ test('getCover', function(t) {
 
     var cover = s2.getCover(dc);
 
-    t.ok(cover[1] instanceof s2.Cell, 'creates cells');
+    t.ok(cover[1] instanceof s2.S2Cell, 'creates cells');
 
     t.end();
 });

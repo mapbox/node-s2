@@ -17,7 +17,7 @@ void Cap::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Cap::New));
-    Local<String> name = String::NewSymbol("Cap");
+    Local<String> name = String::NewSymbol("S2Cap");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

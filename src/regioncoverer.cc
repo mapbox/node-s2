@@ -23,7 +23,7 @@ void RegionCoverer::Init(Handle<Object> target) {
     NanScope();
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(RegionCoverer::New));
-    Local<String> name = String::NewSymbol("RegionCoverer");
+    Local<String> name = String::NewSymbol("S2RegionCoverer");
 
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);

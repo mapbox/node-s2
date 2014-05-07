@@ -97,3 +97,7 @@ Construct a new latlng object
 ## cellid.next() -> s2.CellId
 
 ## cellid.isFace() -> boolean
+
+# s2.Polygon()
+
+# s2.RegionCoverer()

@@ -1,9 +1,9 @@
 var test = require('tap').test,
     s2 = require('../');
 
-test('Cell', function(t) {
+test('S2Cell', function(t) {
 
-    var cell = new s2.Cell(new s2.LatLng(10, 20));
+    var cell = new s2.S2Cell(new s2.S2LatLng(10, 20));
     t.ok(cell, 'generates cell object');
     t.equal(typeof cell.approxArea(), 'number');
     t.equal(typeof cell.exactArea(), 'number');
@@ -12,11 +12,11 @@ test('Cell', function(t) {
     t.equal(cell.orientation(), 3, 'level');
     t.equal(typeof cell.averageArea(1), 'number', '.averageArea');
     t.equal(cell.isLeaf(), true, '.isLeaf');
-    t.ok(cell.getCapBound() instanceof s2.Cap, '.getCapBound');
-    t.ok(cell.getCenter() instanceof s2.Point, '.getCenter');
+    t.ok(cell.getCapBound() instanceof s2.S2Cap, '.getCapBound');
+    t.ok(cell.getCenter() instanceof s2.S2Point, '.getCenter');
 
     t.throws(function() {
-        new s2.Cell('foo');
+        new s2.S2Cell('foo');
     });
 
     t.end();
