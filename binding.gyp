@@ -34,6 +34,7 @@
 	    "./geometry/s2region.cc",
 	    "./geometry/s2regioncoverer.cc",
 	    "./geometry/s2regionintersection.cc",
+	    "./viewfinder/viewfinder.cc",
         "./src/s2.cc",
       ],
       "defines": [
@@ -41,6 +42,7 @@
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
+        "./viewfinder/",
         "./geometry/",
         "./geometry/base/",
         "./geometry/util/",

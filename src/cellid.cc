@@ -28,7 +28,10 @@ void CellId::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "toToken", ToToken);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
-
+    NODE_SET_PROTOTYPE_METHOD(constructor, "parent", Parent);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "prev", Prev);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "next", Next);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isFace", IsFace);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -92,4 +95,27 @@ NAN_METHOD(CellId::ToPoint) {
     NanScope();
     CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
     NanReturnValue(Point::New(obj->this_.ToPoint()));
+}
+
+NAN_METHOD(CellId::Parent) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(CellId::New(obj->this_.parent()));
+}
+NAN_METHOD(CellId::Prev) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(CellId::New(obj->this_.prev()));
+}
+
+NAN_METHOD(CellId::Next) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(CellId::New(obj->this_.next()));
+}
+
+NAN_METHOD(CellId::IsFace) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(NanNew<Boolean>(obj->this_.is_face()));
 }

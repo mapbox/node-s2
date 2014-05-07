@@ -89,3 +89,11 @@ Construct a new latlng object
 ## cellid.toString() -> string
 
 ## cellid.toToken() -> string
+
+## cellid.parent() -> s2.CellId
+
+## cellid.prev() -> s2.CellId
+
+## cellid.next() -> s2.CellId
+
+## cellid.isFace() -> boolean
