@@ -12,5 +12,9 @@ test('LatLngRect', function(t) {
     t.ok(ll.getVertex(0), '.getVertex');
     t.equal(ll.contains(new s2.LatLng(50, 50)), false, '.contains');
 
+    t.throws(function() {
+        new s2.LatLngRect(1);
+    });
+
     t.end();
 });

@@ -62,6 +62,12 @@ Handle<Value> LatLngRect::New(const Arguments& args) {
 
     obj->Wrap(args.This());
 
+    Handle<Object> ll = args[0]->ToObject();
+
+    if (!NanHasInstance(LatLng::constructor, ll)) {
+        return NanThrowError("(latlng) required");
+    }
+
     obj->this_ = S2LatLngRect(
         S2LatLngRect::FromPoint(node::ObjectWrap::Unwrap<LatLng>(args[0]->ToObject())->get()));
 

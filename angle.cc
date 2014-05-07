@@ -23,7 +23,7 @@ void Angle::Init(Handle<Object> target) {
     constructor->SetClassName(name);
 
     // Add all prototype methods, getters and setters here.
-    // NODE_SET_PROTOTYPE_METHOD(constructor, "lat", Lat);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "normalize", Normalize);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -57,9 +57,17 @@ Handle<Value> Angle::New(const Arguments& args) {
 
     obj->Wrap(args.This());
 
+    Handle<Object> a = args[0]->ToObject();
+    Handle<Object> b = args[1]->ToObject();
+
+    if (!NanHasInstance(Point::constructor, a) ||
+        !NanHasInstance(Point::constructor, a)) {
+        return NanThrowError("(point, point) required");
+    }
+
     obj->this_ = S1Angle(
-        node::ObjectWrap::Unwrap<Point>(args[0]->ToObject())->get(),
-        node::ObjectWrap::Unwrap<Point>(args[1]->ToObject())->get());
+        node::ObjectWrap::Unwrap<Point>(a)->get(),
+        node::ObjectWrap::Unwrap<Point>(b)->get());
 
     return args.This();
 }
@@ -73,8 +81,9 @@ Handle<Value> Angle::New(S1Angle s1angle) {
     return scope.Close(handleObject);
 }
 
-// NAN_METHOD(Angle::Lat) {
-//     NanScope();
-//     Angle* obj = ObjectWrap::Unwrap<Angle>(args.This());
-//     NanReturnValue(NanNew<Number>(obj->this_.lat().degrees()));
-// }
+NAN_METHOD(Angle::Normalize) {
+    NanScope();
+    Angle* obj = ObjectWrap::Unwrap<Angle>(args.This());
+    obj->this_.Normalize();
+    return scope.Close(args.This());
+}

@@ -66,8 +66,14 @@ Handle<Value> Cell::New(const Arguments& args) {
 
     obj->Wrap(args.This());
 
+    Handle<Object> ll = args[0]->ToObject();
+
+    if (!NanHasInstance(LatLng::constructor, ll)) {
+        return NanThrowError("(latlng) required");
+    }
+
     obj->this_ = S2Cell(
-        S2CellId::FromLatLng(node::ObjectWrap::Unwrap<LatLng>(args[0]->ToObject())->get()));
+        S2CellId::FromLatLng(node::ObjectWrap::Unwrap<LatLng>(ll)->get()));
 
     return args.This();
 }

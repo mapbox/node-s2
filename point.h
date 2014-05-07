@@ -16,6 +16,9 @@ protected:
     Point();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
+    static v8::Handle<v8::Value> X(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Y(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Z(const v8::Arguments& args);
 
     S2Point this_;
 };

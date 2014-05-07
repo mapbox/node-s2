@@ -19,6 +19,10 @@ void Point::Init(Handle<Object> target) {
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(name);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "x", X);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "y", Y);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "z", Z);
+
     target->Set(name, constructor->GetFunction());
 }
 
@@ -64,4 +68,22 @@ Handle<Value> Point::New(S2Point s2cell) {
     Handle<Value> ext = External::New(obj);
     Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
     return scope.Close(handleObject);
+}
+
+NAN_METHOD(Point::X) {
+    NanScope();
+    Point* obj = ObjectWrap::Unwrap<Point>(args.This());
+    NanReturnValue(NanNew<Number>(obj->this_.x()));
+}
+
+NAN_METHOD(Point::Y) {
+    NanScope();
+    Point* obj = ObjectWrap::Unwrap<Point>(args.This());
+    NanReturnValue(NanNew<Number>(obj->this_.y()));
+}
+
+NAN_METHOD(Point::Z) {
+    NanScope();
+    Point* obj = ObjectWrap::Unwrap<Point>(args.This());
+    NanReturnValue(NanNew<Number>(obj->this_.z()));
 }

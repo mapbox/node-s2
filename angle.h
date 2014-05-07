@@ -16,7 +16,7 @@ protected:
     Angle();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    // static v8::Handle<v8::Value> GetCenter(const v8::Arguments& args);
+    static v8::Handle<v8::Value> Normalize(const v8::Arguments& args);
 
     S1Angle this_;
 };

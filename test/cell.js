@@ -15,5 +15,9 @@ test('Cell', function(t) {
     t.ok(cell.getCapBound() instanceof s2.Cap, '.getCapBound');
     t.ok(cell.getCenter() instanceof s2.Point, '.getCenter');
 
+    t.throws(function() {
+        new s2.Cell('foo');
+    });
+
     t.end();
 });

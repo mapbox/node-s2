@@ -4,6 +4,12 @@ Exposes S2 objects and methods.
 
 # s2.Point(x:number, y:number, z:number)
 
+## point.x() -> number
+
+## point.y() -> number
+
+## point.z() -> number
+
 # s2.LatLng(lat:number, lng:number)
 
 Construct a new latlng object
