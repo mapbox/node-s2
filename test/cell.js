@@ -14,6 +14,7 @@ test('S2Cell', function(t) {
     t.equal(cell.isLeaf(), true, '.isLeaf');
     t.ok(cell.getCapBound() instanceof s2.S2Cap, '.getCapBound');
     t.ok(cell.getCenter() instanceof s2.S2Point, '.getCenter');
+    t.ok(cell.id() instanceof s2.S2CellId, '.id');
 
     t.throws(function() {
         new s2.S2Cell('foo');

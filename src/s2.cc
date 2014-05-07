@@ -28,33 +28,35 @@ NAN_METHOD(GetCover) {
     scoped_ptr<S2PolygonBuilder> builder(
             new S2PolygonBuilder(S2PolygonBuilderOptions::DIRECTED_XOR()));
 
-    if (args.Length() < 1) { return NanThrowError("(array) required"); }
-
-    if (args[0]->IsArray()) {
-        Handle<Array> array = Handle<Array>::Cast(args[0]);
-        for (uint32_t i = 0; i < array->Length(); i++) {
-            Local<Object> obj = array->Get(i)->ToObject();
-            if (NanHasInstance(LatLng::constructor, obj)) {
-                LatLng *a = node::ObjectWrap::Unwrap<LatLng>(array->Get(i)->ToObject());
-                LatLng *b = node::ObjectWrap::Unwrap<LatLng>(array->Get((i + 1) % array->Length())->ToObject());
-                builder->AddEdge(a->get().ToPoint(), b->get().ToPoint());
-            }
+    if (args.Length() < 1 || !args[0]->IsArray()) {
+        return NanThrowError("(array) required");
+    }
+    Handle<Array> array = Handle<Array>::Cast(args[0]);
+    for (uint32_t i = 0; i < array->Length(); i++) {
+        Local<Object> obj = array->Get(i)->ToObject();
+        if (NanHasInstance(LatLng::constructor, obj)) {
+            LatLng *a = node::ObjectWrap::Unwrap<LatLng>(array->Get(i)->ToObject());
+            LatLng *b = node::ObjectWrap::Unwrap<LatLng>(array->Get((i + 1) % array->Length())->ToObject());
+            builder->AddEdge(a->get().ToPoint(), b->get().ToPoint());
         }
-        S2Polygon polygon;
-        typedef vector<pair<S2Point, S2Point> > EdgeList;
-        EdgeList edgeList;
-        builder->AssemblePolygon(&polygon, &edgeList);
-        S2RegionCoverer coverer;
-        std::vector<S2CellId> cellids_vector;
-        coverer.GetCovering(polygon, &cellids_vector);
-        Local<Array> out = Array::New(cellids_vector.size());
-        for (int i = 0; i < cellids_vector.size(); i++) {
-            out->Set(i, Cell::New(cellids_vector.at(i)));
-        }
-        NanReturnValue(out);
     }
 
-    NanReturnValue(NanNew<String>("hi"));
+    S2Polygon polygon;
+    typedef vector<pair<S2Point, S2Point> > EdgeList;
+    EdgeList edgeList;
+    std::vector<S2CellId> cellids_vector;
+    S2RegionCoverer coverer;
+
+    builder->AssemblePolygon(&polygon, &edgeList);
+    coverer.GetCovering(polygon, &cellids_vector);
+
+    Local<Array> out = Array::New(cellids_vector.size());
+
+    for (int i = 0; i < cellids_vector.size(); i++) {
+        out->Set(i, Cell::New(cellids_vector.at(i)));
+    }
+
+    NanReturnValue(out);
 }
 
 void RegisterModule(Handle<Object> exports) {
@@ -63,11 +65,10 @@ void RegisterModule(Handle<Object> exports) {
     Cap::Init(exports);
     Angle::Init(exports);
     Cell::Init(exports);
-    // RegionCoverer::Init(exports);
     CellId::Init(exports);
     Point::Init(exports);
     Interval::Init(exports);
-    exports->Set(NanSymbol("_getCover"),
+    exports->Set(NanSymbol("getCover"),
             NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }
 

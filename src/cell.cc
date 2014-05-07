@@ -35,6 +35,7 @@ void Cell::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "isLeaf", IsLeaf);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getCapBound", GetCapBound);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getCenter", GetCenter);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -148,4 +149,10 @@ NAN_METHOD(Cell::GetCenter) {
     NanScope();
     Cell* obj = node::ObjectWrap::Unwrap<Cell>(args.This());
     NanReturnValue(Point::New(obj->this_.GetCenterRaw()));
+}
+
+NAN_METHOD(Cell::Id) {
+    NanScope();
+    Cell* obj = node::ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(CellId::New(obj->this_.id()));
 }

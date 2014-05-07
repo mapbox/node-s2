@@ -38,3 +38,4 @@ var pt = ll.toPoint();
 * [s2-geometry-javascript](https://github.com/jonatkins/s2-geometry-javascript) - an incomplete port of S2 to JavaScript.
 * [gos2](https://code.google.com/p/gos2/) - very incomplete port to Go
 * [viewfinder built a python wrapper](https://github.com/viewfinderco/third_party/blob/master/python-package/s2-0.2.tar.gz)
+* [s2-geometry-php](https://github.com/eelf/s2-geometry-library-php) - another very incomplete port to PHP

@@ -6,9 +6,10 @@
     "test": "tap --tap test/*.js"
   },
   "dependencies": {
-    "nan": "~1.0.0",
-    "tap": "~0.4.9",
-    "geojson-normalize": "0.0.0"
+    "nan": "~1.0.0"
+  },
+  "devDependencies": {
+    "tap": "~0.4.9"
   },
   "author": "Tom MacWright <tom@macwright.org> (http://macwright.org/)",
   "repository": {
