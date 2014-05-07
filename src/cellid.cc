@@ -59,7 +59,18 @@ Handle<Value> CellId::New(const Arguments& args) {
 
     obj->Wrap(args.This());
 
-    obj->this_ = S2CellId();
+    if (args.Length() == 1) {
+        Handle<Object> fromObj = args[0]->ToObject();
+        if (NanHasInstance(Point::constructor, fromObj)) {
+            S2Point p = node::ObjectWrap::Unwrap<Point>(fromObj)->get();
+            obj->this_ = S2CellId::FromPoint(p);
+        } else if (NanHasInstance(LatLng::constructor, fromObj)) {
+            S2LatLng ll = node::ObjectWrap::Unwrap<LatLng>(fromObj)->get();
+            obj->this_ = S2CellId::FromLatLng(ll);
+        }
+    } else {
+        obj->this_ = S2CellId();
+    }
 
     return args.This();
 }

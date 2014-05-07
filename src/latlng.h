@@ -21,6 +21,7 @@ protected:
     static NAN_METHOD(IsValid);
     static NAN_METHOD(Normalized);
     static NAN_METHOD(ToPoint);
+    static NAN_METHOD(ToString);
     static NAN_METHOD(Distance);
 
     S2LatLng this_;

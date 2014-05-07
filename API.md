@@ -10,7 +10,7 @@ Exposes S2 objects and methods.
 
 ## point.z() -> number
 
-# s2.LatLng(lat:number, lng:number)
+# s2.LatLng(s2.Point | lat:number, lng:number)
 
 Construct a new latlng object
 
@@ -80,7 +80,7 @@ Construct a new latlng object
 
 ## interval.complementLength() -> number
 
-# s2.CellId()
+# s2.CellId(s2.Point | s2.LatLng)
 
 ## cellid.level() -> number
 

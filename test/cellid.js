@@ -13,6 +13,16 @@ test('CellId', function(t) {
     t.ok(cell.prev() instanceof s2.CellId, 'prev');
     t.ok(cell.next() instanceof s2.CellId, 'next');
     t.equal(cell.isFace(), true, 'isFace');
+    t.equal((new s2.LatLng(cell.toPoint())).toString(), '-35.264390,-45.000000');
+
+    var fromlat = new s2.CellId(new s2.LatLng(40, 20));
+    t.ok(fromlat, 'generates cellid object from latlng');
+    t.equal((new s2.LatLng(fromlat.toPoint())).toString(), '40.000000,20.000000', 'gets values');
+
+
+    var frompoint = new s2.CellId(new s2.LatLng(40, 20).toPoint());
+    t.ok(frompoint, 'generates cellid object from point');
+    t.equal((new s2.LatLng(frompoint.toPoint())).toString(), '40.000000,20.000000', 'gets values');
 
     t.end();
 });

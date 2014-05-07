@@ -9,6 +9,7 @@
         "./src/angle.cc",
         "./src/cellid.cc",
         "./src/point.cc",
+        "./src/polygon.cc",
         "./src/interval.cc",
         "./src/cap.cc",
         "./geometry/s2.cc",

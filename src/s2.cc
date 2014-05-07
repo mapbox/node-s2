@@ -17,6 +17,7 @@
 #include "interval.h"
 #include "point.h"
 #include "cap.h"
+#include "regioncoverer.h"
 #include "angle.h"
 
 using namespace v8;
@@ -62,6 +63,7 @@ void RegisterModule(Handle<Object> exports) {
     Cap::Init(exports);
     Angle::Init(exports);
     Cell::Init(exports);
+    // RegionCoverer::Init(exports);
     CellId::Init(exports);
     Point::Init(exports);
     Interval::Init(exports);

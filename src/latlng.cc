@@ -28,6 +28,7 @@ void LatLng::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
     NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Distance);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -53,17 +54,23 @@ Handle<Value> LatLng::New(const Arguments& args) {
         return args.This();
     }
 
-    if (args.Length() != 2) {
-        return NanThrowError("(number, number) required");
-    }
-
     LatLng* obj = new LatLng();
-
     obj->Wrap(args.This());
 
-    obj->this_ = S2LatLng::FromDegrees(
-        args[0]->ToNumber()->Value(),
-        args[1]->ToNumber()->Value());
+    if (args.Length() == 2) {
+        if (args[0]->IsNumber() &&
+            args[1]->IsNumber()) {
+            obj->this_ = S2LatLng::FromDegrees(
+                args[0]->ToNumber()->Value(),
+                args[1]->ToNumber()->Value());
+        }
+    } else if (args.Length() == 1) {
+        Handle<Object> fromObj = args[0]->ToObject();
+        if (NanHasInstance(Point::constructor, fromObj)) {
+            S2Point p = node::ObjectWrap::Unwrap<Point>(fromObj)->get();
+            obj->this_ = S2LatLng(p);
+        }
+    }
 
     return args.This();
 }
@@ -112,4 +119,9 @@ NAN_METHOD(LatLng::Distance) {
     LatLng* latlng = node::ObjectWrap::Unwrap<LatLng>(args.This());
     S2LatLng other = node::ObjectWrap::Unwrap<LatLng>(args[0]->ToObject())->get();
     NanReturnValue(NanNew<Number>(latlng->this_.GetDistance(other).degrees()));
+}
+NAN_METHOD(LatLng::ToString) {
+    NanScope();
+    LatLng* latlng = node::ObjectWrap::Unwrap<LatLng>(args.This());
+    NanReturnValue(NanNew<String>(latlng->this_.ToStringInDegrees().c_str()));
 }
