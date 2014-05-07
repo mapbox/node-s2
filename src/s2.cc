@@ -13,6 +13,7 @@
 #include "latlng.h"
 #include "latlngrect.h"
 #include "cell.h"
+#include "cellid.h"
 #include "interval.h"
 #include "point.h"
 #include "cap.h"
@@ -61,6 +62,7 @@ void RegisterModule(Handle<Object> exports) {
     Cap::Init(exports);
     Angle::Init(exports);
     Cell::Init(exports);
+    CellId::Init(exports);
     Point::Init(exports);
     Interval::Init(exports);
     exports->Set(NanSymbol("_getCover"),

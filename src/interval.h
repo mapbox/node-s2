@@ -16,11 +16,11 @@ protected:
     Interval();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetLength(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetCenter(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetComplementCenter(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetHi(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetLo(const v8::Arguments& args);
+    static NAN_METHOD(GetLength);
+    static NAN_METHOD(GetCenter);
+    static NAN_METHOD(GetComplementCenter);
+    static NAN_METHOD(GetHi);
+    static NAN_METHOD(GetLo);
 
     S1Interval this_;
 };

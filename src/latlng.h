@@ -16,12 +16,12 @@ protected:
     LatLng();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Lat(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Lng(const v8::Arguments& args);
-    static v8::Handle<v8::Value> IsValid(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Normalized(const v8::Arguments& args);
-    static v8::Handle<v8::Value> ToPoint(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Distance(const v8::Arguments& args);
+    static NAN_METHOD(Lat);
+    static NAN_METHOD(Lng);
+    static NAN_METHOD(IsValid);
+    static NAN_METHOD(Normalized);
+    static NAN_METHOD(ToPoint);
+    static NAN_METHOD(Distance);
 
     S2LatLng this_;
 };

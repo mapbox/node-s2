@@ -16,10 +16,10 @@ protected:
     Cap();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetRectBound(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Intersects(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Contains(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Complement(const v8::Arguments& args);
+    static NAN_METHOD(GetRectBound);
+    static NAN_METHOD(Intersects);
+    static NAN_METHOD(Contains);
+    static NAN_METHOD(Complement);
 
     S2Cap this_;
 };

@@ -17,6 +17,11 @@ protected:
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
 
+    static NAN_METHOD(Level);
+    static NAN_METHOD(ToToken);
+    static NAN_METHOD(ToPoint);
+    static NAN_METHOD(ToString);
+
     S2CellId this_;
 };
 

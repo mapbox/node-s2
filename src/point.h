@@ -16,9 +16,9 @@ protected:
     Point();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> X(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Y(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Z(const v8::Arguments& args);
+    static NAN_METHOD(X);
+    static NAN_METHOD(Y);
+    static NAN_METHOD(Z);
 
     S2Point this_;
 };

@@ -79,3 +79,13 @@ Construct a new latlng object
 ## interval.lo() -> number
 
 ## interval.complementLength() -> number
+
+# s2.CellId()
+
+## cellid.level() -> number
+
+## cellid.toPoint() -> s2.Point
+
+## cellid.toString() -> string
+
+## cellid.toToken() -> string

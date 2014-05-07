@@ -16,12 +16,12 @@ protected:
     LatLngRect();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetCenter(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetSize(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetArea(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetVertex(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetCapBound(const v8::Arguments& args);
-    static v8::Handle<v8::Value> Contains(const v8::Arguments& args);
+    static NAN_METHOD(GetCenter);
+    static NAN_METHOD(GetSize);
+    static NAN_METHOD(GetArea);
+    static NAN_METHOD(GetVertex);
+    static NAN_METHOD(GetCapBound);
+    static NAN_METHOD(Contains);
 
     S2LatLngRect this_;
 };
