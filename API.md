@@ -42,7 +42,7 @@ Construct a new latlng object
 
 ## cell.getCapBound() -> s2.Cap
 
-# s2.CellId()
+## cell.id() -> s2.CellId
 
 # s2.LatLngRect(ll:s2.LatLng)
 
