@@ -22,6 +22,9 @@ protected:
     static NAN_METHOD(GetVertex);
     static NAN_METHOD(GetCapBound);
     static NAN_METHOD(Contains);
+    static NAN_METHOD(IsValid);
+    static NAN_METHOD(IsEmpty);
+    static NAN_METHOD(IsPoint);
 
     S2LatLngRect this_;
 };

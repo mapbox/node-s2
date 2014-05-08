@@ -10,7 +10,7 @@ Exposes S2 objects and methods.
 
 ## point.z() -> number
 
-# s2.LatLng(s2.Point | lat:number, lng:number)
+# s2.S2LatLng(s2.Point | lat:number, lng:number)
 
 Construct a new latlng object
 
@@ -20,17 +20,38 @@ Construct a new latlng object
 
 ## latLng.isValid() -> boolean
 
+Return true if the latitude is between -90 and 90 degrees inclusive
+and the longitude is between -180 and 180 degrees inclusive.
+
 ## latLng.toPoint() -> s2.Point
 
-## latLng.normalized() -> s2.LatLng
+Convert a normalized S2LatLng to the equivalent unit-length vector.
 
-# s2.Cell(ll:s2.LatLng)
+## latLng.normalized() -> s2.S2LatLng
+
+Clamps the latitude to the range [-90, 90] degrees, and adds or subtracts
+a multiple of 360 degrees to the longitude if necessary to reduce it to
+the range [-180, 180].
+
+# s2.Cell(ll:s2.S2LatLng)
+
+An S2Cell is an S2Region object that represents a cell.  Unlike S2CellIds,
+it supports efficient containment and intersection tests.  However, it is
+also a more expensive representation (currently 48 bytes rather than 8).
 
 ## cell.approxArea() -> number
 
 ## cell.exactArea() -> number
 
+Return the area of this cell as accurately as possible.  This method is
+more expensive but it is accurate to 6 digits of precision even for leaf
+cells (whose area is approximately 1e-18).
+
 ## cell.averageArea(level:number) -> number
+
+Return the average area of cells at this level.  This is accurate to
+within a factor of 1.7 (for `S2_QUADRATIC_PROJECTION`) and is extremely
+cheap to compute.
 
 ## cell.level() -> number
 
@@ -40,11 +61,23 @@ Construct a new latlng object
 
 ## cell.isLeaf() -> boolean
 
-## cell.getCapBound() -> s2.Cap
+## cell.getCapBound() -> s2.S2Cap
+
+## cell.getCenter() -> s2.S2Point
+
+Return the direction vector corresponding to the center in (s,t)-space of
+the given cell.  This is the point at which the cell is divided into four
+subcells; it is not necessarily the centroid of the cell in (u,v)-space
+or (x,y,z)-space.  The point returned by GetCenterRaw is not necessarily
+unit length.
 
 ## cell.id() -> s2.CellId
 
-# s2.LatLngRect(ll:s2.LatLng)
+# s2.S2LatLngRect(ll:s2.S2LatLng)
+
+An S2LatLngRect represents a closed latitude-longitude rectangle.  It is
+capable of representing the empty and full rectangles as well as
+single points.
 
 ## latLngRect.area() -> number
 
@@ -52,25 +85,57 @@ Construct a new latlng object
 
 ## latLngRect.size() -> latlng
 
-## latLngRect.getVertex(n:number) -> s2.LatLng
+## latLngRect.getVertex(n:number) -> s2.S2LatLng
 
-## latLngRect.getCapBound() -> s2.Cap
+## latLngRect.getCapBound() -> s2.S2Cap
 
 ## latLngRect.contains(ll:latlng) -> boolean
 
-# s2.Cap()
+## latLngRect.isEmpty() -> boolean
 
-## cap.complement() -> s2.Cap
+Return true if the rectangle is empty, i.e. it contains no points at all.
 
-## cap.contains(other:s2.Cap) -> boolean
+## latLngRect.isValid() -> boolean
 
-## cap.intersects(other:s2.Cap) -> boolean
+Return true if the rectangle is valid, which essentially just means
+that the latitude bounds do not exceed Pi/2 in absolute value and
+the longitude bounds do not exceed Pi in absolute value.  Also, if
+either the latitude or longitude bound is empty then both must be.
 
-## cap.getRectBound() -> s2.LatLngRect
+## latLngRect.isPoint() -> boolean
+
+Return true if the rectangle is a point, i.e. lo() == hi()
+
+# s2.S2Cap()
+
+## cap.complement() -> s2.S2Cap
+
+## cap.contains(other:s2.S2Cap) -> boolean
+
+## cap.intersects(other:s2.S2Cap) -> boolean
+
+## cap.getRectBound() -> s2.S2LatLngRect
 
 # s2.Angle(a:s2.Point, b:s2.Point)
 
-# s2.Interval(value:number)
+# s2.S1Interval(lo:number, hi:number)
+
+An S1Interval represents a closed interval on a unit circle (also known
+as a 1-dimensional sphere).  It is capable of representing the empty
+interval (containing no points), the full interval (containing all
+points), and zero-length intervals (containing a single point).
+
+Points are represented by the angle they make with the positive x-axis in
+the range [-Pi, Pi].  An interval is represented by its lower and upper
+bounds (both inclusive, since the interval is closed).  The lower bound may
+be greater than the upper bound, in which case the interval is "inverted"
+(i.e. it passes through the point (-1, 0)).
+
+Note that the point (-1, 0) has two valid representations, Pi and -Pi.
+The normalized representation of this point internally is Pi, so that
+endpoints of normal intervals are in the range (-Pi, Pi].  However, we
+take advantage of the point -Pi to construct two special intervals:
+the Full() interval is [-Pi, Pi], and the Empty() interval is [Pi, -Pi].
 
 ## interval.length() -> number
 
@@ -80,7 +145,7 @@ Construct a new latlng object
 
 ## interval.complementLength() -> number
 
-# s2.CellId(s2.Point | s2.LatLng)
+# s2.CellId(s2.Point | s2.S2LatLng)
 
 ## cellid.level() -> number
 

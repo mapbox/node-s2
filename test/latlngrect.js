@@ -11,6 +11,9 @@ test('S2LatLngRect', function(t) {
     t.ok(ll.getCapBound() instanceof s2.S2Cap, '.getCapBound');
     t.ok(ll.getVertex(0), '.getVertex');
     t.equal(ll.contains(new s2.S2LatLng(50, 50)), false, '.contains');
+    t.equal(ll.isValid(), true, '.isValid');
+    t.equal(ll.isEmpty(), false, '.isEmpty');
+    t.equal(ll.isPoint(), true, '.isPoint');
 
     t.throws(function() {
         new s2.S2LatLngRect(1);

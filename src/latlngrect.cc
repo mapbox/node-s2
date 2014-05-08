@@ -31,6 +31,9 @@ void LatLngRect::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "getVertex", GetVertex);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getCapBound", GetCapBound);
     NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isEmpty", IsEmpty);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isPoint", IsPoint);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -118,4 +121,22 @@ NAN_METHOD(LatLngRect::Contains) {
     LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
     S2LatLng other = node::ObjectWrap::Unwrap<LatLng>(args[0]->ToObject())->get();
     NanReturnValue(NanNew<Boolean>(latlngrect->this_.Contains(other)));
+}
+
+NAN_METHOD(LatLngRect::IsValid) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    NanReturnValue(NanNew<Boolean>(latlngrect->this_.is_valid()));
+}
+
+NAN_METHOD(LatLngRect::IsEmpty) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    NanReturnValue(NanNew<Boolean>(latlngrect->this_.is_empty()));
+}
+
+NAN_METHOD(LatLngRect::IsPoint) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    NanReturnValue(NanNew<Boolean>(latlngrect->this_.is_point()));
 }
