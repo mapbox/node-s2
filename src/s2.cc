@@ -29,7 +29,7 @@ NAN_METHOD(GetCover) {
             new S2PolygonBuilder(S2PolygonBuilderOptions::DIRECTED_XOR()));
 
     if (args.Length() < 1 || !args[0]->IsArray()) {
-        return NanThrowError("(array) required");
+        return NanThrowError("(array, [min, max, mod]) required");
     }
     Handle<Array> array = Handle<Array>::Cast(args[0]);
     for (uint32_t i = 0; i < array->Length(); i++) {
@@ -46,6 +46,22 @@ NAN_METHOD(GetCover) {
     EdgeList edgeList;
     std::vector<S2CellId> cellids_vector;
     S2RegionCoverer coverer;
+
+    if (args.Length() >= 2) {
+        Handle<Object> opt = args[1]->ToObject();
+        if (opt->Has(NanSymbol("min"))) {
+            coverer.set_min_level(opt->Get(NanSymbol("min"))->ToInteger()->Value());
+        }
+        if (opt->Has(NanSymbol("max"))) {
+            coverer.set_max_level(opt->Get(NanSymbol("max"))->ToInteger()->Value());
+        }
+        if (opt->Has(NanSymbol("mod"))) {
+            coverer.set_level_mod(opt->Get(NanSymbol("mod"))->ToInteger()->Value());
+        }
+        if (opt->Has(NanSymbol("max_cells"))) {
+            coverer.set_max_cells(opt->Get(NanSymbol("max_cells"))->ToInteger()->Value());
+        }
+    }
 
     builder->AssemblePolygon(&polygon, &edgeList);
     coverer.GetCovering(polygon, &cellids_vector);

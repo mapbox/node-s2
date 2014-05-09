@@ -79,6 +79,8 @@ subcells; it is not necessarily the centroid of the cell in (u,v)-space
 or (x,y,z)-space.  The point returned by GetCenterRaw is not necessarily
 unit length.
 
+## cell.getVertex(n:number) -> s2.S2Point
+
 ## cell.id() -> s2.CellId
 
 # s2.S2LatLngRect(ll:s2.S2LatLng [, ll:s2.S2LatLng])
@@ -239,3 +241,13 @@ discrete point, it is better to use the S2Cell class.
 # s2.Polygon()
 
 # s2.RegionCoverer()
+
+# s2.getCovering(S2LatLng[], options)
+
+Get a covering, expressed as CellIds, for a given loop of S2atLng objects.
+Options is an optional object that includes:
+
+* min: minimum level
+* max: maximum level
+* max_cells: max number of cells to be computed
+* level_mod: modulo for skipping levels
