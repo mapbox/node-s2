@@ -120,6 +120,27 @@ Return true if the rectangle is a point, i.e. lo() == hi()
 
 # s2.S2Cap()
 
+This class represents a spherical cap, i.e. a portion of a sphere cut off
+by a plane.  The cap is defined by its axis and height.  This
+representation has good numerical accuracy for very small caps (unlike the
+(axis, min-distance-from-origin) representation), and is also efficient for
+containment tests (unlike the (axis, angle) representation).
+
+Here are some useful relationships between the cap height (h), the cap
+opening angle (theta), the maximum chord length from the cap's center (d),
+and the radius of cap's base (a).  All formulas assume a unit radius.
+
+```
+    h = 1 - cos(theta)
+      = 2 sin^2(theta/2)
+  d^2 = 2 h
+      = a^2 + h^2
+```
+
+Caps may be constructed from either an axis and a height, or an axis and
+an angle.  To avoid ambiguity, there are no public constructors except
+the default constructor.
+
 ## cap.complement() -> s2.S2Cap
 
 ## cap.contains(other:s2.S2Cap) -> boolean
@@ -128,7 +149,16 @@ Return true if the rectangle is a point, i.e. lo() == hi()
 
 ## cap.getRectBound() -> s2.S2LatLngRect
 
-# s2.Angle(a:s2.Point, b:s2.Point)
+# s2.S1Angle(a:s2.Point, b:s2.Point)
+
+This class represents a one-dimensional angle (as opposed to a
+two-dimensional solid angle).  It has methods for converting angles to
+or from radians, degrees, and the E5/E6/E7 representations (i.e. degrees
+multiplied by 1e5/1e6/1e7 and rounded to the nearest integer).
+
+This class has built-in support for the E5, E6, and E7
+representations.  An E5 is the measure of an angle in degrees,
+multiplied by `10**5`.
 
 # s2.S1Interval(lo:number, hi:number)
 
@@ -158,6 +188,37 @@ the Full() interval is [-Pi, Pi], and the Empty() interval is [Pi, -Pi].
 ## interval.complementLength() -> number
 
 # s2.CellId(s2.Point | s2.S2LatLng)
+
+An S2CellId is a 64-bit unsigned integer that uniquely identifies a
+cell in the S2 cell decomposition.  It has the following format:
+
+```
+  id = [face][face_pos]
+
+  face:     a 3-bit number (range 0..5) encoding the cube face.
+
+  face_pos: a 61-bit number encoding the position of the center of this
+            cell along the Hilbert curve over this face (see the Wiki
+            pages for details).
+```
+
+Sequentially increasing cell ids follow a continuous space-filling curve
+over the entire sphere. They have the following properties:
+
+- The id of a cell at level k consists of a 3-bit face number followed
+  by k bit pairs that recursively select one of the four children of
+  each cell.  The next bit is always 1, and all other bits are 0.
+  Therefore, the level of a cell is determined by the position of its
+  lowest-numbered bit that is turned on (for a cell at level k, this
+  position is 2 * (kMaxLevel - k).)
+
+- The id of a parent cell is at the midpoint of the range of ids spanned
+  by its children (or by its descendants at any level).
+
+Leaf cells are often used to represent points on the unit sphere, and
+this class provides methods for converting directly between these two
+representations.  For cells that represent 2D regions rather than
+discrete point, it is better to use the S2Cell class.
 
 ## cellid.level() -> number
 
