@@ -29,6 +29,7 @@ protected:
     static NAN_METHOD(GetCapBound);
     static NAN_METHOD(GetCenter);
     static NAN_METHOD(GetVertex);
+    static NAN_METHOD(ToString);
     static NAN_METHOD(Id);
 
     S2Cell this_;

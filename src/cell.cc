@@ -37,6 +37,7 @@ void Cell::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "getVertex", GetVertex);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getCenter", GetCenter);
     NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -156,6 +157,12 @@ NAN_METHOD(Cell::Id) {
     NanScope();
     Cell* obj = node::ObjectWrap::Unwrap<Cell>(args.This());
     NanReturnValue(CellId::New(obj->this_.id()));
+}
+
+NAN_METHOD(Cell::ToString) {
+    NanScope();
+    Cell* obj = node::ObjectWrap::Unwrap<Cell>(args.This());
+    NanReturnValue(NanNew<String>(obj->this_.id().ToString().c_str()));
 }
 
 NAN_METHOD(Cell::GetVertex) {

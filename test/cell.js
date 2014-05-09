@@ -15,6 +15,7 @@ test('S2Cell', function(t) {
     t.ok(cell.getCapBound() instanceof s2.S2Cap, '.getCapBound');
     t.ok(cell.getCenter() instanceof s2.S2Point, '.getCenter');
     t.ok(cell.id() instanceof s2.S2CellId, '.id');
+    t.equal(cell.toString(), '0/202110010010032001303303333203', '.id');
 
     t.deepEqual(cell.toGeoJSON(), {
         type: 'Polygon',
