@@ -16,6 +16,13 @@ test('S2Cell', function(t) {
     t.ok(cell.getCenter() instanceof s2.S2Point, '.getCenter');
     t.ok(cell.id() instanceof s2.S2CellId, '.id');
 
+    t.deepEqual(cell.toGeoJSON(), {
+        type: 'Polygon',
+        coordinates: [
+            [[[19.99999996053861,9.999999997863615],[20.000000051405298,9.999999992207837],[20.000000051405298,10.000000073270334],[19.99999996053861,10.000000078926108]]]
+        ]
+    }, '.toGeoJSON');
+
     t.throws(function() {
         new s2.S2Cell('foo');
     });

@@ -39,3 +39,4 @@ var pt = ll.toPoint();
 * [gos2](https://code.google.com/p/gos2/) - very incomplete port to Go
 * [viewfinder built a python wrapper](https://github.com/viewfinderco/third_party/blob/master/python-package/s2-0.2.tar.gz)
 * [s2-geometry-php](https://github.com/eelf/s2-geometry-library-php) - another very incomplete port to PHP
+* [interview with david blackman](http://www.fastcolabs.com/3007394/open-company/how-foursquare-building-humane-map-framework-rival-googles)
