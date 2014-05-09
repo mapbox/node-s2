@@ -57,13 +57,14 @@ Handle<Value> LatLngRect::New(const Arguments& args) {
         return args.This();
     }
 
-    if (args.Length() != 1) {
-        return NanThrowError("(latlng) required");
+    if (args.Length() == 0) {
+        return NanThrowError("(latlng) or (latlng, latlng) required");
     }
 
     LatLngRect* obj = new LatLngRect();
 
     obj->Wrap(args.This());
+
 
     Handle<Object> ll = args[0]->ToObject();
 
@@ -71,8 +72,21 @@ Handle<Value> LatLngRect::New(const Arguments& args) {
         return NanThrowError("(latlng) required");
     }
 
-    obj->this_ = S2LatLngRect(
-        S2LatLngRect::FromPoint(node::ObjectWrap::Unwrap<LatLng>(args[0]->ToObject())->get()));
+    if (args.Length() == 1) {
+        obj->this_ = S2LatLngRect(
+            S2LatLngRect::FromPoint(node::ObjectWrap::Unwrap<LatLng>(ll)->get()));
+    } else if (args.Length() == 2) {
+        Handle<Object> llb = args[1]->ToObject();
+
+        if (!NanHasInstance(LatLng::constructor, llb)) {
+            return NanThrowError("(latlng, latlng) required");
+        }
+
+        obj->this_ = S2LatLngRect(
+            S2LatLngRect::FromPointPair(
+                node::ObjectWrap::Unwrap<LatLng>(ll)->get(),
+                node::ObjectWrap::Unwrap<LatLng>(llb)->get()));
+    }
 
     return args.This();
 }

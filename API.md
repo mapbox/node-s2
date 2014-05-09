@@ -33,11 +33,19 @@ Clamps the latitude to the range [-90, 90] degrees, and adds or subtracts
 a multiple of 360 degrees to the longitude if necessary to reduce it to
 the range [-180, 180].
 
+## latLng.toGeoJSON() -> GeoJSON object
+
+Return a Point geometry of this latlng object
+
 # s2.Cell(ll:s2.S2LatLng)
 
 An S2Cell is an S2Region object that represents a cell.  Unlike S2CellIds,
 it supports efficient containment and intersection tests.  However, it is
 also a more expensive representation (currently 48 bytes rather than 8).
+
+## cell.toGeoJSON() -> GeoJSON object
+
+Return a Polygon geometry of this cell object
 
 ## cell.approxArea() -> number
 
@@ -73,11 +81,15 @@ unit length.
 
 ## cell.id() -> s2.CellId
 
-# s2.S2LatLngRect(ll:s2.S2LatLng)
+# s2.S2LatLngRect(ll:s2.S2LatLng [, ll:s2.S2LatLng])
 
 An S2LatLngRect represents a closed latitude-longitude rectangle.  It is
 capable of representing the empty and full rectangles as well as
 single points.
+
+## latLngRect.toGeoJSON() -> GeoJSON object
+
+Return a Polygon geometry of this latlngrect object
 
 ## latLngRect.area() -> number
 

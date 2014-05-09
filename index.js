@@ -24,3 +24,20 @@ s2.S2Cell.prototype.toGeoJSON = function() {
         ]
     };
 };
+
+s2.S2LatLngRect.prototype.toGeoJSON = function() {
+    var vs = [];
+    for (var i = 0; i < 4; i++) {
+        vs.push(this.getVertex(i));
+    }
+    return {
+        type: 'Polygon',
+        coordinates: [
+            [
+                vs.map(function(v) {
+                    return [v.lng(), v.lat()];
+                })
+            ]
+        ]
+    };
+};
