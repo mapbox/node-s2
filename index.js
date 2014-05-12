@@ -16,11 +16,9 @@ s2.S2Cell.prototype.toGeoJSON = function() {
     return {
         type: 'Polygon',
         coordinates: [
-            [
-                vs.map(function(v) {
-                    return [v.lng(), v.lat()];
-                })
-            ]
+            vs.map(function(v) {
+                return [v.lng(), v.lat()];
+            })
         ]
     };
 };
