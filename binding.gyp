@@ -60,7 +60,7 @@
                 '-Wno-deprecated',
                 '-DARCH_K8 -DS2_USE_EXACTFLOAT'
               ],
-              'OTHER_LDFLAGS':['-bundle -flat_namespace -undefined suppress'],
+              'OTHER_LDFLAGS':['-flat_namespace -undefined suppress'],
               'GCC_ENABLE_CPP_RTTI': 'YES',
               'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
             }
