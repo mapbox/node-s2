@@ -238,6 +238,10 @@ discrete point, it is better to use the S2Cell class.
 
 ## cellid.isFace() -> boolean
 
+## cellid.child(child:number) -> s2:CellId
+
+child is from 0 to 3, the cell's child at each location.
+
 ## cellid.rangeMin() -> s2.CellId
 
 Methods that return the range of cell ids that are contained

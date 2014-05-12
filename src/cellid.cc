@@ -35,6 +35,7 @@ void CellId::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "rangeMin", RangeMin);
     NODE_SET_PROTOTYPE_METHOD(constructor, "rangeMax", RangeMax);
     NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "child", Child);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -150,4 +151,13 @@ NAN_METHOD(CellId::Id) {
     NanScope();
     CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
     NanReturnValue(Number::New(obj->this_.id()));
+}
+
+NAN_METHOD(CellId::Child) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    if (args.Length() != 1) {
+        return NanThrowError("(number) required");
+    }
+    NanReturnValue(CellId::New(obj->this_.child(args[0]->ToNumber()->Value())));
 }
