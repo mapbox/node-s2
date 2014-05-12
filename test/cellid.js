@@ -12,12 +12,15 @@ test('S2CellId', function(t) {
     t.ok(cell.parent() instanceof s2.S2CellId, 'parent');
     t.ok(cell.prev() instanceof s2.S2CellId, 'prev');
     t.ok(cell.next() instanceof s2.S2CellId, 'next');
+    t.ok(cell.rangeMin() instanceof s2.S2CellId, 'rangeMin');
+    t.ok(cell.rangeMax() instanceof s2.S2CellId, 'rangeMax');
     t.equal(cell.isFace(), true, 'isFace');
     t.equal((new s2.S2LatLng(cell.toPoint())).toString(), '-35.264390,-45.000000');
 
     var fromlat = new s2.S2CellId(new s2.S2LatLng(40, 20));
     t.ok(fromlat, 'generates cellid object from latlng');
     t.equal((new s2.S2LatLng(fromlat.toPoint())).toString(), '40.000000,20.000000', 'gets values');
+    t.equal(typeof fromlat.id(), 'number', '.id');
 
 
     var frompoint = new s2.S2CellId(new s2.S2LatLng(40, 20).toPoint());

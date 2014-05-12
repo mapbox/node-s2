@@ -25,6 +25,9 @@ protected:
     static NAN_METHOD(Prev);
     static NAN_METHOD(Next);
     static NAN_METHOD(IsFace);
+    static NAN_METHOD(RangeMin);
+    static NAN_METHOD(RangeMax);
+    static NAN_METHOD(Id);
 
     S2CellId this_;
 };

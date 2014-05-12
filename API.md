@@ -238,6 +238,27 @@ discrete point, it is better to use the S2Cell class.
 
 ## cellid.isFace() -> boolean
 
+## cellid.rangeMin() -> s2.CellId
+
+Methods that return the range of cell ids that are contained
+within this cell (including itself).  The range is *inclusive*
+(i.e. test using >= and <=) and the return values of both
+methods are valid leaf cell ids.
+
+These methods should not be used for iteration.  If you want to
+iterate through all the leaf cells, call child_begin(kMaxLevel) and
+child_end(kMaxLevel) instead.
+
+It would in fact be error-prone to define a range_end() method,
+because (range_max().id() + 1) is not always a valid cell id, and the
+iterator would need to be tested using "<" rather that the usual "!=".
+
+## cellid.rangeMax() -> s2.CellId
+
+## cellid.id() -> number
+
+The 64-bit unique identifier for this cell.
+
 # s2.Polygon()
 
 # s2.RegionCoverer()

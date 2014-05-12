@@ -32,6 +32,9 @@ void CellId::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "prev", Prev);
     NODE_SET_PROTOTYPE_METHOD(constructor, "next", Next);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isFace", IsFace);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "rangeMin", RangeMin);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "rangeMax", RangeMax);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -129,4 +132,22 @@ NAN_METHOD(CellId::IsFace) {
     NanScope();
     CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
     NanReturnValue(NanNew<Boolean>(obj->this_.is_face()));
+}
+
+NAN_METHOD(CellId::RangeMin) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(CellId::New(obj->this_.range_min()));
+}
+
+NAN_METHOD(CellId::RangeMax) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(CellId::New(obj->this_.range_max()));
+}
+
+NAN_METHOD(CellId::Id) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(Number::New(obj->this_.id()));
 }
