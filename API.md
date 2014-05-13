@@ -241,6 +241,10 @@ be less than or equal to the current level).
 
 ## cellid.isFace() -> boolean
 
+## cellid.fromToken(token:str) -> this
+
+Initialze this cell id with a given string token.
+
 ## cellid.child(child:number) -> s2:CellId
 
 child is from 0 to 3, the cell's child at each location.

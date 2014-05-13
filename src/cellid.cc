@@ -27,6 +27,7 @@ void CellId::Init(Handle<Object> target) {
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "level", Level);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toToken", ToToken);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "fromToken", FromToken);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
     NODE_SET_PROTOTYPE_METHOD(constructor, "parent", Parent);
@@ -93,6 +94,18 @@ Handle<Value> CellId::New(S2CellId s2cellid) {
     Handle<Value> ext = External::New(obj);
     Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
     return scope.Close(handleObject);
+}
+
+NAN_METHOD(CellId::FromToken) {
+    NanScope();
+    if (args.Length() != 1 || !args[0]->IsString()) {
+        return NanThrowError("(str) required");
+    }
+    size_t count;
+    char* strtoken = NanCString(args[0], &count);
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    obj->this_ = S2CellId::FromToken(strtoken);
+    NanReturnValue(args.This());
 }
 
 NAN_METHOD(CellId::Level) {

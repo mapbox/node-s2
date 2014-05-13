@@ -50,6 +50,14 @@ test('S2CellId', function(t) {
         t.end();
     });
 
+    t.test('token constructor', function(t) {
+        var frompoint = new s2.S2CellId(new s2.S2LatLng(40, 20).toPoint());
+        t.ok(frompoint);
+        t.equal(frompoint.toToken(), '135b19d4fe8a27a5');
+        t.equal((new s2.S2CellId()).fromToken(frompoint.toToken()).toToken(), '135b19d4fe8a27a5');
+        t.end();
+    });
+
     t.end();
 });
 
