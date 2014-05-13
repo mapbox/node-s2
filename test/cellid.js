@@ -31,6 +31,9 @@ test('S2CellId', function(t) {
     t.ok(frompoint, 'generates cellid object from point');
     t.equal((new s2.S2LatLng(frompoint.toPoint())).toString(), '40.000000,20.000000', 'gets values');
 
+    var fromstr = new s2.S2CellId('21223120303222133310110103310');
+    t.ok(fromstr);
+
     t.end();
 });
 

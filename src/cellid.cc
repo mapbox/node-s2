@@ -10,6 +10,7 @@
 #include "latlng.h"
 #include "point.h"
 #include "cellid.h"
+#include "strutil.h"
 
 using namespace v8;
 
@@ -71,6 +72,12 @@ Handle<Value> CellId::New(const Arguments& args) {
         } else if (NanHasInstance(LatLng::constructor, fromObj)) {
             S2LatLng ll = node::ObjectWrap::Unwrap<LatLng>(fromObj)->get();
             obj->this_ = S2CellId::FromLatLng(ll);
+        } else if (args[0]->IsString()) {
+            size_t count;
+            char* strnum = NanCString(args[0], &count);
+            obj->this_ = S2CellId(ParseLeadingUInt64Value(strnum, 0));
+        } else {
+            return NanThrowError("Invalid input");
         }
     } else {
         obj->this_ = S2CellId();
