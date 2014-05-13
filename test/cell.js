@@ -28,5 +28,8 @@ test('S2Cell', function(t) {
         new s2.S2Cell('foo');
     });
 
+    var cellFromId = new s2.S2Cell(new s2.S2CellId());
+    t.ok(cellFromId, 'generates cell from id');
+
     t.end();
 });

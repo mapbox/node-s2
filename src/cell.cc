@@ -71,12 +71,14 @@ Handle<Value> Cell::New(const Arguments& args) {
 
     Handle<Object> ll = args[0]->ToObject();
 
-    if (!NanHasInstance(LatLng::constructor, ll)) {
-        return NanThrowError("(latlng) required");
+    if (NanHasInstance(LatLng::constructor, ll)) {
+        obj->this_ = S2Cell(
+            S2CellId::FromLatLng(node::ObjectWrap::Unwrap<LatLng>(ll)->get()));
+    } else if (NanHasInstance(CellId::constructor, ll)) {
+        obj->this_ = S2Cell(node::ObjectWrap::Unwrap<CellId>(ll)->get());
+    } else {
+        return NanThrowError("(latlng) or (cellid) required");
     }
-
-    obj->this_ = S2Cell(
-        S2CellId::FromLatLng(node::ObjectWrap::Unwrap<LatLng>(ll)->get()));
 
     return args.This();
 }
