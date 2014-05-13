@@ -230,7 +230,10 @@ discrete point, it is better to use the S2Cell class.
 
 ## cellid.toToken() -> string
 
-## cellid.parent() -> s2.CellId
+## cellid.parent(number?) -> s2.CellId
+
+Return the cell at the previous level or at the given level (which must
+be less than or equal to the current level).
 
 ## cellid.prev() -> s2.CellId
 

@@ -13,6 +13,7 @@ s2.S2Cell.prototype.toGeoJSON = function() {
     for (var i = 0; i < 4; i++) {
         vs.push(new s2.S2LatLng(this.getVertex(i)));
     }
+    vs.push(new s2.S2LatLng(this.getVertex(0)));
     return {
         type: 'Polygon',
         coordinates: [

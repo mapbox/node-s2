@@ -122,7 +122,11 @@ NAN_METHOD(CellId::ToPoint) {
 NAN_METHOD(CellId::Parent) {
     NanScope();
     CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
-    NanReturnValue(CellId::New(obj->this_.parent()));
+    if (args.Length() == 1 && args[0]->IsNumber()) {
+        NanReturnValue(CellId::New(obj->this_.parent(args[0]->ToNumber()->Value())));
+    } else {
+        NanReturnValue(CellId::New(obj->this_.parent()));
+    }
 }
 NAN_METHOD(CellId::Prev) {
     NanScope();
