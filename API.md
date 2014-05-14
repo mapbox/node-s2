@@ -189,6 +189,8 @@ the Full() interval is [-Pi, Pi], and the Empty() interval is [Pi, -Pi].
 
 ## interval.complementLength() -> number
 
+## interval.contains(val:number) -> boolean
+
 # s2.CellId(s2.Point | s2.S2LatLng | string)
 
 An S2CellId is a 64-bit unsigned integer that uniquely identifies a

@@ -21,6 +21,7 @@ protected:
     static NAN_METHOD(GetComplementCenter);
     static NAN_METHOD(GetHi);
     static NAN_METHOD(GetLo);
+    static NAN_METHOD(Contains);
 
     S1Interval this_;
 };

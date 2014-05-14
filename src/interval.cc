@@ -28,6 +28,7 @@ void Interval::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "lo", GetLo);
     NODE_SET_PROTOTYPE_METHOD(constructor, "center", GetCenter);
     NODE_SET_PROTOTYPE_METHOD(constructor, "complementLength", GetComplementCenter);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -103,4 +104,16 @@ NAN_METHOD(Interval::GetLo) {
     NanScope();
     Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
     NanReturnValue(NanNew<Number>(obj->this_.lo()));
+}
+
+NAN_METHOD(Interval::Contains) {
+    NanScope();
+    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
+    if (args.Length() != 1) {
+        NanThrowError("(number) required");
+    }
+    if (!args[0]->IsNumber()) {
+        NanThrowError("(number) required");
+    }
+    NanReturnValue(NanNew<Boolean>(obj->this_.Contains(args[0]->ToNumber()->Value())));
 }

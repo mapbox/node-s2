@@ -10,6 +10,7 @@
 #include "s2loop.h"
 #include "s2polygonbuilder.h"
 #include "s2regioncoverer.h"
+#include "s2polyline.h"
 #include "latlng.h"
 #include "latlngrect.h"
 #include "cell.h"
@@ -18,6 +19,7 @@
 #include "point.h"
 #include "cap.h"
 #include "regioncoverer.h"
+// #include "polyline.h"
 #include "angle.h"
 
 using namespace v8;
@@ -80,6 +82,7 @@ void RegisterModule(Handle<Object> exports) {
     LatLngRect::Init(exports);
     Cap::Init(exports);
     Angle::Init(exports);
+    // Polyline::Init(exports);
     Cell::Init(exports);
     CellId::Init(exports);
     Point::Init(exports);
