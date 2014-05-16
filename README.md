@@ -33,6 +33,18 @@ var pt = ll.toPoint();
 
 ## [Documentation: API.md](API.md)
 
+## Notes
+
+Some of the S2 API is not wrapped because it isn't meant to be exposed in this way,
+and is blocked from wrapping by [DISALLOW_COPY_AND_ASSIGN](http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors).
+
+* S2CellUnion
+* S2Loop
+* S2Polyline
+* S2Polygon
+* S2RegionCoverer
+* S2RegionIntersection
+
 ## See Also
 
 * [s2-geometry-javascript](https://github.com/jonatkins/s2-geometry-javascript) - an incomplete port of S2 to JavaScript.
