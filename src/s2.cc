@@ -30,26 +30,16 @@ NAN_METHOD(GetCover) {
     scoped_ptr<S2PolygonBuilder> builder(
             new S2PolygonBuilder(S2PolygonBuilderOptions::DIRECTED_XOR()));
 
-    if (args.Length() < 1 || !args[0]->IsArray()) {
+    if (args.Length() < 1) {
         return NanThrowError("(array, [min, max, mod]) required");
     }
-    Handle<Array> array = Handle<Array>::Cast(args[0]);
-    for (uint32_t i = 0; i < array->Length(); i++) {
-        Local<Object> obj = array->Get(i)->ToObject();
-        if (NanHasInstance(LatLng::constructor, obj)) {
-            LatLng *a = node::ObjectWrap::Unwrap<LatLng>(array->Get(i)->ToObject());
-            LatLng *b = node::ObjectWrap::Unwrap<LatLng>(array->Get((i + 1) % array->Length())->ToObject());
-            builder->AddEdge(a->get().ToPoint(), b->get().ToPoint());
-        }
-    }
 
-    S2Polygon polygon;
     typedef vector<pair<S2Point, S2Point> > EdgeList;
     EdgeList edgeList;
     std::vector<S2CellId> cellids_vector;
     S2RegionCoverer coverer;
 
-    if (args.Length() >= 2) {
+    if (args.Length() > 1) {
         Handle<Object> opt = args[1]->ToObject();
         if (opt->Has(NanSymbol("min"))) {
             coverer.set_min_level(opt->Get(NanSymbol("min"))->ToInteger()->Value());
@@ -65,8 +55,31 @@ NAN_METHOD(GetCover) {
         }
     }
 
-    builder->AssemblePolygon(&polygon, &edgeList);
-    coverer.GetCovering(polygon, &cellids_vector);
+    if (args[0]->IsArray()) {
+        Handle<Array> array = Handle<Array>::Cast(args[0]);
+        for (uint32_t i = 0; i < array->Length(); i++) {
+            Local<Object> obj = array->Get(i)->ToObject();
+            if (NanHasInstance(LatLng::constructor, obj)) {
+                LatLng *a = node::ObjectWrap::Unwrap<LatLng>(array->Get(i)->ToObject());
+                LatLng *b = node::ObjectWrap::Unwrap<LatLng>(array->Get((i + 1) % array->Length())->ToObject());
+                builder->AddEdge(a->get().ToPoint(), b->get().ToPoint());
+            }
+        }
+        S2Polygon polygon;
+        builder->AssemblePolygon(&polygon, &edgeList);
+        coverer.GetCovering(polygon, &cellids_vector);
+    } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
+        S2LatLngRect rect = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
+        coverer.GetCovering(rect, &cellids_vector);
+    } else if (NanHasInstance(Cell::constructor, args[0])) {
+        S2Cell cell = node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
+        coverer.GetCovering(cell, &cellids_vector);
+    } else if (NanHasInstance(Cap::constructor, args[0])) {
+        S2Cap cap = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
+        coverer.GetCovering(cap, &cellids_vector);
+    } else {
+        return NanThrowError("incompatible object to cover");
+    }
 
     Local<Array> out = Array::New(cellids_vector.size());
 
