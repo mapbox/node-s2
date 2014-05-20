@@ -20,6 +20,7 @@ protected:
     static NAN_METHOD(Level);
     static NAN_METHOD(ToToken);
     static NAN_METHOD(ToPoint);
+    static NAN_METHOD(ToLatLng);
     static NAN_METHOD(ToString);
     static NAN_METHOD(FromToken);
     static NAN_METHOD(Parent);

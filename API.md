@@ -95,11 +95,18 @@ Return a Polygon geometry of this latlngrect object
 
 ## latLngRect.area() -> number
 
+Returns the surface area of this rectangle on the unit sphere.
+
 ## latLngRect.center() -> latlng
+
+Return the center of the rectangle in latitude-longitude space
+(in general this is not the center of the region on the sphere).
 
 ## latLngRect.size() -> latlng
 
 ## latLngRect.getVertex(n:number) -> s2.S2LatLng
+
+Return the k-th vertex of the rectangle (k = 0,1,2,3) in CCW order.
 
 ## latLngRect.getCapBound() -> s2.S2Cap
 
@@ -145,9 +152,21 @@ the default constructor.
 
 ## cap.complement() -> s2.S2Cap
 
+Return the complement of the interior of the cap.  A cap and its
+complement have the same boundary but do not share any interior points.
+The complement operator is not a bijection, since the complement of a
+singleton cap (containing a single point) is the same as the complement
+of an empty cap.
+
 ## cap.contains(other:s2.S2Cap) -> boolean
 
+Return true if and only if this cap contains the given other cap
+(in a set containment sense, e.g. every cap contains the empty cap).
+
 ## cap.intersects(other:s2.S2Cap) -> boolean
+
+Return true if and only if this cap intersects the given other cap,
+i.e. whether they have any points in common.
 
 ## cap.getRectBound() -> s2.S2LatLngRect
 
@@ -183,6 +202,9 @@ the Full() interval is [-Pi, Pi], and the Empty() interval is [Pi, -Pi].
 
 ## interval.length() -> number
 
+Return the length of the interval.  The length of an empty interval
+is negative.
+
 ## interval.hi() -> number
 
 ## interval.lo() -> number
@@ -190,6 +212,8 @@ the Full() interval is [-Pi, Pi], and the Empty() interval is [Pi, -Pi].
 ## interval.complementLength() -> number
 
 ## interval.contains(val:number) -> boolean
+
+Return true if the interval (which is closed) contains the point 'p'.
 
 # s2.CellId(s2.Point | s2.S2LatLng | string)
 
@@ -228,26 +252,45 @@ discrete point, it is better to use the S2Cell class.
 
 ## cellid.toPoint() -> s2.Point
 
+Return the direction vector corresponding to the center of the given
+cell.  The vector returned by ToPointRaw is not necessarily unit length.
+
 ## cellid.toString() -> string
+
+Creates a debug human readable string. Used for << and available for direct
+usage as well.
 
 ## cellid.toToken() -> string
 
-## cellid.parent(number?) -> s2.CellId
+Methods to encode and decode cell ids to compact text strings suitable
+for display or indexing.  Cells at lower levels (i.e. larger cells) are
+encoded into fewer characters.  The maximum token length is 16.
+
+ToToken() returns a string by value for convenience; the compiler
+does this without intermediate copying in most cases.
+
+These methods guarantee that FromToken(ToToken(x)) == x even when
+"x" is an invalid cell id.  All tokens are alphanumeric strings.
+FromToken() returns S2CellId::None() for malformed inputs.
+
+## cellid.parent(number?) -> s2.S2CellId
 
 Return the cell at the previous level or at the given level (which must
 be less than or equal to the current level).
 
-## cellid.prev() -> s2.CellId
+## cellid.prev() -> s2.S2CellId
 
-## cellid.next() -> s2.CellId
+## cellid.next() -> s2.S2CellId
 
 ## cellid.isFace() -> boolean
+
+## cellid.toLatLng() -> s2.S2LatLng
 
 ## cellid.fromToken(token:str) -> this
 
 Initialze this cell id with a given string token.
 
-## cellid.child(child:number) -> s2:CellId
+## cellid.child(child:number) -> s2.S2CellId
 
 child is from 0 to 3, the cell's child at each location.
 
@@ -272,13 +315,10 @@ iterator would need to be tested using "<" rather that the usual "!=".
 
 The 64-bit unique identifier for this cell.
 
-# s2.Polygon()
+# s2.getCovering(S2LatLng[] | S2LatLngRect | S2Cap | S2Cell, options)
 
-# s2.RegionCoverer()
-
-# s2.getCovering(S2LatLng[], options)
-
-Get a covering, expressed as CellIds, for a given loop of S2atLng objects.
+Get a covering, expressed as CellIds, for a given region. If an array
+of S2LatLng objects is provided, they will be turned into a S2Loop internally.
 Options is an optional object that includes:
 
 * min: minimum level

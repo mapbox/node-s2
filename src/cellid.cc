@@ -30,6 +30,7 @@ void CellId::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "fromToken", FromToken);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "toLatLng", ToLatLng);
     NODE_SET_PROTOTYPE_METHOD(constructor, "parent", Parent);
     NODE_SET_PROTOTYPE_METHOD(constructor, "prev", Prev);
     NODE_SET_PROTOTYPE_METHOD(constructor, "next", Next);
@@ -184,4 +185,10 @@ NAN_METHOD(CellId::Child) {
         return NanThrowError("(number) required");
     }
     NanReturnValue(CellId::New(obj->this_.child(args[0]->ToNumber()->Value())));
+}
+
+NAN_METHOD(CellId::ToLatLng) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    NanReturnValue(LatLng::New(obj->this_.ToLatLng()));
 }
