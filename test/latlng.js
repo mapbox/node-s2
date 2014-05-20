@@ -3,6 +3,10 @@ var test = require('tap').test,
 
 test('S2LatLng', function(t) {
 
+    t.throws(function() {
+        var ll = new s2.S2LatLng([10, 20]);
+    }, 'throws on array input');
+
     var ll = new s2.S2LatLng(10, 20);
     t.ok(ll, 'generates latlng object');
     t.equal(ll.lat(), 10, 'lat()');

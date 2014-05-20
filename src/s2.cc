@@ -20,9 +20,7 @@
 #include "point.h"
 #include "cap.h"
 #include "regioncoverer.h"
-// #include "polyline.h"
 #include "angle.h"
-
 
 using std::vector;
 using namespace v8;
@@ -78,6 +76,10 @@ NAN_METHOD(GetCover) {
         S2Polygon polygon;
         S2Loop outerLoop(points);
         outerLoop.Normalize();
+
+        if (outerLoop.is_hole()) {
+            outerLoop.Invert();
+        }
 
         if (!outerLoop.IsValid()) {
             return NanThrowError("invalid loop");

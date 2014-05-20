@@ -69,6 +69,8 @@ Handle<Value> LatLng::New(const Arguments& args) {
         if (NanHasInstance(Point::constructor, fromObj)) {
             S2Point p = node::ObjectWrap::Unwrap<Point>(fromObj)->get();
             obj->this_ = S2LatLng(p);
+        } else {
+            return NanThrowError("Use the new operator to create instances of this object.");
         }
     }
 
