@@ -1,5 +1,6 @@
 #include <node.h>
 #include <nan.h>
+#include <vector>
 #include "node_object_wrap.h"           // for ObjectWrap
 #include "v8.h"                         // for Handle, String, Integer, etc
 
@@ -22,20 +23,18 @@
 // #include "polyline.h"
 #include "angle.h"
 
+
+using std::vector;
 using namespace v8;
 
 NAN_METHOD(GetCover) {
     NanScope();
-
-    scoped_ptr<S2PolygonBuilder> builder(
-            new S2PolygonBuilder(S2PolygonBuilderOptions::DIRECTED_XOR()));
 
     if (args.Length() < 1) {
         return NanThrowError("(array, [min, max, mod]) required");
     }
 
     typedef vector<pair<S2Point, S2Point> > EdgeList;
-    EdgeList edgeList;
     std::vector<S2CellId> cellids_vector;
     S2RegionCoverer coverer;
 
@@ -57,16 +56,36 @@ NAN_METHOD(GetCover) {
 
     if (args[0]->IsArray()) {
         Handle<Array> array = Handle<Array>::Cast(args[0]);
+        S2PolygonBuilderOptions polyOptions;
+        polyOptions.set_validate(true);
+        // Don't silently eliminate duplicate edges.
+        polyOptions.set_xor_edges(false);
+
+        S2PolygonBuilder builder(polyOptions);
+
+        std::vector<S2Point> points;
+
         for (uint32_t i = 0; i < array->Length(); i++) {
             Local<Object> obj = array->Get(i)->ToObject();
-            if (NanHasInstance(LatLng::constructor, obj)) {
-                LatLng *a = node::ObjectWrap::Unwrap<LatLng>(array->Get(i)->ToObject());
-                LatLng *b = node::ObjectWrap::Unwrap<LatLng>(array->Get((i + 1) % array->Length())->ToObject());
-                builder->AddEdge(a->get().ToPoint(), b->get().ToPoint());
+            if (NanHasInstance(Point::constructor, obj)) {
+                S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
+                points.push_back(p);
+            } else {
+                return NanThrowError("array must contain only points");
             }
         }
+
         S2Polygon polygon;
-        builder->AssemblePolygon(&polygon, &edgeList);
+        S2Loop outerLoop(points);
+        outerLoop.Normalize();
+
+        if (!outerLoop.IsValid()) {
+            return NanThrowError("invalid loop");
+        }
+
+        builder.AddLoop(&outerLoop);
+        builder.AssemblePolygon(&polygon, NULL);
+
         coverer.GetCovering(polygon, &cellids_vector);
     } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
         S2LatLngRect rect = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();

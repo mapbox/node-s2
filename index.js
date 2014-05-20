@@ -40,3 +40,11 @@ s2.S2LatLngRect.prototype.toGeoJSON = function() {
         ]
     };
 };
+
+s2.S2Point.prototype.toArray = function() {
+    return [this.x(), this.y(), this.z()];
+};
+
+s2.S2Point.prototype.toString = function() {
+    return this.toArray().toString();
+};

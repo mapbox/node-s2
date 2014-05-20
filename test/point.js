@@ -8,6 +8,8 @@ test('S2Point', function(t) {
     t.equal(point.x(), 0, 'x');
     t.equal(point.y(), 1, 'y');
     t.equal(point.z(), 2, 'z');
+    t.equal(point.toString(), '0,1,2', '.toString');
+    t.deepEqual(point.toArray(), [0,1,2], '.toArray');
 
     t.throws(function() {
         var point = new s2.S2Point(0, 0);
