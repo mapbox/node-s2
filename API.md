@@ -2,7 +2,62 @@
 
 Exposes S2 objects and methods.
 
-# s2.Point(x:number, y:number, z:number)
+The S2 library is mostly composed of datatypes and methods for converting
+one to another - a single point on Earth can be expressed by the library
+in several different ways, as can an area.
+
+## Place Encodings
+
+`S2LatLng`: the most familiar type of storage, this contains latitude &
+longitude, stored internally as [radians](http://en.wikipedia.org/wiki/Radian)
+rather than degrees.
+
+`S2Point`: an `x,y,z` coordinate on a sphere. this is basically a vector
+representation of any point. Not very relevant to any GIS theory, but this
+is what's used most directly for converting into Cells.
+
+`S2Cap`: a [spherical cap](http://en.wikipedia.org/wiki/Spherical_cap) - an
+area from a single point on Earth to a specific radius around it. Both being
+area representations, S2Cells and S2Caps can represent similar amounts of areas.
+Also, for proximity searches, like "all points around this by 90m", `S2Cap`
+provides a quick and geodesy-accurate way to compute.
+
+`S2Cell`: a chunk of the tesselation S2 creates at a certain place. Cells
+represent both points and areas, since they have four corners but also an
+easily-computed centerpoint.
+
+`S2CellId`: a minimal representation of an `S2Cell`. While S2Cell is the useful
+data type for manipulating cell positions, ids are used for serializing
+these cells into strings and numbers that are suitable for storage and
+lookup in an index.
+
+## Area Encodings
+
+For anything beyond a single point, S2 pushes you to the idea of a **covering**.
+A covering is a set of `S2Cell`s that, combined, cover up the given shape.
+They usually overestimate the shape - the boundary of these cells will
+be ragged and slightly large than the Polygon itself. S2 has very special
+math for computing coverings that is smart enough to take a budget of how
+many cells at which levels, and to compute the covering that uses the least
+but is the most accurate.
+
+Coverings can be computed on anything that's an `S2Region` subclass. In these
+bindings, that means (so far)
+
+* S2LatLng[]
+* S2LatLngRect
+* S2Cap
+* S2Cell
+
+---
+
+# API
+
+# s2.S2Point(x:number, y:number, z:number)
+
+`S2Point`: an `x,y,z` coordinate on a sphere. this is basically a vector
+representation of any point. These representations should be normalized -
+they should be unit vectors of length 1.
 
 ## point.x() -> number
 
@@ -12,7 +67,9 @@ Exposes S2 objects and methods.
 
 # s2.S2LatLng(s2.Point | lat:number, lng:number)
 
-Construct a new latlng object
+`S2LatLng`: the most familiar type of storage, this contains latitude &
+longitude, stored internally as [radians](http://en.wikipedia.org/wiki/Radian)
+rather than degrees..
 
 ## latLng.lat() -> number
 
