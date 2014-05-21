@@ -104,6 +104,24 @@ Return the center of the rectangle in latitude-longitude space
 
 ## latLngRect.size() -> latlng
 
+## latLngRect.approxEquals(other:S2LatLngRect) -> boolean
+
+Return true if the latitude and longitude intervals of the two rectangles
+are the same up to the given tolerance (see r1interval.h and s1interval.h
+for details).
+
+## latLngRect.union(other:S2LatLngRect) -> S2LatLngRect
+
+Return the smallest rectangle containing the union of this rectangle and
+the given rectangle.
+
+## latLngRect.intersection(other:S2LatLngRect) -> S2LatLngRect
+
+Return the smallest rectangle containing the intersection of this
+rectangle and the given rectangle.  Note that the region of intersection
+may consist of two disjoint rectangles, in which case a single rectangle
+spanning both of them is returned.
+
 ## latLngRect.getVertex(n:number) -> s2.S2LatLng
 
 Return the k-th vertex of the rectangle (k = 0,1,2,3) in CCW order.

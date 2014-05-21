@@ -25,6 +25,9 @@ protected:
     static NAN_METHOD(IsValid);
     static NAN_METHOD(IsEmpty);
     static NAN_METHOD(IsPoint);
+    static NAN_METHOD(Union);
+    static NAN_METHOD(Intersection);
+    static NAN_METHOD(ApproxEquals);
 
     S2LatLngRect this_;
 };

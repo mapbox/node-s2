@@ -34,6 +34,9 @@ void LatLngRect::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isEmpty", IsEmpty);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isPoint", IsPoint);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "union", Union);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "intersection", Intersection);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "approxEquals", ApproxEquals);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -153,4 +156,25 @@ NAN_METHOD(LatLngRect::IsPoint) {
     NanScope();
     LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
     NanReturnValue(NanNew<Boolean>(latlngrect->this_.is_point()));
+}
+
+NAN_METHOD(LatLngRect::Union) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    S2LatLngRect other = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
+    NanReturnValue(LatLngRect::New(latlngrect->this_.Union(other)));
+}
+
+NAN_METHOD(LatLngRect::Intersection) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    S2LatLngRect other = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
+    NanReturnValue(LatLngRect::New(latlngrect->this_.Intersection(other)));
+}
+
+NAN_METHOD(LatLngRect::ApproxEquals) {
+    NanScope();
+    LatLngRect* latlngrect = node::ObjectWrap::Unwrap<LatLngRect>(args.This());
+    S2LatLngRect other = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
+    NanReturnValue(NanNew<Boolean>(latlngrect->this_.ApproxEquals(other)));
 }
