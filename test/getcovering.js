@@ -17,6 +17,24 @@ test('getCovering', function(t) {
     t.end();
 });
 
+test('getCovering - polygon', function(t) {
+    var input = [
+        [0, 0],
+        [0, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCover(input, {
+        type: 'polyline'
+    });
+
+    t.ok(cover, 'generates cover object');
+    // t.equal(cover.length, 8, 'cover.length');
+    t.end();
+});
+
 test('getCovering - llrect', function(t) {
     var ll2 = new s2.S2LatLngRect(new s2.S2LatLng(10, 20), new s2.S2LatLng(20, 30));
 

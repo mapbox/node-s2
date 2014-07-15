@@ -36,10 +36,15 @@ NAN_METHOD(GetCover) {
     std::vector<S2CellId> cellids_vector;
     S2RegionCoverer coverer;
 
+    std::string type = "polygon";
+
     if (args.Length() > 1) {
         Handle<Object> opt = args[1]->ToObject();
         if (opt->Has(NanSymbol("min"))) {
             coverer.set_min_level(opt->Get(NanSymbol("min"))->ToInteger()->Value());
+        }
+        if (opt->Has(NanSymbol("type"))) {
+            type = opt->Get(NanSymbol("type"))->ToInteger()->Value();
         }
         if (opt->Has(NanSymbol("max"))) {
             coverer.set_max_level(opt->Get(NanSymbol("max"))->ToInteger()->Value());
@@ -54,41 +59,59 @@ NAN_METHOD(GetCover) {
 
     if (args[0]->IsArray()) {
         Handle<Array> array = Handle<Array>::Cast(args[0]);
-        S2PolygonBuilderOptions polyOptions;
-        polyOptions.set_validate(true);
-        // Don't silently eliminate duplicate edges.
-        polyOptions.set_xor_edges(false);
 
-        S2PolygonBuilder builder(polyOptions);
 
-        std::vector<S2Point> points;
+        if (type == "polygon") {
 
-        for (uint32_t i = 0; i < array->Length(); i++) {
-            Local<Object> obj = array->Get(i)->ToObject();
-            if (NanHasInstance(Point::constructor, obj)) {
-                S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
-                points.push_back(p);
-            } else {
-                return NanThrowError("array must contain only points");
+            S2PolygonBuilderOptions polyOptions;
+            polyOptions.set_validate(true);
+            // Don't silently eliminate duplicate edges.
+            polyOptions.set_xor_edges(false);
+            S2PolygonBuilder builder(polyOptions);
+            std::vector<S2Point> points;
+
+            for (uint32_t i = 0; i < array->Length(); i++) {
+                Local<Object> obj = array->Get(i)->ToObject();
+                if (NanHasInstance(Point::constructor, obj)) {
+                    S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
+                    points.push_back(p);
+                } else {
+                    return NanThrowError("array must contain only points");
+                }
             }
+
+            S2Polygon polygon;
+            S2Loop outerLoop(points);
+            outerLoop.Normalize();
+
+            if (outerLoop.is_hole()) {
+                outerLoop.Invert();
+            }
+
+            if (!outerLoop.IsValid()) {
+                return NanThrowError("invalid loop");
+            }
+
+            builder.AddLoop(&outerLoop);
+            builder.AssemblePolygon(&polygon, NULL);
+
+            coverer.GetCovering(polygon, &cellids_vector);
+        } else if (type == "polyline") {
+            std::vector<S2Point> points;
+
+            for (uint32_t i = 0; i < array->Length(); i++) {
+                Local<Object> obj = array->Get(i)->ToObject();
+                if (NanHasInstance(Point::constructor, obj)) {
+                    S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
+                    points.push_back(p);
+                } else {
+                    return NanThrowError("array must contain only points");
+                }
+            }
+
+            S2Polyline polyline(points);
+            coverer.GetCovering(polyline, &cellids_vector);
         }
-
-        S2Polygon polygon;
-        S2Loop outerLoop(points);
-        outerLoop.Normalize();
-
-        if (outerLoop.is_hole()) {
-            outerLoop.Invert();
-        }
-
-        if (!outerLoop.IsValid()) {
-            return NanThrowError("invalid loop");
-        }
-
-        builder.AddLoop(&outerLoop);
-        builder.AssemblePolygon(&polygon, NULL);
-
-        coverer.GetCovering(polygon, &cellids_vector);
     } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
         S2LatLngRect rect = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
         coverer.GetCovering(rect, &cellids_vector);

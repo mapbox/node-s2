@@ -65,6 +65,14 @@ they should be unit vectors of length 1.
 
 ## point.z() -> number
 
+## point.toArray() -> array
+
+Returns an `[x, y, z]` array serialization of this point.
+
+## point.toString() -> string
+
+Returns the stringification of this point as an array.
+
 # s2.S2LatLng(s2.Point | lat:number, lng:number)
 
 `S2LatLng`: the most familiar type of storage, this contains latitude &
