@@ -29,6 +29,7 @@ s2.S2LatLngRect.prototype.toGeoJSON = function() {
     for (var i = 0; i < 4; i++) {
         vs.push(this.getVertex(i));
     }
+    vs.push(this.getVertex(0));
     return {
         type: 'Polygon',
         coordinates: [

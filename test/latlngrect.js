@@ -15,6 +15,11 @@ test('S2LatLngRect', function(t) {
     t.equal(ll.isEmpty(), false, '.isEmpty');
     t.equal(ll.isPoint(), true, '.isPoint');
 
+    for(var x in ll){
+        console.log(x)
+    }
+    console.log('\n\n')
+
     t.throws(function() {
         new s2.S2LatLngRect(1);
     });
@@ -23,7 +28,7 @@ test('S2LatLngRect', function(t) {
     t.ok(ll2, 'generates latlng object from (latlng, latlng)');
     t.deepEqual(ll2.toGeoJSON(), {
       "type" : "Polygon", // != undefined
-      "coordinates" : [[[[20,10],[29.999999999999996,10],[29.999999999999996,20],[20,20]]]] // != undefined
+      "coordinates" : [[[[20,10],[29.999999999999996,10],[29.999999999999996,20],[20,20],[20,10]]]] // != undefined
     }, '.toGeoJSON');
 
     t.test('union & intersection', function(t) {
