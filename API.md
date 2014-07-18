@@ -404,7 +404,9 @@ Get a covering, expressed as CellIds, for a given region. If an array
 of S2LatLng objects is provided, they will be turned into a S2Loop internally.
 Options is an optional object that includes:
 
-* min: minimum level
-* max: maximum level
-* max_cells: max number of cells to be computed
-* level_mod: modulo for skipping levels
+|option|desc|default|note|
+|---|---|---|---|
+|min|minimum level|1|min option will override max_cells to cover the input region|
+max|maximum level|30||
+max_cells|max number of cells to be computed|null||
+|level_mod|modulo for skipping levels|1|defines branch velocity. 1:4x; 2:16x; 3:64x|
