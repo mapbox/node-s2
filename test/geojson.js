@@ -24,3 +24,15 @@ test('import geojson linestring', function(t) {
 
     t.end();
 })
+
+test('import geojson polygon', function(t) {
+	var s2Polygon = s2.fromGeojson(polygon)
+
+    t.equal(s2Line.length, 19, 'number of vertices')
+    t.ok(s2Line[0].x(), 'loaded coordinates')
+    t.ok(s2Line[0].y(), 'loaded coordinates')
+    t.ok(s2Line[1].x(), 'loaded coordinates')
+    t.ok(s2Line[1].y(), 'loaded coordinates')
+
+    t.end();
+})
