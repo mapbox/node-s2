@@ -62,7 +62,10 @@ s2.fromGeojson = function(geojson){
         return ll
     }
     else if(geojson.type === 'LineString'){
-
+        var llArray = geojson.coordinates.map(function(p) {
+                return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+            });
+        return llArray
     }
     else if(geojson.type === 'Polygon'){
 

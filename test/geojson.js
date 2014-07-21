@@ -12,3 +12,15 @@ test('import geojson point', function(t) {
 
 	t.end();
 })
+
+test('import geojson linestring', function(t) {
+	var s2Line = s2.fromGeojson(linestring)
+
+    t.equal(s2Line.length, 19, 'number of vertices')
+    t.ok(s2Line[0].x(), 'loaded coordinates')
+    t.ok(s2Line[0].y(), 'loaded coordinates')
+    t.ok(s2Line[1].x(), 'loaded coordinates')
+    t.ok(s2Line[1].y(), 'loaded coordinates')
+
+    t.end();
+})
