@@ -68,7 +68,10 @@ s2.fromGeojson = function(geojson){
         return llArray
     }
     else if(geojson.type === 'Polygon'){
-
+        var llArray = geojson.coordinates[0].map(function(p) {
+                return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+            });
+        return llArray
     }
 
 
