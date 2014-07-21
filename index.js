@@ -50,6 +50,23 @@ s2.S2Point.prototype.toString = function() {
     return this.toArray().toString();
 };
 
-s2.geojson = function(){
-    
+s2.fromGeojson = function(geojson){
+    if(geojson.type === 'Feature'){
+        geojson = geojson.geometry;
+    }
+
+    if(geojson.type === 'Point'){
+        var ll = new s2.S2LatLng(geojson.coordinates[0], 
+                        geojson.coordinates[1]);
+
+        return ll
+    }
+    else if(geojson.type === 'LineString'){
+
+    }
+    else if(geojson.type === 'Polygon'){
+
+    }
+
+
 }
