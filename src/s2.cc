@@ -43,9 +43,6 @@ NAN_METHOD(GetCover) {
         if (opt->Has(NanSymbol("min"))) {
             coverer.set_min_level(opt->Get(NanSymbol("min"))->ToInteger()->Value());
         }
-        if (opt->Has(NanSymbol("type"))) {
-            type = opt->Get(NanSymbol("type"))->ToInteger()->Value();
-        }
         if (opt->Has(NanSymbol("max"))) {
             coverer.set_max_level(opt->Get(NanSymbol("max"))->ToInteger()->Value());
         }
@@ -60,9 +57,13 @@ NAN_METHOD(GetCover) {
     if (args[0]->IsArray()) {
         Handle<Array> array = Handle<Array>::Cast(args[0]);
 
+        if (args.Length() > 1) {
+            Handle<Object> opt = args[1]->ToObject();
+            size_t count;
+            type = NanCString(opt->Get(NanSymbol("type")), &count);
+        }
 
         if (type == "polygon") {
-
             S2PolygonBuilderOptions polyOptions;
             polyOptions.set_validate(true);
             // Don't silently eliminate duplicate edges.
@@ -93,10 +94,12 @@ NAN_METHOD(GetCover) {
             }
 
             builder.AddLoop(&outerLoop);
-            builder.AssemblePolygon(&polygon, NULL);
+            EdgeList edgeList;
+            builder.AssemblePolygon(&polygon, &edgeList);
 
             coverer.GetCovering(polygon, &cellids_vector);
         } else if (type == "polyline") {
+            printf("POLYLINE DETECTED");
             std::vector<S2Point> points;
 
             for (uint32_t i = 0; i < array->Length(); i++) {
@@ -130,7 +133,9 @@ NAN_METHOD(GetCover) {
     for (int i = 0; i < cellids_vector.size(); i++) {
         out->Set(i, Cell::New(cellids_vector.at(i)));
     }
-
+    if(cellids_vector.size() < 1){
+        return NanThrowError("NO CELLS WERE FOUND");
+    }
     NanReturnValue(out);
 }
 
@@ -149,3 +154,4 @@ void RegisterModule(Handle<Object> exports) {
 }
 
 NODE_MODULE(_s2, RegisterModule);
+
