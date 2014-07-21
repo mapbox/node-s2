@@ -50,9 +50,6 @@
         "./geometry/util/math/",
         "./geometry/strings/"
       ],
-      "cflags_cc!": [
-        "-Wignored-qualifiers"
-      ],
       'conditions': [
         ['OS=="mac"', {
             'xcode_settings': {

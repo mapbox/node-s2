@@ -133,7 +133,7 @@ NAN_METHOD(GetCover) {
         out->Set(i, Cell::New(cellids_vector.at(i)));
     }
     if(cellids_vector.size() < 1){
-        return NanThrowError("NO CELLS WERE FOUND");
+        //return NanThrowError("NO CELLS WERE FOUND");
     }
     NanReturnValue(out);
 }
