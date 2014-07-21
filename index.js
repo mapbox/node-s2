@@ -49,3 +49,7 @@ s2.S2Point.prototype.toArray = function() {
 s2.S2Point.prototype.toString = function() {
     return this.toArray().toString();
 };
+
+s2.geojson = function(){
+    
+}
