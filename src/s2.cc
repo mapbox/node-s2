@@ -99,7 +99,6 @@ NAN_METHOD(GetCover) {
 
             coverer.GetCovering(polygon, &cellids_vector);
         } else if (type == "polyline") {
-            printf("POLYLINE DETECTED");
             std::vector<S2Point> points;
 
             for (uint32_t i = 0; i < array->Length(); i++) {

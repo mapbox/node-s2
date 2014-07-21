@@ -89,9 +89,9 @@ test('getCovering - polygon', function(t) {
 
 test('getCovering - polyline', function(t) {
     var input = [
-        [0, 0],
-        [0, 20],
-        [20, 20]
+        [0, 2],
+        [1, 1],
+        [0, 0]
     ].map(function(p) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
