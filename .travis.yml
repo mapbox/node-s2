@@ -8,7 +8,6 @@ before_install:
 - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
 - node --version
 - npm --version
-- sudo chown -R $USER ~/.npm
 install:
 - npm install --build-from-source
 script:
