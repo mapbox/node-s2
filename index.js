@@ -56,21 +56,20 @@ s2.fromGeojson = function(geojson){
     }
 
     if(geojson.type === 'Point'){
-        var ll = new s2.S2LatLng(geojson.coordinates[0], 
-                        geojson.coordinates[1]);
-
-        return ll
+        var ll = new s2.S2LatLng(geojson.coordinates[1], 
+                        geojson.coordinates[0]);
+        return ll;
     }
     else if(geojson.type === 'LineString'){
         var llArray = geojson.coordinates.map(function(p) {
-                return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+                return (new s2.S2LatLng(p[1], p[0])).normalized().toPoint();
             });
         return llArray;
     }
     else if(geojson.type === 'Polygon'){
         geojson.coordinates = deloop(geojson.coordinates);
         var llArray = geojson.coordinates[0].map(function(p) {
-                return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+                return (new s2.S2LatLng(p[1], p[0])).normalized().toPoint();
             });
         return llArray;
     }

@@ -7,8 +7,8 @@ var s2 = require('../'),
 test('import geojson point', function(t) {
 	var ll = s2.fromGeojson(point);
 
-	t.equal(ll.lat(), -87.64789581298828, 'lat');
-    t.equal(ll.lng(), 41.88464303825411, 'lng');
+	t.equal(ll.lng(), -87.64789581298828, 'lng');
+    t.equal(ll.lat(), 41.88464303825411, 'lat');
 
 	t.end();
 })
