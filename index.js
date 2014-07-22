@@ -68,11 +68,17 @@ s2.fromGeojson = function(geojson){
         return llArray;
     }
     else if(geojson.type === 'Polygon'){
+        geojson.coordinates = deloop(geojson.coordinates);
         var llArray = geojson.coordinates[0].map(function(p) {
                 return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
             });
         return llArray;
     }
+}
 
-
+function deloop(coordinates){
+    if(coordinates[0][0] === coordinates[0][coordinates.length-1]){
+        coordinates[0].pop();
+    }
+    return coordinates;
 }

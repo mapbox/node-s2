@@ -99,7 +99,6 @@ test('getCovering - polyline', function(t) {
     var cover = s2.getCover(input, {
         type: 'polyline'
     });
-    console.log(cover.length)
 
     t.ok(cover, 'generates cover object');
     t.equal(cover.length, 8, 'cover.length');

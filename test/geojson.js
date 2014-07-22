@@ -28,11 +28,18 @@ test('import geojson linestring', function(t) {
 test('import geojson polygon', function(t) {
 	var s2Polygon = s2.fromGeojson(polygon);
 
-    t.equal(s2Polygon.length, 31, 'number of vertices');
+    t.equal(s2Polygon.length, 30, 'number of vertices');
     t.ok(s2Polygon[0].x(), 'loaded coordinates');
     t.ok(s2Polygon[0].y(), 'loaded coordinates');
     t.ok(s2Polygon[1].x(), 'loaded coordinates');
     t.ok(s2Polygon[1].y(), 'loaded coordinates');
+
+    var cover = s2.getCover(s2Polygon, {
+        type: 'polygon',
+        min: 1,
+        max: 30,
+        max_cells: 8
+    });
 
     t.end();
 })
