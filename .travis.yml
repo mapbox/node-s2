@@ -1,3 +1,17 @@
 language: node_js
 node_js:
   - 0.10
+env:
+  global:
+
+before_install:
+- export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
+- node --version
+- npm --version
+install:
+- npm install --build-from-source
+script:
+- npm test
+after_success:
+- ./node_modules/.bin/node-pre-gyp rebuild
+- ./deps/travis-publish.sh
