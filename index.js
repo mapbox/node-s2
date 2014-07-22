@@ -49,3 +49,30 @@ s2.S2Point.prototype.toArray = function() {
 s2.S2Point.prototype.toString = function() {
     return this.toArray().toString();
 };
+
+s2.fromGeojson = function(geojson){
+    if(geojson.type === 'Feature'){
+        geojson = geojson.geometry;
+    }
+
+    if(geojson.type === 'Point'){
+        var ll = new s2.S2LatLng(geojson.coordinates[0], 
+                        geojson.coordinates[1]);
+
+        return ll
+    }
+    else if(geojson.type === 'LineString'){
+        var llArray = geojson.coordinates.map(function(p) {
+                return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+            });
+        return llArray;
+    }
+    else if(geojson.type === 'Polygon'){
+        var llArray = geojson.coordinates[0].map(function(p) {
+                return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+            });
+        return llArray;
+    }
+
+
+}
