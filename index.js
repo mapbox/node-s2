@@ -65,7 +65,7 @@ s2.fromGeojson = function(geojson){
         geojson.coordinates = deloop(geojson.coordinates);
         return geojson.coordinates[0].map(coordinateToPoint);
     }
-}
+};
 
 function coordinateToPoint(p) {
     return (new s2.S2LatLng(p[1], p[0])).normalized().toPoint();
