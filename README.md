@@ -28,7 +28,7 @@ var pt = ll.toPoint();
 ## Build
 
     npm install
-    npm build .
+    npm build . --build-from-source
     npm test
 
 ## [Documentation: API.md](API.md)
