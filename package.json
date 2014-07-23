@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build",
-    "test": "tap --tap test/*.js"
+    "test": "jshint index.js && tap --tap test/*.js"
   },
   "dependencies": {
     "nan": "^1.2.0",
@@ -14,7 +14,8 @@
     "tap": "~0.4.9",
     "test-linestring": "0.0.1",
     "test-point": "0.0.2",
-    "test-polygon": "0.0.4"
+    "test-polygon": "0.0.4",
+    "jshint": "~2.5.2"
   },
   "bundledDependencies": [
     "node-pre-gyp"
