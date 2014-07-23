@@ -3,14 +3,14 @@ var test = require('tap').test,
 
 test('getCovering', function(t) {
     var input = [
-        [0, 0],
-        [0, 20],
+        [10, 10],
+        [30, 20],
         [20, 20]
     ].map(function(p) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover(input);
+    var cover = s2.getCover([input]);
 
     t.ok(cover, 'generates cover object');
     t.equal(cover.length, 8, 'cover.length');
@@ -68,14 +68,14 @@ test('invalid - none', function(t) {
 
 test('getCovering - polygon', function(t) {
     var input = [
-        [0, 0],
+        [3, 30],
         [0, 20],
         [20, 20]
     ].map(function(p) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover(input, {
+    var cover = s2.getCover([input], {
         type: 'polygon',
         min: 1,
         max: 30,
@@ -98,6 +98,32 @@ test('getCovering - polyline', function(t) {
 
     var cover = s2.getCover(input, {
         type: 'polyline'
+    });
+
+    t.ok(cover, 'generates cover object');
+    t.equal(cover.length, 8, 'cover.length');
+    t.end();
+});
+
+test('getCovering - polygon with hole', function(t) {
+    var outerRing = [
+        [0, 0],
+        [1, 1],
+        [1, 0]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var holeRing = [
+     [.1, .1],
+     [.2, .2],
+     [.2, .1]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCover([outerRing], {
+        type: 'polygon'
     });
 
     t.ok(cover, 'generates cover object');

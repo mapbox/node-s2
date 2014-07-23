@@ -69,34 +69,45 @@ NAN_METHOD(GetCover) {
             // Don't silently eliminate duplicate edges.
             polyOptions.set_xor_edges(false);
             S2PolygonBuilder builder(polyOptions);
-            std::vector<S2Point> points;
+            S2Polygon polygon;
+            std::vector<S2Point> rings;
 
             for (uint32_t i = 0; i < array->Length(); i++) {
-                Local<Object> obj = array->Get(i)->ToObject();
-                if (NanHasInstance(Point::constructor, obj)) {
-                    S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
-                    points.push_back(p);
-                } else {
-                    return NanThrowError("array must contain only points");
+                std::vector<S2Point> points;
+                Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
+
+                for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
+                    S2LatLng pt = S2LatLng(node::ObjectWrap::Unwrap<Point>(pointArray->Get(ii)->ToObject())->get());
+                    Local<Object> obj = pointArray->Get(ii)->ToObject();
+                    if (NanHasInstance(Point::constructor, obj)) {
+                        S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
+                        points.push_back(p);
+                    } else {
+                        return NanThrowError("array must contain only points");
+                    }
                 }
+                // construct polygon loop
+                S2Loop loop(points);
+                loop.Normalize();
+
+                // outer ring should not be a hole
+                if (i==0 && loop.is_hole()) {
+                    loop.Invert();
+                }
+                // inner rings should be holes
+                else if (i==1 && !loop.is_hole()) {
+                    loop.Invert();
+                }
+
+                if (!loop.IsValid()) {
+                    return NanThrowError("invalid loop");
+                }
+
+                builder.AddLoop(&loop);
             }
-
-            S2Polygon polygon;
-            S2Loop outerLoop(points);
-            outerLoop.Normalize();
-
-            if (outerLoop.is_hole()) {
-                outerLoop.Invert();
-            }
-
-            if (!outerLoop.IsValid()) {
-                return NanThrowError("invalid loop");
-            }
-
-            builder.AddLoop(&outerLoop);
+            // get cover
             EdgeList edgeList;
             builder.AssemblePolygon(&polygon, &edgeList);
-
             coverer.GetCovering(polygon, &cellids_vector);
         } else if (type == "polyline") {
             std::vector<S2Point> points;

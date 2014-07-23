@@ -1,3 +1,18 @@
 language: node_js
 node_js:
   - 0.10
+before_install:
+- export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
+- node --version
+- npm --version
+install:
+- npm install --build-from-source
+script:
+- npm test
+after_success:
+- ./node_modules/.bin/node-pre-gyp rebuild
+- ./deps/travis-publish.sh
+env:
+  global:
+  - secure: ZPxj6YrpTZuODSZMW9835xOguk9bFgqVONzpjpLD4H5bF6znzn9IAZim2gEb5FZ7YHJ0gmeWc8CD27HzFIliq9fanEEB7mMytb1cjIsQM5nit0ZtMFf/IU9g0ZGkvdJZdd3tyTVb9vA0nh03lssvyYoFpo58jrBJOJqH9F1HUuo=
+  - secure: T9Jqs5fHV/ujrkCYkWRphX9/1EBn63Ff+cTwP1jNrQzT8CpCXmjb90ng4QtyEqWPgyKljaMaTt5O8yVL7mCcDePKjkvzi6Bc/NDAxh/TH0wpxZA90Qb1X32QIzVa3063FM9zZFkunV6qyFA4LsXI/tdJqj0ZU7rh+kwL26NAPng=
