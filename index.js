@@ -55,28 +55,24 @@ s2.fromGeojson = function(geojson){
         geojson = geojson.geometry;
     }
 
-    if(geojson.type === 'Point'){
-        var ll = new s2.S2LatLng(geojson.coordinates[1], 
+    if (geojson.type === 'Point') {
+        var ll = new s2.S2LatLng(geojson.coordinates[1],
                         geojson.coordinates[0]);
         return ll;
-    }
-    else if(geojson.type === 'LineString'){
-        var llArray = geojson.coordinates.map(function(p) {
-                return (new s2.S2LatLng(p[1], p[0])).normalized().toPoint();
-            });
-        return llArray;
-    }
-    else if(geojson.type === 'Polygon'){
+    } else if(geojson.type === 'LineString') {
+        return geojson.coordinates.map(coordinateToPoint);
+    } else if (geojson.type === 'Polygon') {
         geojson.coordinates = deloop(geojson.coordinates);
-        var llArray = geojson.coordinates[0].map(function(p) {
-                return (new s2.S2LatLng(p[1], p[0])).normalized().toPoint();
-            });
-        return llArray;
+        return geojson.coordinates[0].map(coordinateToPoint);
     }
+};
+
+function coordinateToPoint(p) {
+    return (new s2.S2LatLng(p[1], p[0])).normalized().toPoint();
 }
 
-function deloop(coordinates){
-    if(coordinates[0][0] === coordinates[0][coordinates.length-1]){
+function deloop(coordinates) {
+    if (coordinates[0][0] === coordinates[0][coordinates.length - 1]) {
         coordinates[0].pop();
     }
     return coordinates;
