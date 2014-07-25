@@ -149,3 +149,46 @@ test('getCovering - polygon with hole', function(t) {
     t.end();
 });
 
+test('getCovering - multipolygon', function(t) {
+    var ring1 = [
+        [
+          -2.48565673828125,
+          17.32179844407804
+        ],
+        [
+          -2.728729248046875,
+          17.180155043474496
+        ],
+        [
+          -2.49114990234375,
+          17.106667613984445
+        ]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var ring2 = [
+        [
+          -3.519744873046875,
+          17.14603949574698
+        ],
+        [
+          -3.62823486328125,
+          16.787449898410646
+        ],
+        [
+          -3.393402099609375,
+          16.92807754169301
+        ]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCover([ring1, ring2], {
+        type: 'multipolygon'
+    });
+
+    t.ok(cover, 'generates cover object');
+    t.equal(cover.length, 8, 'cover.length');
+    t.end();
+});
