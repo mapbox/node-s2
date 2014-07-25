@@ -107,22 +107,40 @@ test('getCovering - polyline', function(t) {
 
 test('getCovering - polygon with hole', function(t) {
     var outerRing = [
-        [0, 0],
-        [1, 1],
-        [1, 0]
+        [
+          15.776367187499998,
+          51.67255514839676
+        ],
+        [
+          7.71240234375,
+          47.931066347509784
+        ],
+        [
+          17.9296875,
+          45.72152152227954
+        ]
     ].map(function(p) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
     var holeRing = [
-     [.1, .1],
-     [.2, .2],
-     [.2, .1]
+        [
+          14.853515625,
+          49.75287993415023
+        ],
+        [
+          12.7001953125,
+          48.821332549646634
+        ],
+        [
+          15.18310546875,
+          47.97521412341618
+        ]
     ].map(function(p) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover([outerRing], {
+    var cover = s2.getCover([outerRing, holeRing], {
         type: 'polygon'
     });
 
@@ -130,3 +148,4 @@ test('getCovering - polygon with hole', function(t) {
     t.equal(cover.length, 8, 'cover.length');
     t.end();
 });
+
