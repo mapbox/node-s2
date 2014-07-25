@@ -148,7 +148,7 @@ test('getCovering - polygon with hole', function(t) {
     t.equal(cover.length, 8, 'cover.length');
     t.end();
 });
-
+/*
 test('getCovering - multipolygon', function(t) {
     var ring1 = [
         [
@@ -191,4 +191,4 @@ test('getCovering - multipolygon', function(t) {
     t.ok(cover, 'generates cover object');
     t.equal(cover.length, 8, 'cover.length');
     t.end();
-});
+});*/
