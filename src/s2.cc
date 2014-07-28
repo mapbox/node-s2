@@ -124,6 +124,54 @@ NAN_METHOD(GetCover) {
 
             S2Polyline polyline(points);
             coverer.GetCovering(polyline, &cellids_vector);
+        } else if (type == "multipolygon") {
+            S2PolygonBuilderOptions polyOptions;
+            polyOptions.set_validate(true);
+            // Don't silently eliminate duplicate edges.
+            polyOptions.set_xor_edges(false);
+            S2PolygonBuilder builder(polyOptions);
+            S2Polygon polygon;
+            std::vector<S2Point> rings;
+
+            for (uint32_t k = 0; k < array->Length(); k++) {
+                Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
+                for (uint32_t i = 0; i < ringArray->Length(); i++) {
+                    std::vector<S2Point> points;
+                    Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
+                    for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
+                        S2LatLng pt = S2LatLng(node::ObjectWrap::Unwrap<Point>(pointArray->Get(ii)->ToObject())->get());
+                        Local<Object> obj = pointArray->Get(ii)->ToObject();
+                        if (NanHasInstance(Point::constructor, obj)) {
+                            S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
+                            points.push_back(p);
+                        } else {
+                            return NanThrowError("array must contain only points");
+                        }
+                    }
+                    // construct polygon loop
+                    S2Loop loop(points);
+                    loop.Normalize();
+
+                    // outer ring should not be a hole
+                    if (i==0 && loop.is_hole()) {
+                        loop.Invert();
+                    }
+                    // inner rings should be holes
+                    else if (i==1 && !loop.is_hole()) {
+                        loop.Invert();
+                    }
+
+                    if (!loop.IsValid()) {
+                        return NanThrowError("invalid loop");
+                    }
+
+                    builder.AddLoop(&loop);
+                }
+            }
+            // get cover
+            EdgeList edgeList;
+            builder.AssemblePolygon(&polygon, &edgeList);
+            coverer.GetCovering(polygon, &cellids_vector);
         }
     } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
         S2LatLngRect rect = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
@@ -154,13 +202,12 @@ void RegisterModule(Handle<Object> exports) {
     LatLngRect::Init(exports);
     Cap::Init(exports);
     Angle::Init(exports);
-    // Polyline::Init(exports);
     Cell::Init(exports);
     CellId::Init(exports);
     Point::Init(exports);
     Interval::Init(exports);
     exports->Set(NanSymbol("getCover"),
-            NanNew<FunctionTemplate>(GetCover)->GetFunction());
+        NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }
 
 NODE_MODULE(_s2, RegisterModule);
