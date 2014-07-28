@@ -133,14 +133,11 @@ NAN_METHOD(GetCover) {
             S2Polygon polygon;
             std::vector<S2Point> rings;
 
-            printf("array length::: %i\n", array->Length());
             for (uint32_t k = 0; k < array->Length(); k++) {
                 Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
-                printf("ringArray length::: %i\n", ringArray->Length());
                 for (uint32_t i = 0; i < ringArray->Length(); i++) {
                     std::vector<S2Point> points;
                     Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
-                    printf("pointArray length::: %i\n", pointArray->Length());
                     for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
                         S2LatLng pt = S2LatLng(node::ObjectWrap::Unwrap<Point>(pointArray->Get(ii)->ToObject())->get());
                         Local<Object> obj = pointArray->Get(ii)->ToObject();
