@@ -19,7 +19,7 @@ are intelligently computed groups of cells that can be used to index geometries.
 ```js
 var s2 = require('s2');
 
-var ll = new s2.LatLng(0, 0);
+var ll = new s2.S2LatLng(0, 0);
 ll.isValid(); // true
 var normalized = ll.normalized(); // true
 var pt = ll.toPoint();
