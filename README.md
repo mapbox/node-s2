@@ -31,6 +31,10 @@ var pt = ll.toPoint();
     npm build . --build-from-source
     npm test
 
+## Geojson
+
+node-s2 is a low level s2 wrapper. If you are simply looking to get geojson into s2, you should check out [geojson-cover](https://github.com/mapbox/geojson-cover).
+
 ## [Documentation: API.md](API.md)
 
 ## Notes
