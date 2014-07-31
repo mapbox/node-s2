@@ -2,6 +2,7 @@
 
 #include "s2pointregion.h"
 
+#include "base/scoped_ptr.h"
 #include "testing/base/public/gunit.h"
 #include "util/coding/coder.h"
 #include "s2cap.h"
