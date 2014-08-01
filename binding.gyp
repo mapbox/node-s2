@@ -55,7 +55,7 @@
             'xcode_settings': {
               'OTHER_CPLUSPLUSFLAGS':[
                 '-Wno-deprecated',
-                '-Wnoignored-qualifiers',
+                '-Wno-ignored-qualifiers',
                 '-DARCH_K8 -DS2_USE_EXACTFLOAT',
                 '-stdlib=libc++',
                 '-std=c++11'
@@ -72,7 +72,7 @@
         ['OS=="linux"', {
             'cflags_cc' : [
               '-Wno-deprecated',
-              '-Wnoignored-qualifiers',
+              '-Wno-ignored-qualifiers',
               '-DARCH_K8 -DS2_USE_EXACTFLOAT',
               '-std=c++11'
             ],
