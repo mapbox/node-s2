@@ -9,13 +9,9 @@ using std::max;
 using std::swap;
 using std::reverse;
 
-#ifdef __GNUC__
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
-using __gnu_cxx::hash_map;
-  // To have template struct hash<T> defined
+#include <unordered_map>
+using std::unordered_map;
+// To have template struct hash<T> defined
 #include "base/basictypes.h"
 #include "base/logging.h"
 #include "base/macros.h"
@@ -30,21 +26,16 @@ using __gnu_cxx::hash_map;
 // arithmetic expressions (e.g. (1-x)*p1 + x*p2).
 typedef Vector3_d S2Point;
 
-#ifdef __GNUC__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-namespace __gnu_cxx {
+#include <unordered_set>
 
+namespace std {
 
-template<> struct hash<S2Point> {
+template <>
+struct hash<S2Point> {
   size_t operator()(S2Point const& p) const;
 };
 
-
-}  // namespace __gnu_cxx
-
+}  // namespace std
 
 // The S2 class is simply a namespace for constants and static utility
 // functions related to spherical geometry, such as area calculations and edge
@@ -191,8 +182,7 @@ class S2 {
   //
   // Unlike RobustCCW(), this method does not require the input points to be
   // normalized.
-  static int ExpensiveCCW(S2Point const& a, S2Point const& b,
-                          S2Point const& c);
+  static int ExpensiveCCW(S2Point const& a, S2Point const& b, S2Point const& c);
 
   // Given 4 points on the unit sphere, return true if the edges OA, OB, and
   // OC are encountered in that order while sweeping CCW around the point O.
@@ -371,8 +361,8 @@ class S2 {
   // If the dot product of p with the given face normal is positive,
   // set the corresponding u and v values (which may lie outside the range
   // [-1,1]) and return true.  Otherwise return false.
-  inline static bool FaceXYZtoUV(int face, S2Point const& p,
-                                 double* pu, double* pv);
+  inline static bool FaceXYZtoUV(int face, S2Point const& p, double* pu,
+                                 double* pv);
 
   // Convert a direction vector (not necessarily unit length) to
   // (face, u, v) coordinates.
@@ -446,7 +436,8 @@ class S2 {
   // somewhat conservative for very large cells (e.g. face cells).
 
   // Defines a cell metric of the given dimension (1 == length, 2 == area).
-  template <int dim> class Metric {
+  template <int dim>
+  class Metric {
    public:
     explicit Metric(double deriv) : deriv_(deriv) {}
 
@@ -457,7 +448,7 @@ class S2 {
     // Return the value of a metric for cells at the given level. The value is
     // either a length or an area on the unit sphere, depending on the
     // particular metric.
-    double GetValue(int level) const { return ldexp(deriv_, - dim * level); }
+    double GetValue(int level) const { return ldexp(deriv_, -dim * level); }
 
     // Return the level at which the metric has approximately the given
     // value.  For example, S2::kAvgEdge.GetClosestLevel(0.1) returns the
@@ -565,8 +556,8 @@ class S2 {
   // Given a *valid* face for the given point p (meaning that dot product
   // of p with the face normal is positive), return the corresponding
   // u and v values (which may lie outside the range [-1,1]).
-  inline static void ValidFaceXYZtoUV(int face, S2Point const& p,
-                                      double* pu, double* pv);
+  inline static void ValidFaceXYZtoUV(int face, S2Point const& p, double* pu,
+                                      double* pv);
 
   // The value below is the maximum error in computing the determinant
   // a.CrossProd(b).DotProd(c).  To derive this, observe that computing the
@@ -598,16 +589,15 @@ inline S2Point S2::Origin() {
 #endif
 }
 
-inline int S2::TriageCCW(S2Point const& a, S2Point const& b,
-                         S2Point const& c, S2Point const& a_cross_b) {
+inline int S2::TriageCCW(S2Point const& a, S2Point const& b, S2Point const& c,
+                         S2Point const& a_cross_b) {
   DCHECK(IsUnitLength(a));
   DCHECK(IsUnitLength(b));
   DCHECK(IsUnitLength(c));
   double det = a_cross_b.DotProd(c);
 
   // Double-check borderline cases in debug mode.
-  DCHECK(fabs(det) < kMaxDetError ||
-         fabs(det) > 100 * kMaxDetError ||
+  DCHECK(fabs(det) < kMaxDetError || fabs(det) > 100 * kMaxDetError ||
          det * ExpensiveCCW(a, b, c) > 0);
 
   if (det > kMaxDetError) return 1;
@@ -615,8 +605,8 @@ inline int S2::TriageCCW(S2Point const& a, S2Point const& b,
   return 0;
 }
 
-inline int S2::RobustCCW(S2Point const& a, S2Point const& b,
-                         S2Point const& c, S2Point const& a_cross_b) {
+inline int S2::RobustCCW(S2Point const& a, S2Point const& b, S2Point const& c,
+                         S2Point const& a_cross_b) {
   int ccw = TriageCCW(a, b, c, a_cross_b);
   if (ccw == 0) ccw = ExpensiveCCW(a, b, c);
   return ccw;
@@ -668,21 +658,17 @@ inline int S2::RobustCCW(S2Point const& a, S2Point const& b,
 //
 // This data was produced using s2cell_unittest and s2cellid_unittest.
 
-#define S2_LINEAR_PROJECTION    0
-#define S2_TAN_PROJECTION       1
+#define S2_LINEAR_PROJECTION 0
+#define S2_TAN_PROJECTION 1
 #define S2_QUADRATIC_PROJECTION 2
 
 #define S2_PROJECTION S2_QUADRATIC_PROJECTION
 
 #if S2_PROJECTION == S2_LINEAR_PROJECTION
 
-inline double S2::STtoUV(double s) {
-  return 2 * s - 1;
-}
+inline double S2::STtoUV(double s) { return 2 * s - 1; }
 
-inline double S2::UVtoST(double u) {
-  return 0.5 * (u + 1);
-}
+inline double S2::UVtoST(double u) { return 0.5 * (u + 1); }
 
 #elif S2_PROJECTION == S2_TAN_PROJECTION
 
@@ -706,13 +692,17 @@ inline double S2::UVtoST(double u) {
 #elif S2_PROJECTION == S2_QUADRATIC_PROJECTION
 
 inline double S2::STtoUV(double s) {
-  if (s >= 0.5) return (1/3.) * (4*s*s - 1);
-  else          return (1/3.) * (1 - 4*(1-s)*(1-s));
+  if (s >= 0.5)
+    return (1 / 3.) * (4 * s * s - 1);
+  else
+    return (1 / 3.) * (1 - 4 * (1 - s) * (1 - s));
 }
 
 inline double S2::UVtoST(double u) {
-  if (u >= 0) return 0.5 * sqrt(1 + 3*u);
-  else        return 1 - 0.5 * sqrt(1 - 3*u);
+  if (u >= 0)
+    return 0.5 * sqrt(1 + 3 * u);
+  else
+    return 1 - 0.5 * sqrt(1 - 3 * u);
 }
 
 #else
@@ -723,25 +713,49 @@ inline double S2::UVtoST(double u) {
 
 inline S2Point S2::FaceUVtoXYZ(int face, double u, double v) {
   switch (face) {
-    case 0:  return S2Point( 1,  u,  v);
-    case 1:  return S2Point(-u,  1,  v);
-    case 2:  return S2Point(-u, -v,  1);
-    case 3:  return S2Point(-1, -v, -u);
-    case 4:  return S2Point( v, -1, -u);
-    default: return S2Point( v,  u, -1);
+    case 0:
+      return S2Point(1, u, v);
+    case 1:
+      return S2Point(-u, 1, v);
+    case 2:
+      return S2Point(-u, -v, 1);
+    case 3:
+      return S2Point(-1, -v, -u);
+    case 4:
+      return S2Point(v, -1, -u);
+    default:
+      return S2Point(v, u, -1);
   }
 }
 
-inline void S2::ValidFaceXYZtoUV(int face, S2Point const& p,
-                                 double* pu, double* pv) {
+inline void S2::ValidFaceXYZtoUV(int face, S2Point const& p, double* pu,
+                                 double* pv) {
   DCHECK_GT(p.DotProd(FaceUVtoXYZ(face, 0, 0)), 0);
   switch (face) {
-    case 0:  *pu =  p[1] / p[0]; *pv =  p[2] / p[0]; break;
-    case 1:  *pu = -p[0] / p[1]; *pv =  p[2] / p[1]; break;
-    case 2:  *pu = -p[0] / p[2]; *pv = -p[1] / p[2]; break;
-    case 3:  *pu =  p[2] / p[0]; *pv =  p[1] / p[0]; break;
-    case 4:  *pu =  p[2] / p[1]; *pv = -p[0] / p[1]; break;
-    default: *pu = -p[1] / p[2]; *pv = -p[0] / p[2]; break;
+    case 0:
+      *pu = p[1] / p[0];
+      *pv = p[2] / p[0];
+      break;
+    case 1:
+      *pu = -p[0] / p[1];
+      *pv = p[2] / p[1];
+      break;
+    case 2:
+      *pu = -p[0] / p[2];
+      *pv = -p[1] / p[2];
+      break;
+    case 3:
+      *pu = p[2] / p[0];
+      *pv = p[1] / p[0];
+      break;
+    case 4:
+      *pu = p[2] / p[1];
+      *pv = -p[0] / p[1];
+      break;
+    default:
+      *pu = -p[1] / p[2];
+      *pv = -p[0] / p[2];
+      break;
   }
 }
 
@@ -752,12 +766,12 @@ inline int S2::XYZtoFaceUV(S2Point const& p, double* pu, double* pv) {
   return face;
 }
 
-inline bool S2::FaceXYZtoUV(int face, S2Point const& p,
-                            double* pu, double* pv) {
+inline bool S2::FaceXYZtoUV(int face, S2Point const& p, double* pu,
+                            double* pv) {
   if (face < 3) {
     if (p[face] <= 0) return false;
   } else {
-    if (p[face-3] >= 0) return false;
+    if (p[face - 3] >= 0) return false;
   }
   ValidFaceXYZtoUV(face, p, pu, pv);
   return true;
@@ -765,49 +779,71 @@ inline bool S2::FaceXYZtoUV(int face, S2Point const& p,
 
 inline S2Point S2::GetUNorm(int face, double u) {
   switch (face) {
-    case 0:  return S2Point( u, -1,  0);
-    case 1:  return S2Point( 1,  u,  0);
-    case 2:  return S2Point( 1,  0,  u);
-    case 3:  return S2Point(-u,  0,  1);
-    case 4:  return S2Point( 0, -u,  1);
-    default: return S2Point( 0, -1, -u);
+    case 0:
+      return S2Point(u, -1, 0);
+    case 1:
+      return S2Point(1, u, 0);
+    case 2:
+      return S2Point(1, 0, u);
+    case 3:
+      return S2Point(-u, 0, 1);
+    case 4:
+      return S2Point(0, -u, 1);
+    default:
+      return S2Point(0, -1, -u);
   }
 }
 
 inline S2Point S2::GetVNorm(int face, double v) {
   switch (face) {
-    case 0:  return S2Point(-v,  0,  1);
-    case 1:  return S2Point( 0, -v,  1);
-    case 2:  return S2Point( 0, -1, -v);
-    case 3:  return S2Point( v, -1,  0);
-    case 4:  return S2Point( 1,  v,  0);
-    default: return S2Point( 1,  0,  v);
+    case 0:
+      return S2Point(-v, 0, 1);
+    case 1:
+      return S2Point(0, -v, 1);
+    case 2:
+      return S2Point(0, -1, -v);
+    case 3:
+      return S2Point(v, -1, 0);
+    case 4:
+      return S2Point(1, v, 0);
+    default:
+      return S2Point(1, 0, v);
   }
 }
 
-inline S2Point S2::GetNorm(int face) {
-  return S2::FaceUVtoXYZ(face, 0, 0);
-}
+inline S2Point S2::GetNorm(int face) { return S2::FaceUVtoXYZ(face, 0, 0); }
 
 inline S2Point S2::GetUAxis(int face) {
   switch (face) {
-    case 0:  return S2Point( 0,  1,  0);
-    case 1:  return S2Point(-1,  0,  0);
-    case 2:  return S2Point(-1,  0,  0);
-    case 3:  return S2Point( 0,  0, -1);
-    case 4:  return S2Point( 0,  0, -1);
-    default: return S2Point( 0,  1,  0);
+    case 0:
+      return S2Point(0, 1, 0);
+    case 1:
+      return S2Point(-1, 0, 0);
+    case 2:
+      return S2Point(-1, 0, 0);
+    case 3:
+      return S2Point(0, 0, -1);
+    case 4:
+      return S2Point(0, 0, -1);
+    default:
+      return S2Point(0, 1, 0);
   }
 }
 
 inline S2Point S2::GetVAxis(int face) {
   switch (face) {
-    case 0:  return S2Point( 0,  0,  1);
-    case 1:  return S2Point( 0,  0,  1);
-    case 2:  return S2Point( 0, -1,  0);
-    case 3:  return S2Point( 0, -1,  0);
-    case 4:  return S2Point( 1,  0,  0);
-    default: return S2Point( 1,  0,  0);
+    case 0:
+      return S2Point(0, 0, 1);
+    case 1:
+      return S2Point(0, 0, 1);
+    case 2:
+      return S2Point(0, -1, 0);
+    case 3:
+      return S2Point(0, -1, 0);
+    case 4:
+      return S2Point(1, 0, 0);
+    default:
+      return S2Point(1, 0, 0);
   }
 }
 

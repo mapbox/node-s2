@@ -2,6 +2,7 @@
 
 #include "util/math/exactfloat/exactfloat.h"
 #include <cstring>
+#include <cmath>
 
 #include <math.h>
 #include <algorithm>
@@ -86,6 +87,9 @@ static int BN_ext_count_low_zero_bits(const BIGNUM* bn) {
 
 ExactFloat::ExactFloat(double v) {
   BN_init(&bn_);
+#if __cplusplus > 199711L
+  using std::signbit;
+#endif
   sign_ = signbit(v) ? -1 : 1;
   if (isnan(v)) {
     set_nan();

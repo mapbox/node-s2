@@ -947,7 +947,7 @@ struct PortableHashBase { };
 
 // Portable handling of unaligned loads and stores
 
-#if defined(ARCH_PIII) || defined(ARCH_ATHLON) || defined(ARCH_K8) || defined(_ARCH_PPC)
+#if defined(X86_64) || defined(ARCH_PIII) || defined(ARCH_ATHLON) || defined(ARCH_K8) || defined(_ARCH_PPC)
 
 // x86 and x86-64 can perform unaligned loads/stores directly;
 // modern PowerPC hardware can also do unaligned integer loads and stores;

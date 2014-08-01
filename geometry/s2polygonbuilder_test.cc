@@ -326,7 +326,7 @@ void DumpUnusedEdges(vector<pair<S2Point, S2Point> > const& unused_edges,
 
   if (unused_edges.size() == num_expected) return;
   fprintf(stderr,
-          "Wrong number of unused edges (%d expected, %"PRIuS" actual):\n",
+          "Wrong number of unused edges (%d expected, %" PRIuS " actual):\n",
           num_expected, unused_edges.size());
   for (int i = 0; i < unused_edges.size(); ++i) {
     S2LatLng p0(m.Transpose() * unused_edges[i].first);

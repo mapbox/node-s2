@@ -13,12 +13,8 @@ using std::reverse;
 #include <functional>
 using std::less;
 
-#ifdef __GNUC__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-using __gnu_cxx::hash_set;
+#include <unordered_set>
+using std::unordered_set;
 
 #include <queue>
 using std::priority_queue;
@@ -326,7 +322,7 @@ void S2RegionCoverer::GetInteriorCellUnion(S2Region const& region,
 
 void S2RegionCoverer::FloodFill(
     S2Region const& region, S2CellId const& start, vector<S2CellId>* output) {
-  hash_set<S2CellId> all;
+  unordered_set<S2CellId> all;
   vector<S2CellId> frontier;
   output->clear();
   all.insert(start);

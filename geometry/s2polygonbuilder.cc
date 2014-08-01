@@ -8,19 +8,11 @@ using std::max;
 using std::swap;
 using std::reverse;
 
-#ifdef __GNUC__
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
-using __gnu_cxx::hash_map;
+#include <unordered_map>
+using std::unordered_map;
 
-#ifdef __GNUC__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-using __gnu_cxx::hash_set;
+#include <unordered_set>
+using std::unordered_set;
 
 #include <iomanip>
 using std::setprecision;
@@ -187,7 +179,7 @@ S2Loop* S2PolygonBuilder::AssembleLoop(S2Point const& v0, S2Point const& v1,
   // This ensures that only CCW loops are constructed when possible.
 
   vector<S2Point> path;          // The path so far.
-  hash_map<S2Point, int> index;  // Maps a vertex to its index in "path".
+  unordered_map<S2Point, int> index;  // Maps a vertex to its index in "path".
   path.push_back(v0);
   path.push_back(v1);
   index[v1] = 1;
@@ -373,7 +365,7 @@ void S2PolygonBuilder::BuildMergeMap(PointIndex* index, MergeMap* merge_map) {
 
   // First, we build the set of all the distinct vertices in the input.
   // We need to include the source and destination of every edge.
-  hash_set<S2Point> vertices;
+  unordered_set<S2Point> vertices;
   for (EdgeSet::const_iterator i = edges_->begin(); i != edges_->end(); ++i) {
     vertices.insert(i->first);
     VertexSet const& vset = i->second;
@@ -382,7 +374,7 @@ void S2PolygonBuilder::BuildMergeMap(PointIndex* index, MergeMap* merge_map) {
   }
 
   // Build a spatial index containing all the distinct vertices.
-  for (hash_set<S2Point>::const_iterator i = vertices.begin();
+  for (unordered_set<S2Point>::const_iterator i = vertices.begin();
        i != vertices.end(); ++i) {
     index->Insert(*i);
   }
@@ -390,7 +382,7 @@ void S2PolygonBuilder::BuildMergeMap(PointIndex* index, MergeMap* merge_map) {
   // Next, we loop through all the vertices and attempt to grow a maximial
   // mergeable group starting from each vertex.
   vector<S2Point> frontier, mergeable;
-  for (hash_set<S2Point>::const_iterator vstart = vertices.begin();
+  for (unordered_set<S2Point>::const_iterator vstart = vertices.begin();
        vstart != vertices.end(); ++vstart) {
     // Skip any vertices that have already been merged with another vertex.
     if (merge_map->find(*vstart) != merge_map->end()) continue;

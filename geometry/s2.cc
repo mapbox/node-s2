@@ -21,12 +21,10 @@ COMPILE_ASSERT(S2::kSwapMask == 0x01 && S2::kInvertMask == 0x02,
 DEFINE_bool(s2debug, false, "");
 
 static const uint32 MIX32 = 0x12b9b0a1UL;
-#ifdef __GNUC__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-namespace __gnu_cxx {
+
+#include <unordered_set>
+
+namespace std {
 
 
 
@@ -88,7 +86,7 @@ size_t hash<S2Point>::operator()(S2Point const& p) const {
 }
 
 
-}  // namespace __gnu_cxx
+}  // namespace std
 
 
 bool S2::IsUnitLength(S2Point const& p) {
@@ -191,46 +189,8 @@ int S2::RobustCCW(S2Point const& a, S2Point const& b, S2Point const& c) {
 // therefore subject to an LGPL license) and ExactFloat (which is based on the
 // OpenSSL Bignum library and therefore has a permissive BSD-style license).
 
-#ifdef S2_USE_EXACTFLOAT
-
 // ExactFloat only supports exact calculations with floating-point numbers.
 #include "util/math/exactfloat/exactfloat.h"
-
-#else  // S2_USE_EXACTFLOAT
-
-// MPFloat requires a "maximum precision" to be specified.
-//
-// To figure out how much precision we need, first observe that any double
-// precision number can be represented as an integer by multiplying it by
-// 2**1074.  This is because the minimum exponent is -1022, and denormalized
-// numbers have 52 bits after the leading "0".  On the other hand, the largest
-// double precision value has the form 1.x * (2**1023), which is a 1024-bit
-// integer.  Therefore any double precision value can be represented as a
-// (1074 + 1024) = 2098 bit integer.
-//
-// A 3x3 determinant is computed by adding together 6 values, each of which is
-// the product of 3 of the input values.  When an m-bit integer is multiplied
-// by an n-bit integer, the result has at most (m+n) bits.  When "k" m-bit
-// integers are added together, the result has at most m + ceil(log2(k)) bits.
-// Therefore the determinant of any 3x3 matrix can be represented exactly
-// using no more than (3*2098)+3 = 6297 bits.
-//
-// Note that MPFloat only uses as much precision as required to compute the
-// exact result, and that typically far fewer bits of precision are used.  The
-// worst-case estimate above is only achieved for a matrix where every row
-// contains both the maximum and minimum possible double precision values
-// (i.e. approximately 1e308 and 1e-323).  For randomly chosen unit-length
-// vectors, the average case uses only about 200 bits of precision.
-
-// The maximum precision must be at least (6297 + 1) so that we can assert
-// that the result of the determinant calculation is exact (by checking that
-// the actual precision of the result is less than the maximum precision
-// specified).
-
-#include "util/math/mpfloat/mpfloat.h"
-typedef MPFloat<6300> ExactFloat;
-
-#endif  // S2_USE_EXACTFLOAT
 
 typedef Vector3<ExactFloat> Vector3_xf;
 

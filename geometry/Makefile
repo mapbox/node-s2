@@ -1,38 +1,20 @@
-# Please edit the following:
-PYTHON_VER=2.6
-# TODO(tudorh): Fix this.
-GFLAGS_DIR=/home/tudorh/usr
-SWIG_BINARY=swig
-ZLIB_DIR=/usr
-
 #  ----- No more editing below -----
 
-PYTHON_INC=-I/usr/include/python$(PYTHON_VER) -I/usr/lib/python$(PYTHON_VER)
-
-DEBUG=-O -DNDEBUG
+DEBUG=-O3 -DNDEBUG
 SYSCFLAGS=-fPIC
-CCC=g++
+CCC=clang++
 
-GFLAGS_INC = -I$(GFLAGS_DIR)/include
-ZLIB_INC = -I$(ZLIB_DIR)/include
-CFLAGS= $(SYSCFLAGS) $(DEBUG) -I. -DARCH_K8 $(GFLAGS_INC) $(ZLIB_INC) \
-        -Wno-deprecated -DS2_USE_EXACTFLOAT
+CFLAGS= $(SYSCFLAGS) $(DEBUG) -I. -DARCH_K8 -Wno-deprecated -DS2_USE_EXACTFLOAT
 
 # ----- OS Dependent -----
 OS=$(shell uname -s)
 
 ifeq ($(OS),Linux)
-LD = gcc -shared
-GFLAGS_LNK = -Wl,-rpath $(GFLAGS_DIR)/lib -L$(GFLAGS_DIR)/lib -lgflags
-ZLIB_LNK = -Wl,-rpath $(ZLIB_DIR)/lib -L$(ZLIB_DIR)/lib -lz
+LD = $(CCC) -shared
 endif
 ifeq ($(OS),Darwin) # Assume Mac Os X
 LD = ld -arch x86_64 -bundle -flat_namespace -undefined suppress
-GFLAGS_LNK = -L$(GFLAGS_DIR)/lib -lgflags
-ZLIB_LNK = -L$(ZLIB_DIR)/lib -lz
 endif
-
-LDFLAGS=$(GFLAGS_LNK) $(ZLIB_LNK)
 
 # Real targets
 
