@@ -55,17 +55,24 @@
             'xcode_settings': {
               'OTHER_CPLUSPLUSFLAGS':[
                 '-Wno-deprecated',
-                '-DARCH_K8 -DS2_USE_EXACTFLOAT'
+                '-DARCH_K8 -DS2_USE_EXACTFLOAT',
+                '-stdlib=libc++',
+                '-std=c++11'
               ],
-              'OTHER_LDFLAGS':['-flat_namespace -undefined suppress'],
+              'OTHER_LDFLAGS':[
+                '-flat_namespace -undefined suppress',
+                '-stdlib=libc++',
+                '-std=c++11'],
               'GCC_ENABLE_CPP_RTTI': 'YES',
-              'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
+              'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+              'MACOSX_DEPLOYMENT_TARGET': '10.7',
             }
         }],
         ['OS=="linux"', {
             'cflags_cc' : [
               '-Wno-deprecated',
-              '-DARCH_K8 -DS2_USE_EXACTFLOAT'
+              '-DARCH_K8 -DS2_USE_EXACTFLOAT',
+              'std=c++11'
             ],
         }]
       ]
