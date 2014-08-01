@@ -9,6 +9,7 @@ install:
 - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
 - sudo apt-get update >/dev/null
 - sudo apt-get -q install g++-4.7
+- g++ -v
 - npm install --build-from-source
 script:
 - npm test
