@@ -40,17 +40,17 @@ NAN_METHOD(GetCover) {
 
     if (args.Length() > 1) {
         Handle<Object> opt = args[1]->ToObject();
-        if (opt->Has(NanSymbol("min"))) {
-            coverer.set_min_level(opt->Get(NanSymbol("min"))->ToInteger()->Value());
+        if (opt->Has(NanNew<String>("min"))) {
+            coverer.set_min_level(opt->Get(NanNew<String>("min"))->ToInteger()->Value());
         }
-        if (opt->Has(NanSymbol("max"))) {
-            coverer.set_max_level(opt->Get(NanSymbol("max"))->ToInteger()->Value());
+        if (opt->Has(NanNew<String>("max"))) {
+            coverer.set_max_level(opt->Get(NanNew<String>("max"))->ToInteger()->Value());
         }
-        if (opt->Has(NanSymbol("mod"))) {
-            coverer.set_level_mod(opt->Get(NanSymbol("mod"))->ToInteger()->Value());
+        if (opt->Has(NanNew<String>("mod"))) {
+            coverer.set_level_mod(opt->Get(NanNew<String>("mod"))->ToInteger()->Value());
         }
-        if (opt->Has(NanSymbol("max_cells"))) {
-            coverer.set_max_cells(opt->Get(NanSymbol("max_cells"))->ToInteger()->Value());
+        if (opt->Has(NanNew<String>("max_cells"))) {
+            coverer.set_max_cells(opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value());
         }
     }
 
@@ -60,7 +60,7 @@ NAN_METHOD(GetCover) {
         if (args.Length() > 1) {
             Handle<Object> opt = args[1]->ToObject();
             size_t count;
-            type = NanCString(opt->Get(NanSymbol("type")), &count);
+            type = NanCString(opt->Get(NanNew<String>("type")), &count);
         }
 
         if (type == "polygon") {
@@ -206,7 +206,7 @@ void RegisterModule(Handle<Object> exports) {
     CellId::Init(exports);
     Point::Init(exports);
     Interval::Init(exports);
-    exports->Set(NanSymbol("getCover"),
+    exports->Set(NanNew<String>("getCover"),
         NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }
 
