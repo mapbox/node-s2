@@ -59,8 +59,7 @@ NAN_METHOD(GetCover) {
 
         if (args.Length() > 1) {
             Handle<Object> opt = args[1]->ToObject();
-            size_t count;
-            type = NanCString(opt->Get(NanNew<String>("type")), &count);
+            type = *NanAsciiString(opt->Get(NanNew<String>("type")));
         }
 
         if (type == "polygon") {
@@ -111,7 +110,7 @@ NAN_METHOD(GetCover) {
         } else if (type == "polyline") {
             std::vector<S2Point> points;
 
-            for (size_t i = 0; i < array->Length(); ++i) {
+            for (std::size_t i = 0; i < array->Length(); ++i) {
                 Local<Object> obj = array->Get(i)->ToObject();
                 if (NanHasInstance(Point::constructor, obj)) {
                     S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
@@ -137,7 +136,7 @@ NAN_METHOD(GetCover) {
                 for (std::size_t i = 0; i < ringArray->Length(); ++i) {
                     std::vector<S2Point> points;
                     Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
-                    for (uint32_t ii = 0; ii < pointArray->Length(); ++ii) {
+                    for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
                         Local<Object> obj = pointArray->Get(ii)->ToObject();
                         if (NanHasInstance(Point::constructor, obj)) {
                             S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
