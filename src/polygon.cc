@@ -56,10 +56,7 @@ Handle<Value> Polygon::New(const Arguments& args) {
     }
 
     Polygon* obj = new Polygon();
-
     obj->Wrap(args.This());
-
-    Handle<Object> ll = args[0]->ToObject();
 
     return args.This();
 }
