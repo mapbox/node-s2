@@ -13,12 +13,8 @@ using std::reverse;
 #include <functional>
 using std::less;
 
-#ifdef __GNUC__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-using __gnu_cxx::hash_set;
+#include <unordered_set>
+using std::unordered_set;
 
 #include <queue>
 using std::priority_queue;
@@ -223,7 +219,7 @@ void S2RegionCoverer::GetInitialCandidates() {
       base.reserve(4);
       S2CellId id = S2CellId::FromPoint(cap.axis());
       id.AppendVertexNeighbors(level, &base);
-      for (int i = 0; i < base.size(); ++i) {
+      for (std::size_t i = 0; i < base.size(); ++i) {
         AddCandidate(NewCandidate(S2Cell(base[i])));
       }
       return;
@@ -257,14 +253,14 @@ void S2RegionCoverer::GetCoveringInternal(S2Region const& region) {
 
   GetInitialCandidates();
   while (!pq_->empty() &&
-         (!interior_covering_ || result_->size() < max_cells_)) {
+         (!interior_covering_ || result_->size() < (std::size_t)max_cells_)) {
     Candidate* candidate = pq_->top().second;
     pq_->pop();
     VLOG(2) << "Pop: " << candidate->cell.id();
     if (candidate->cell.level() < min_level_ ||
         candidate->num_children == 1 ||
         result_->size() + (interior_covering_ ? 0 : pq_->size()) +
-            candidate->num_children <= max_cells_) {
+            candidate->num_children <= (std::size_t)max_cells_) {
       // Expand this candidate into its children.
       for (int i = 0; i < candidate->num_children; ++i) {
         AddCandidate(candidate->children[i]);
@@ -326,7 +322,7 @@ void S2RegionCoverer::GetInteriorCellUnion(S2Region const& region,
 
 void S2RegionCoverer::FloodFill(
     S2Region const& region, S2CellId const& start, vector<S2CellId>* output) {
-  hash_set<S2CellId> all;
+  unordered_set<S2CellId> all;
   vector<S2CellId> frontier;
   output->clear();
   all.insert(start);

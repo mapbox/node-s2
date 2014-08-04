@@ -21,19 +21,11 @@ using std::max;
 using std::swap;
 using std::reverse;
 
-#if defined __GNUC__ || defined __APPLE__
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
-using __gnu_cxx::hash_map;
+#include <unordered_map>
+using std::unordered_map;
 
-#if defined __GNUC__ || defined __APPLE__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-using __gnu_cxx::hash_set;
+#include <unordered_set>
+using std::unordered_set;
 
 #include <iterator>
 #include <limits>
@@ -312,7 +304,7 @@ char *FastInt64ToBuffer(int64 i, char* buffer) {
 
 // Offset into buffer where FastInt32ToBuffer places the end of string
 // null character.  Also used by FastInt32ToBufferLeft
-static const int kFastInt32ToBufferOffset = 11;
+// static const int kFastInt32ToBufferOffset = 11;
 
 char *FastInt32ToBuffer(int32 i, char* buffer) {
   FastInt32ToBufferLeft(i, buffer);
@@ -487,7 +479,7 @@ bool DictionaryParse(const string& encoded_str,
                       vector<pair<string, string> >* items) {
   vector<string> entries;
   SplitStringUsing(encoded_str, ",", &entries);
-  for (int i = 0; i < entries.size(); ++i) {
+  for (std::size_t i = 0; i < entries.size(); ++i) {
     vector<string> fields;
     SplitStringAllowEmpty(entries[i], ":", &fields);
     if (fields.size() != 2) // parsing error

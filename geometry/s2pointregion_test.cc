@@ -2,6 +2,7 @@
 
 #include "s2pointregion.h"
 
+#include "base/scoped_ptr.h"
 #include "testing/base/public/gunit.h"
 #include "util/coding/coder.h"
 #include "s2cap.h"
@@ -18,7 +19,7 @@ TEST(S2PointRegionTest, Basic) {
   EXPECT_TRUE(r0.VirtualContainsPoint(p));
   EXPECT_TRUE(r0.VirtualContainsPoint(r0.point()));
   EXPECT_FALSE(r0.VirtualContainsPoint(S2Point(1, 0, 1)));
-  scoped_ptr<S2PointRegion> r0_clone(r0.Clone());
+  testing::internal::scoped_ptr<S2PointRegion> r0_clone(r0.Clone());
   EXPECT_EQ(r0_clone->point(), r0.point());
   EXPECT_EQ(r0.GetCapBound(), S2Cap::FromAxisHeight(p, 0));
   S2LatLng ll(p);

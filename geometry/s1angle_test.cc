@@ -105,7 +105,7 @@ TEST(S1Angle, ConstructorsThatMeasureAngles) {
 }
 
 TEST(S1Angle, TestFormatting) {
-  ostringstream ss;
+  std::ostringstream ss;
   ss << S1Angle::Degrees(180.0);
   EXPECT_EQ("180.0000000", ss.str());
 }

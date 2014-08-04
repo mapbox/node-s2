@@ -13,12 +13,8 @@ using std::multiset;
 #include <vector>
 using std::vector;
 
-#ifdef __GNUC__
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
-using __gnu_cxx::hash_map;
+#include <unordered_map>
+using std::unordered_map;
 
 #include <utility>
 using std::pair;
@@ -112,7 +108,7 @@ bool S2Loop::IsValid() const {
     }
   }
   // Loops are not allowed to have any duplicate vertices.
-  hash_map<S2Point, int> vmap;
+  unordered_map<S2Point, int> vmap;
   for (int i = 0; i < num_vertices(); ++i) {
     if (!vmap.insert(make_pair(vertex(i), i)).second) {
       VLOG(2) << "Duplicate vertices: " << vmap[vertex(i)] << " and " << i;

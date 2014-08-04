@@ -34,7 +34,7 @@
 #if defined __GNUC__ && __GNUC__ >= 2
 # define __bswap_16(x) \
      (__extension__							      \
-      ({ register unsigned short int __v, __x = (x);			      \
+      ({ unsigned short int __v, __x = (x);			      \
 	 if (__builtin_constant_p (__x))				      \
 	   __v = __bswap_constant_16 (__x);				      \
 	 else								      \
@@ -47,7 +47,7 @@
 /* This is better than nothing.  */
 # define __bswap_16(x) \
      (__extension__							      \
-      ({ register unsigned short int __x = (x); __bswap_constant_16 (__x); }))
+      ({ unsigned short int __x = (x); __bswap_constant_16 (__x); }))
 #endif
 
 
@@ -67,7 +67,7 @@
    `bswap' opcode.  On i386 we have to use three instructions.  */
 #  define __bswap_32(x) \
      (__extension__							      \
-      ({ register unsigned int __v, __x = (x);				      \
+      ({ unsigned int __v, __x = (x);				      \
 	 if (__builtin_constant_p (__x))				      \
 	   __v = __bswap_constant_32 (__x);				      \
 	 else								      \
@@ -76,7 +76,7 @@
 # else
 #  define __bswap_32(x)							      \
      (__extension__							      \
-      ({ register unsigned int __v, __x = (x);				      \
+      ({ unsigned int __v, __x = (x);				      \
 	 if (__builtin_constant_p (__x))				      \
 	   __v = __bswap_constant_32 (__x);				      \
 	 else								      \
@@ -91,7 +91,7 @@
 #else
 # define __bswap_32(x) \
      (__extension__							      \
-      ({ register unsigned int __x = (x); __bswap_constant_32 (__x); }))
+      ({ unsigned int __x = (x); __bswap_constant_32 (__x); }))
 #endif
 
 
@@ -110,7 +110,7 @@
 # if __WORDSIZE == 64
 #  define __bswap_64(x) \
      (__extension__							      \
-      ({ register unsigned long __v, __x = (x);				      \
+      ({ unsigned long __v, __x = (x);				      \
 	 if (__builtin_constant_p (__x))				      \
 	   __v = __bswap_constant_64 (__x);				      \
 	 else								      \

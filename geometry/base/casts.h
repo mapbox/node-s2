@@ -35,10 +35,10 @@
 // implicit_cast would have been part of the C++ standard library,
 // but the proposal was submitted too late.  It will probably make
 // its way into the language in the future.
-template<typename To, typename From>
-inline To implicit_cast(From const &f) {
-  return f;
-}
+// template<typename To, typename From>
+// inline To implicit_cast(From const &f) {
+//   return f;
+// }
 
 
 // When you upcast (that is, cast a pointer from type Foo to type
@@ -59,22 +59,22 @@ inline To implicit_cast(From const &f) {
 //    if (dynamic_cast<Subclass2>(foo)) HandleASubclass2Object(foo);
 // You should design the code some other way not to need this.
 
-template<typename To, typename From>     // use like this: down_cast<T*>(foo);
-inline To down_cast(From* f) {                   // so we only accept pointers
-  // Ensures that To is a sub-type of From *.  This test is here only
-  // for compile-time type checking, and has no overhead in an
-  // optimized build at run-time, as it will be optimized away
-  // completely.
+// template<typename To, typename From>     // use like this: down_cast<T*>(foo);
+// inline To down_cast(From* f) {                   // so we only accept pointers
+//   // Ensures that To is a sub-type of From *.  This test is here only
+//   // for compile-time type checking, and has no overhead in an
+//   // optimized build at run-time, as it will be optimized away
+//   // completely.
 
-  // TODO(user): This should use COMPILE_ASSERT.
-  if (false) {
-    implicit_cast<From*, To>(0);
-  }
+//   // TODO(user): This should use COMPILE_ASSERT.
+//   if (false) {
+//     implicit_cast<From*, To>(0);
+//   }
 
-  // uses RTTI in dbg and fastbuild. asserts are disabled in opt builds.
-  assert(f == NULL || dynamic_cast<To>(f) != NULL);
-  return static_cast<To>(f);
-}
+//   // uses RTTI in dbg and fastbuild. asserts are disabled in opt builds.
+//   assert(f == NULL || dynamic_cast<To>(f) != NULL);
+//   return static_cast<To>(f);
+// }
 
 // Overload of down_cast for references. Use like this: down_cast<T&>(foo).
 // The code is slightly convoluted because we're still using the pointer
@@ -84,18 +84,18 @@ inline To down_cast(From* f) {                   // so we only accept pointers
 // There's no need for a special const overload either for the pointer
 // or the reference form. If you call down_cast with a const T&, the
 // compiler will just bind From to const T.
-template<typename To, typename From>
-inline To down_cast(From& f) {
-  COMPILE_ASSERT(base::is_reference<To>::value, target_type_not_a_reference);
-  typedef typename base::remove_reference<To>::type* ToAsPointer;
-  if (false) {
-    // Compile-time check that To inherits from From. See above for details.
-    implicit_cast<From*, ToAsPointer>(0);
-  }
+// template<typename To, typename From>
+// inline To down_cast(From& f) {
+//   COMPILE_ASSERT(base::is_reference<To>::value, target_type_not_a_reference);
+//   typedef typename base::remove_reference<To>::type* ToAsPointer;
+//   if (false) {
+//     // Compile-time check that To inherits from From. See above for details.
+//     implicit_cast<From*, ToAsPointer>(0);
+//   }
 
-  assert(dynamic_cast<ToAsPointer>(&f) != NULL);  // RTTI: debug mode only
-  return static_cast<To>(f);
-}
+//   assert(dynamic_cast<ToAsPointer>(&f) != NULL);  // RTTI: debug mode only
+//   return static_cast<To>(f);
+// }
 
 // bit_cast<Dest,Source> is a template function that implements the
 // equivalent of "*reinterpret_cast<Dest*>(&source)".  We need this in

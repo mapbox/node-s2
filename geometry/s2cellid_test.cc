@@ -9,8 +9,8 @@ using std::swap;
 using std::reverse;
 
 #include <cstdio>
-#include <hash_map>
-using __gnu_cxx::hash_map;
+#include <unordered_map>
+using std::unordered_map;
 
 #include <sstream>
 #include <vector>
@@ -20,18 +20,18 @@ using std::vector;
 #include "base/commandlineflags.h"
 #include "base/integral_types.h"
 #include "base/logging.h"
-#include "base/malloc_interface.h"
-#include "base/sysinfo.h"
+// #include "base/malloc_interface.h"
+// #include "base/sysinfo.h"
 #include "testing/base/public/gunit.h"
 #include "s2.h"
 #include "s2latlng.h"
 #include "s2testing.h"
 #include "util/math/mathutil.h"
 
-#define int8 HTM_int8  // To avoid conflicts with our own 'int8'
-#include "third_party/htm/include/SpatialIndex.h"
-#include "third_party/htm/include/RangeConvex.h"
-#undef int8
+// #define int8 HTM_int8  // To avoid conflicts with our own 'int8'
+// #include "third_party/htm/include/SpatialIndex.h"
+// #include "third_party/htm/include/RangeConvex.h"
+// #undef int8
 
 DEFINE_int32(iters, 20000000,
              "Number of iterations for timing tests with optimized build");
@@ -42,7 +42,7 @@ DEFINE_int32(build_level, 5, "HTM build level to use");
 static S2CellId GetCellId(double lat_degrees, double lng_degrees) {
   S2CellId id = S2CellId::FromLatLng(S2LatLng::FromDegrees(lat_degrees,
                                                            lng_degrees));
-  LOG(INFO) << hex << id.id();
+  LOG(INFO) << std::hex << id.id();
   return id;
 }
 
@@ -170,7 +170,7 @@ TEST(S2CellId, Tokens) {
 static const int kMaxExpandLevel = 3;
 
 static void ExpandCell(S2CellId const& parent, vector<S2CellId>* cells,
-                       hash_map<S2CellId, S2CellId>* parent_map) {
+                       unordered_map<S2CellId, S2CellId>* parent_map) {
   cells->push_back(parent);
   if (parent.level() == kMaxExpandLevel) return;
   int i, j, orientation;
@@ -194,7 +194,7 @@ static void ExpandCell(S2CellId const& parent, vector<S2CellId>* cells,
 
 TEST(S2CellId, Containment) {
   // Test contains() and intersects().
-  hash_map<S2CellId, S2CellId> parent_map;
+  unordered_map<S2CellId, S2CellId> parent_map;
   vector<S2CellId> cells;
   for (int face = 0; face < 6; ++face) {
     ExpandCell(S2CellId::FromFacePosLevel(face, 0, 0), &cells, &parent_map);
@@ -327,7 +327,7 @@ TEST(S2CellId, Neighbors) {
 
 TEST(S2CellId, OutputOperator) {
   S2CellId cell(0xbb04000000000000ULL);
-  ostringstream s;
+  std::ostringstream s;
   s << cell;
   EXPECT_EQ("5/31200", s.str());
 }
@@ -414,64 +414,64 @@ TEST(S2CellId, FromPointBenchmark) {
   EXPECT_NE(isum, 0);  // Don't let the loop get optimized away.
 }
 
-TEST(S2CellId, HtmBenchmark) {
-  // This "test" is really a benchmark, so skip it unless we're optimized.
-  if (DEBUG_MODE) return;
+// TEST(S2CellId, HtmBenchmark) {
+//   // This "test" is really a benchmark, so skip it unless we're optimized.
+//   if (DEBUG_MODE) return;
 
-  // The HTM methods are about 100 times slower than the S2CellId methods,
-  // so we adjust the number of iterations accordingly.
-  int htm_iters = FLAGS_iters / 100;
+//   // The HTM methods are about 100 times slower than the S2CellId methods,
+//   // so we adjust the number of iterations accordingly.
+//   int htm_iters = FLAGS_iters / 100;
 
-  SpatialVector start(1, 0, -4);
-  double dz = (-2 * start.z()) / htm_iters;
-  double dt = 1.37482937133e-4;
+//   SpatialVector start(1, 0, -4);
+//   double dz = (-2 * start.z()) / htm_iters;
+//   double dt = 1.37482937133e-4;
 
-  double test_start = S2Testing::GetCpuTime();
-  uint64 mem_start = MemoryUsage(0);
-  MallocInterface* mi = MallocInterface::instance();
-  size_t heap_start, heap_end;
-  CHECK(mi->GetNumericProperty("generic.current_allocated_bytes", &heap_start));
-  SpatialIndex htm(FLAGS_htm_level, FLAGS_build_level);
-  double constructor_time = S2Testing::GetCpuTime() - test_start;
-  printf("\tHTM constructor time:  %12.3f ms\n", 1e3 * constructor_time);
-  printf("\tHTM heap size increase:   %9lld\n", MemoryUsage(0) - mem_start);
-  CHECK(mi->GetNumericProperty("generic.current_allocated_bytes", &heap_end));
-  printf("\tHTM heap bytes allocated: %9u\n", heap_end - heap_start);
+//   double test_start = S2Testing::GetCpuTime();
+//   uint64 mem_start = MemoryUsage(0);
+//   MallocInterface* mi = MallocInterface::instance();
+//   size_t heap_start, heap_end;
+//   CHECK(mi->GetNumericProperty("generic.current_allocated_bytes", &heap_start));
+//   SpatialIndex htm(FLAGS_htm_level, FLAGS_build_level);
+//   double constructor_time = S2Testing::GetCpuTime() - test_start;
+//   printf("\tHTM constructor time:  %12.3f ms\n", 1e3 * constructor_time);
+//   printf("\tHTM heap size increase:   %9lld\n", MemoryUsage(0) - mem_start);
+//   CHECK(mi->GetNumericProperty("generic.current_allocated_bytes", &heap_end));
+//   printf("\tHTM heap bytes allocated: %9u\n", heap_end - heap_start);
 
-  test_start = S2Testing::GetCpuTime();
-  double sum = 0;
-  SpatialVector v = start;
-  for (int i = htm_iters; i > 0; --i) {
-    v.set(v.x() - dt * v.y(), v.y() + dt * v.x(), v.z() + dz);
-    sum += v.x();
-  }
-  double htm_control = S2Testing::GetCpuTime() - test_start;
-  printf("\tHTM Control:   %8.3f usecs\n", 1e6 * htm_control / htm_iters);
-  EXPECT_NE(sum, 0);  // Don't let the loop get optimized away.
+//   test_start = S2Testing::GetCpuTime();
+//   double sum = 0;
+//   SpatialVector v = start;
+//   for (int i = htm_iters; i > 0; --i) {
+//     v.set(v.x() - dt * v.y(), v.y() + dt * v.x(), v.z() + dz);
+//     sum += v.x();
+//   }
+//   double htm_control = S2Testing::GetCpuTime() - test_start;
+//   printf("\tHTM Control:   %8.3f usecs\n", 1e6 * htm_control / htm_iters);
+//   EXPECT_NE(sum, 0);  // Don't let the loop get optimized away.
 
-  // Keeping the returned ids in a vector adds a negligible amount of time
-  // to the idByPoint test and makes it much easier to test pointById.
-  vector<uint64> ids(htm_iters);
-  test_start = S2Testing::GetCpuTime();
-  v = start;
-  for (int i = htm_iters; i > 0; --i) {
-    v.set(v.x() - dt * v.y(), v.y() + dt * v.x(), v.z() + dz);
-    ids[i-1] = htm.idByPoint(v);
-  }
-  double idByPoint_time = S2Testing::GetCpuTime() - test_start - htm_control;
-  printf("\tHTM FromPoint: %8.3f usecs\n",
-          1e6 * idByPoint_time / htm_iters);
+//   // Keeping the returned ids in a vector adds a negligible amount of time
+//   // to the idByPoint test and makes it much easier to test pointById.
+//   vector<uint64> ids(htm_iters);
+//   test_start = S2Testing::GetCpuTime();
+//   v = start;
+//   for (int i = htm_iters; i > 0; --i) {
+//     v.set(v.x() - dt * v.y(), v.y() + dt * v.x(), v.z() + dz);
+//     ids[i-1] = htm.idByPoint(v);
+//   }
+//   double idByPoint_time = S2Testing::GetCpuTime() - test_start - htm_control;
+//   printf("\tHTM FromPoint: %8.3f usecs\n",
+//           1e6 * idByPoint_time / htm_iters);
 
-  test_start = S2Testing::GetCpuTime();
-  sum = 0;
-  v = start;
-  for (int i = htm_iters; i > 0; --i) {
-    SpatialVector v2;
-    htm.pointById(v2, ids[i-1]);
-    sum += v2.x();
-  }
-  double pointById_time = S2Testing::GetCpuTime() - test_start;
-  printf("\tHTM ToPoint:   %8.3f usecs\n",
-          1e6 * pointById_time / htm_iters);
-  EXPECT_NE(sum, 0);  // Don't let the loop get optimized away.
-}
+//   test_start = S2Testing::GetCpuTime();
+//   sum = 0;
+//   v = start;
+//   for (int i = htm_iters; i > 0; --i) {
+//     SpatialVector v2;
+//     htm.pointById(v2, ids[i-1]);
+//     sum += v2.x();
+//   }
+//   double pointById_time = S2Testing::GetCpuTime() - test_start;
+//   printf("\tHTM ToPoint:   %8.3f usecs\n",
+//           1e6 * pointById_time / htm_iters);
+//   EXPECT_NE(sum, 0);  // Don't let the loop get optimized away.
+// }
