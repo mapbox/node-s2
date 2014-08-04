@@ -8,7 +8,7 @@ test('S2Cap', function(t) {
     t.ok(ll, 'generates cap object');
     t.ok(ll.getRectBound() instanceof s2.S2LatLngRect, '.getRectBound');
     t.equal(ll.intersects(ll2), true, '.intersects');
-    t.equal(ll.intersects(ll2), true, '.contains');
+    t.equal(ll.interiorIntersects(ll2), true, '.interiorIntersects');
     t.ok(ll.complement() instanceof s2.S2Cap, '.complement');
 
     t.end();

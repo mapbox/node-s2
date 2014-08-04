@@ -253,6 +253,12 @@ Return true if and only if this cap contains the given other cap
 Return true if and only if this cap intersects the given other cap,
 i.e. whether they have any points in common.
 
+## cap.interiorIntersects(other:s2.S2Cap) -> boolean
+
+Return true if and only if the interior of this cap intersects the
+given other cap.  (This relationship is not symmetric, since only
+the interior of this cap is used.)
+
 ## cap.getRectBound() -> s2.S2LatLngRect
 
 # s2.S1Angle(a:s2.Point, b:s2.Point)

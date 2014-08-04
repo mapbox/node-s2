@@ -18,6 +18,7 @@ protected:
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
     static NAN_METHOD(GetRectBound);
     static NAN_METHOD(Intersects);
+    static NAN_METHOD(InteriorIntersects);
     static NAN_METHOD(Contains);
     static NAN_METHOD(Complement);
 

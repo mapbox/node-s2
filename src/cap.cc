@@ -25,6 +25,7 @@ void Cap::Init(Handle<Object> target) {
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "getRectBound", GetRectBound);
     NODE_SET_PROTOTYPE_METHOD(constructor, "intersects", Intersects);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "interiorIntersects", InteriorIntersects);
     NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
     NODE_SET_PROTOTYPE_METHOD(constructor, "complement", Complement);
 
@@ -85,6 +86,13 @@ NAN_METHOD(Cap::GetRectBound) {
 }
 
 NAN_METHOD(Cap::Intersects) {
+    NanScope();
+    Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
+    S2Cap other = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
+    NanReturnValue(NanNew<Boolean>(cap->this_.Intersects(other)));
+}
+
+NAN_METHOD(Cap::InteriorIntersects) {
     NanScope();
     Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
     S2Cap other = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
