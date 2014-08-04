@@ -35,10 +35,10 @@
 // implicit_cast would have been part of the C++ standard library,
 // but the proposal was submitted too late.  It will probably make
 // its way into the language in the future.
-// template<typename To, typename From>
-// inline To implicit_cast(From const &f) {
-//   return f;
-// }
+template<typename To, typename From>
+inline To implicit_cast(From const &f) {
+  return f;
+}
 
 
 // When you upcast (that is, cast a pointer from type Foo to type
@@ -331,7 +331,7 @@ inline bool loose_enum_test(int e_val) {
 
 template <typename Enum>
 inline bool tight_enum_test(int e_val) {
-  static_assert(enum_limits<Enum>::is_specialized, missing_MAKE_ENUM_LIMITS);
+  static_assert(enum_limits<Enum>::is_specialized, "missing_MAKE_ENUM_LIMITS");
   const Enum e_min = enum_limits<Enum>::min_enumerator;
   const Enum e_max = enum_limits<Enum>::max_enumerator;
   return e_min <= e_val && e_val <= e_max;

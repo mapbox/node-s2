@@ -43,8 +43,7 @@
 // struct CompileAssert {
 // };
 
-// #define COMPILE_ASSERT(expr, msg) \
-//   typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
+// #define COMPILE_ASSERT(expr, msg) typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
 
 // NOTE: switched to static_assert
 
