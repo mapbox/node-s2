@@ -72,11 +72,11 @@ NAN_METHOD(GetCover) {
             S2Polygon polygon;
             std::vector<S2Point> rings;
 
-            for (uint32_t i = 0; i < array->Length(); i++) {
+            for (size_t i = 0; i < array->Length(); i++) {
                 std::vector<S2Point> points;
                 Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
 
-                for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
+                for (size_t ii = 0; ii < pointArray->Length(); ii++) {
                     Local<Object> obj = pointArray->Get(ii)->ToObject();
                     if (NanHasInstance(Point::constructor, obj)) {
                         S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
@@ -111,7 +111,7 @@ NAN_METHOD(GetCover) {
         } else if (type == "polyline") {
             std::vector<S2Point> points;
 
-            for (uint32_t i = 0; i < array->Length(); i++) {
+            for (size_t i = 0; i < array->Length(); i++) {
                 Local<Object> obj = array->Get(i)->ToObject();
                 if (NanHasInstance(Point::constructor, obj)) {
                     S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
@@ -132,12 +132,12 @@ NAN_METHOD(GetCover) {
             S2Polygon polygon;
             std::vector<S2Point> rings;
 
-            for (uint32_t k = 0; k < array->Length(); k++) {
+            for (size_t k = 0; k < array->Length(); k++) {
                 Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
-                for (uint32_t i = 0; i < ringArray->Length(); i++) {
+                for (size_t i = 0; i < ringArray->Length(); i++) {
                     std::vector<S2Point> points;
                     Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
-                    for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
+                    for (size_t ii = 0; ii < pointArray->Length(); ii++) {
                         Local<Object> obj = pointArray->Get(ii)->ToObject();
                         if (NanHasInstance(Point::constructor, obj)) {
                             S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
@@ -186,7 +186,7 @@ NAN_METHOD(GetCover) {
 
     Local<Array> out = Array::New(cellids_vector.size());
 
-    for (int i = 0; i < cellids_vector.size(); i++) {
+    for (size_t i = 0; i < cellids_vector.size(); i++) {
         out->Set(i, Cell::New(cellids_vector.at(i)));
     }
     if(cellids_vector.size() < 1){
