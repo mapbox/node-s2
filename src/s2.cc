@@ -59,8 +59,7 @@ NAN_METHOD(GetCover) {
 
         if (args.Length() > 1) {
             Handle<Object> opt = args[1]->ToObject();
-            size_t count;
-            type = NanCString(opt->Get(NanNew<String>("type")), &count);
+            type = *NanAsciiString(opt->Get(NanNew<String>("type")));
         }
 
         if (type == "polygon") {
