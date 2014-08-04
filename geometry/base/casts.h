@@ -59,22 +59,22 @@
 //    if (dynamic_cast<Subclass2>(foo)) HandleASubclass2Object(foo);
 // You should design the code some other way not to need this.
 
-// template<typename To, typename From>     // use like this: down_cast<T*>(foo);
-// inline To down_cast(From* f) {                   // so we only accept pointers
-//   // Ensures that To is a sub-type of From *.  This test is here only
-//   // for compile-time type checking, and has no overhead in an
-//   // optimized build at run-time, as it will be optimized away
-//   // completely.
+template<typename To, typename From>     // use like this: down_cast<T*>(foo);
+inline To down_cast(From* f) {                   // so we only accept pointers
+  // Ensures that To is a sub-type of From *.  This test is here only
+  // for compile-time type checking, and has no overhead in an
+  // optimized build at run-time, as it will be optimized away
+  // completely.
 
-//   // TODO(user): This should use COMPILE_ASSERT.
-//   if (false) {
-//     implicit_cast<From*, To>(0);
-//   }
+  // TODO(user): This should use COMPILE_ASSERT.
+  if (false) {
+    implicit_cast<From*, To>(0);
+  }
 
-//   // uses RTTI in dbg and fastbuild. asserts are disabled in opt builds.
-//   assert(f == NULL || dynamic_cast<To>(f) != NULL);
-//   return static_cast<To>(f);
-// }
+  // uses RTTI in dbg and fastbuild. asserts are disabled in opt builds.
+  assert(f == NULL || dynamic_cast<To>(f) != NULL);
+  return static_cast<To>(f);
+}
 
 // Overload of down_cast for references. Use like this: down_cast<T&>(foo).
 // The code is slightly convoluted because we're still using the pointer
@@ -84,18 +84,18 @@
 // There's no need for a special const overload either for the pointer
 // or the reference form. If you call down_cast with a const T&, the
 // compiler will just bind From to const T.
-// template<typename To, typename From>
-// inline To down_cast(From& f) {
-//   COMPILE_ASSERT(base::is_reference<To>::value, target_type_not_a_reference);
-//   typedef typename base::remove_reference<To>::type* ToAsPointer;
-//   if (false) {
-//     // Compile-time check that To inherits from From. See above for details.
-//     implicit_cast<From*, ToAsPointer>(0);
-//   }
+template<typename To, typename From>
+inline To down_cast(From& f) {
+  static_assert(base::is_reference<To>::value, "target_type_not_a_reference");
+  typedef typename base::remove_reference<To>::type* ToAsPointer;
+  if (false) {
+    // Compile-time check that To inherits from From. See above for details.
+    implicit_cast<From*, ToAsPointer>(0);
+  }
 
-//   assert(dynamic_cast<ToAsPointer>(&f) != NULL);  // RTTI: debug mode only
-//   return static_cast<To>(f);
-// }
+  assert(dynamic_cast<ToAsPointer>(&f) != NULL);  // RTTI: debug mode only
+  return static_cast<To>(f);
+}
 
 // bit_cast<Dest,Source> is a template function that implements the
 // equivalent of "*reinterpret_cast<Dest*>(&source)".  We need this in
@@ -246,8 +246,8 @@ public: \
   static const ENUM_TYPE min_enumerator = ENUM_MIN; \
   static const ENUM_TYPE max_enumerator = ENUM_MAX; \
   static const bool is_specialized = true; \
-  COMPILE_ASSERT(ENUM_MIN >= INT_MIN, enumerator_too_negative_for_int); \
-  COMPILE_ASSERT(ENUM_MAX <= INT_MAX, enumerator_too_positive_for_int); \
+  static_assert(ENUM_MIN >= INT_MIN, "enumerator_too_negative_for_int"); \
+  static_assert(ENUM_MAX <= INT_MAX, "enumerator_too_positive_for_int"); \
 };
 
 // The loose enum test/cast is actually the more complicated one,
@@ -277,10 +277,10 @@ public: \
 
 template <typename Enum>
 inline bool loose_enum_test(int e_val) {
-  COMPILE_ASSERT(enum_limits<Enum>::is_specialized, missing_MAKE_ENUM_LIMITS);
+  static_assert(enum_limits<Enum>::is_specialized, "missing_MAKE_ENUM_LIMITS");
   const Enum e_min = enum_limits<Enum>::min_enumerator;
   const Enum e_max = enum_limits<Enum>::max_enumerator;
-  COMPILE_ASSERT(sizeof(e_val) == 4 || sizeof(e_val) == 8, unexpected_int_size);
+  static_assert(sizeof(e_val) == 4 || sizeof(e_val) == 8, "unexpected_int_size");
 
   // Find the unary bounding negative number of e_min and e_max.
 
@@ -331,7 +331,7 @@ inline bool loose_enum_test(int e_val) {
 
 template <typename Enum>
 inline bool tight_enum_test(int e_val) {
-  COMPILE_ASSERT(enum_limits<Enum>::is_specialized, missing_MAKE_ENUM_LIMITS);
+  static_assert(enum_limits<Enum>::is_specialized, missing_MAKE_ENUM_LIMITS);
   const Enum e_min = enum_limits<Enum>::min_enumerator;
   const Enum e_max = enum_limits<Enum>::max_enumerator;
   return e_min <= e_val && e_val <= e_max;
