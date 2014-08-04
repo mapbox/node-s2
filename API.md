@@ -210,7 +210,7 @@ either the latitude or longitude bound is empty then both must be.
 
 Return true if the rectangle is a point, i.e. lo() == hi()
 
-# s2.S2Cap()
+# s2.S2Cap(S2Point, height: number)
 
 This class represents a spherical cap, i.e. a portion of a sphere cut off
 by a plane.  The cap is defined by its axis and height.  This
@@ -232,6 +232,8 @@ and the radius of cap's base (a).  All formulas assume a unit radius.
 Caps may be constructed from either an axis and a height, or an axis and
 an angle.  To avoid ambiguity, there are no public constructors except
 the default constructor.
+
+`node-s2` uses the `FromAxisHeight` constructor by default.
 
 ## cap.complement() -> s2.S2Cap
 

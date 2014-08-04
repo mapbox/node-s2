@@ -6,6 +6,7 @@
 #include "s2.h"
 #include "s2cap.h"
 #include "s2latlngrect.h"
+#include "point.h"
 #include "cap.h"
 #include "latlngrect.h"
 
@@ -49,14 +50,20 @@ Handle<Value> Cap::New(const Arguments& args) {
         return args.This();
     }
 
-
     Cap* obj = new Cap();
 
     obj->Wrap(args.This());
 
-    obj->this_ = S2Cap();
-
-    if (args.Length() == 0) {
+    if (args.Length() == 2 && args[1]->IsNumber()) {
+        Handle<Object> fromObj = args[0]->ToObject();
+        if (NanHasInstance(Point::constructor, fromObj)) {
+            S2Point p = node::ObjectWrap::Unwrap<Point>(fromObj)->get();
+            obj->this_ = S2Cap::FromAxisHeight(p, args[1]->ToNumber()->Value());
+        } else {
+            return NanThrowError("S2Cap requires arguments (S2Point, number)");
+        }
+    } else {
+        return NanThrowError("S2Cap requires arguments (S2Point, number)");
     }
 
     return args.This();
