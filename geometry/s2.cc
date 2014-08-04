@@ -20,7 +20,7 @@ COMPILE_ASSERT(S2::kSwapMask == 0x01 && S2::kInvertMask == 0x02,
 
 DEFINE_bool(s2debug, false, "");
 
-static const uint32 MIX32 = 0x12b9b0a1UL;
+// static const uint32 MIX32 = 0x12b9b0a1UL;
 
 #include <unordered_set>
 
