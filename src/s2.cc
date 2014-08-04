@@ -77,7 +77,6 @@ NAN_METHOD(GetCover) {
                 Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
 
                 for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
-                    S2LatLng pt = S2LatLng(node::ObjectWrap::Unwrap<Point>(pointArray->Get(ii)->ToObject())->get());
                     Local<Object> obj = pointArray->Get(ii)->ToObject();
                     if (NanHasInstance(Point::constructor, obj)) {
                         S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
@@ -139,7 +138,6 @@ NAN_METHOD(GetCover) {
                     std::vector<S2Point> points;
                     Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
                     for (uint32_t ii = 0; ii < pointArray->Length(); ii++) {
-                        S2LatLng pt = S2LatLng(node::ObjectWrap::Unwrap<Point>(pointArray->Get(ii)->ToObject())->get());
                         Local<Object> obj = pointArray->Get(ii)->ToObject();
                         if (NanHasInstance(Point::constructor, obj)) {
                             S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
