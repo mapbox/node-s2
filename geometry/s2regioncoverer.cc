@@ -219,7 +219,7 @@ void S2RegionCoverer::GetInitialCandidates() {
       base.reserve(4);
       S2CellId id = S2CellId::FromPoint(cap.axis());
       id.AppendVertexNeighbors(level, &base);
-      for (int i = 0; i < base.size(); ++i) {
+      for (std::size_t i = 0; i < base.size(); ++i) {
         AddCandidate(NewCandidate(S2Cell(base[i])));
       }
       return;
@@ -253,14 +253,14 @@ void S2RegionCoverer::GetCoveringInternal(S2Region const& region) {
 
   GetInitialCandidates();
   while (!pq_->empty() &&
-         (!interior_covering_ || result_->size() < max_cells_)) {
+         (!interior_covering_ || result_->size() < (std::size_t)max_cells_)) {
     Candidate* candidate = pq_->top().second;
     pq_->pop();
     VLOG(2) << "Pop: " << candidate->cell.id();
     if (candidate->cell.level() < min_level_ ||
         candidate->num_children == 1 ||
         result_->size() + (interior_covering_ ? 0 : pq_->size()) +
-            candidate->num_children <= max_cells_) {
+            candidate->num_children <= (std::size_t)max_cells_) {
       // Expand this candidate into its children.
       for (int i = 0; i < candidate->num_children; ++i) {
         AddCandidate(candidate->children[i]);
