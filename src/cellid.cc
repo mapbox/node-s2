@@ -75,8 +75,7 @@ Handle<Value> CellId::New(const Arguments& args) {
             S2LatLng ll = node::ObjectWrap::Unwrap<LatLng>(fromObj)->get();
             obj->this_ = S2CellId::FromLatLng(ll);
         } else if (args[0]->IsString()) {
-            size_t count;
-            char* strnum = NanCString(args[0], &count);
+            char* strnum = *NanAsciiString(args[0]);
             obj->this_ = S2CellId(ParseLeadingUInt64Value(strnum, 0));
         } else {
             return NanThrowError("Invalid input");
@@ -102,8 +101,7 @@ NAN_METHOD(CellId::FromToken) {
     if (args.Length() != 1 || !args[0]->IsString()) {
         return NanThrowError("(str) required");
     }
-    size_t count;
-    char* strtoken = NanCString(args[0], &count);
+    char* strtoken = *NanAsciiString(args[0]);
     CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
     obj->this_ = S2CellId::FromToken(strtoken);
     NanReturnValue(args.This());
