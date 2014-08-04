@@ -128,7 +128,7 @@ class S2EdgeIndex {
 
     // Index within array above.
     // We have: current_index_ = candidates_[current_index_in_candidates_].
-    int current_index_in_candidates_;
+    std::size_t current_index_in_candidates_;
 
     DISALLOW_COPY_AND_ASSIGN(Iterator);
   };

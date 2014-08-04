@@ -2,6 +2,7 @@
 
 #include "util/math/exactfloat/exactfloat.h"
 #include <cstring>
+#include <cmath>
 
 #include <math.h>
 #include <algorithm>
@@ -86,6 +87,9 @@ static int BN_ext_count_low_zero_bits(const BIGNUM* bn) {
 
 ExactFloat::ExactFloat(double v) {
   BN_init(&bn_);
+#if __cplusplus > 199711L
+  using std::signbit;
+#endif
   sign_ = signbit(v) ? -1 : 1;
   if (isnan(v)) {
     set_nan();
@@ -328,7 +332,7 @@ string ExactFloat::ToStringWithMaxDigits(int max_digits) const {
     // Use fixed format.  We split this into two cases depending on whether
     // the integer portion is non-zero or not.
     if (exp10 > 0) {
-      if (exp10 >= digits.size()) {
+      if (exp10 >= (int)digits.size()) {
         str += digits;
         for (int i = exp10 - digits.size(); i > 0; --i) {
           str.push_back('0');

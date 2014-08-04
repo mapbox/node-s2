@@ -6,8 +6,8 @@ using std::max;
 using std::swap;
 using std::reverse;
 
-#include <hash_set>
-using __gnu_cxx::hash_set;
+#include <unordered_set>
+using std::unordered_set;
 
 #include "s2.h"
 #include "base/logging.h"
@@ -371,7 +371,7 @@ class RobustCCWTest : public testing::Test {
   // The following method is used to sort a collection of points in CCW order
   // around a given origin.  It returns true if A comes before B in the CCW
   // ordering (starting at an arbitrary fixed direction).
-  class LessCCW : public binary_function<S2Point const&, S2Point const&, bool> {
+  class LessCCW : public std::binary_function<S2Point const&, S2Point const&, bool> {
    public:
     LessCCW(S2Point const& origin, S2Point const& start)
         : origin_(origin), start_(start) {
@@ -440,7 +440,7 @@ class RobustCCWTest : public testing::Test {
     // should be CCW.
     EXPECT_EQ(n * (n-1) / 2, total_num_ccw);
   }
-      
+
   static void AddNormalized(S2Point const& a, vector<S2Point>* points) {
     points->push_back(a.Normalize());
   }
@@ -704,9 +704,9 @@ TEST(S2, Frames) {
 
 TEST(S2, S2PointHashSpreads) {
   int kTestPoints = 1 << 16;
-  hash_set<size_t> set;
-  hash_set<S2Point> points;
-  hash<S2Point> hasher;
+  unordered_set<size_t> set;
+  unordered_set<S2Point> points;
+  std::hash<S2Point> hasher;
   S2Point base = S2Point(1, 1, 1);
   for (int i = 0; i < kTestPoints; ++i) {
     // All points in a tiny cap to test avalanche property of hash
@@ -727,7 +727,7 @@ TEST(S2, S2PointHashCollapsesZero) {
   double minus_zero = -zero;
   EXPECT_NE(*reinterpret_cast<uint64 const*>(&zero),
             *reinterpret_cast<uint64 const*>(&minus_zero));
-  hash_map<S2Point, int> map;
+  unordered_map<S2Point, int> map;
   S2Point zero_pt(zero, zero, zero);
   S2Point minus_zero_pt(minus_zero, minus_zero, minus_zero);
 

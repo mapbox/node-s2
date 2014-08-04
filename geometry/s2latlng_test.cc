@@ -5,7 +5,7 @@
 #include "base/stringprintf.h"
 #include "strings/split.h"
 #include "testing/base/public/gunit.h"
-#include "testing/base/public/benchmark.h"
+// #include "testing/base/public/benchmark.h"
 #include "s2testing.h"
 
 TEST(S2LatLng, TestBasic) {
@@ -133,4 +133,4 @@ static void BM_ToPoint(int iters) {
       ll.ToPoint();
     }
 }
-BENCHMARK(BM_ToPoint);
+// BENCHMARK(BM_ToPoint);
