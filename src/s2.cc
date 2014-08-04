@@ -189,7 +189,7 @@ NAN_METHOD(GetCover) {
     for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
         out->Set(i, Cell::New(cellids_vector.at(i)));
     }
-    if(cellids_vector.size() < 1){
+    if(cellids_vector.empty()){
         //return NanThrowError("NO CELLS WERE FOUND");
     }
     NanReturnValue(out);
