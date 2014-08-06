@@ -147,10 +147,9 @@ NAN_METHOD(Polyline::NearlyCoversPolyline) {
     NanReturnValue(NanNew<Boolean>(polyline->this_.NearlyCoversPolyline(other, max_error)));
 }
 
-  // virtual S2LatLngRect GetRectBound() const;
-
 NAN_METHOD(Polyline::GetRectBound) {
     NanScope();
+    Polyline* polyline = node::ObjectWrap::Unwrap<Polyline>(args.This());
     NanReturnValue(LatLngRect::New(polyline->this_.GetRectBound()));
 }
 
@@ -160,9 +159,3 @@ NAN_METHOD(Polyline::Contains) {
     S2Cell other = node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
     NanReturnValue(NanNew<Boolean>(polyline->this_.Contains(other)));
 }
-
-// NAN_METHOD(Polyline::IsValid) {
-//     NanScope();
-//     Polyline* polyline = node::ObjectWrap::Unwrap<Polyline>(args.This());
-//     NanReturnValue(NanNew<Boolean>(polyline->this_.is_valid()));
-// }
