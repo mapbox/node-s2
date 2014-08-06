@@ -1,6 +1,6 @@
 {
   "name": "s2",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "main": "index.js",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build",
