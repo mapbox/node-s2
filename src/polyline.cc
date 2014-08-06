@@ -129,6 +129,7 @@ NAN_METHOD(Polyline::Reverse) {
     NanScope();
     Polyline* polyline = node::ObjectWrap::Unwrap<Polyline>(args.This());
     polyline->this_.Reverse();
+    NanReturnUndefined();
 }
 
 NAN_METHOD(Polyline::ApproxEquals) {
