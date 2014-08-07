@@ -10,6 +10,7 @@
         "./src/cellid.cc",
         "./src/point.cc",
         "./src/polygon.cc",
+        "./src/polyline.cc",
         "./src/interval.cc",
         "./src/cap.cc",
         "./geometry/s2.cc",

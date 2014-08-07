@@ -15,8 +15,8 @@ int const S2::kSwapMask;
 int const S2::kInvertMask;
 double const S2::kMaxDetError = 0.8e-15;  // 14 * (2**-54)
 
-COMPILE_ASSERT(S2::kSwapMask == 0x01 && S2::kInvertMask == 0x02,
-               masks_changed);
+static_assert(S2::kSwapMask == 0x01 && S2::kInvertMask == 0x02,
+               "masks_changed");
 
 DEFINE_bool(s2debug, false, "");
 

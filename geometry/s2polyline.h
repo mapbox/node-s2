@@ -188,7 +188,7 @@ class S2Polyline : public S2Region {
   int num_vertices_;
   S2Point* vertices_;
 
-  DISALLOW_EVIL_CONSTRUCTORS(S2Polyline);
+ // DISALLOW_EVIL_CONSTRUCTORS(S2Polyline);
 };
 
 #endif  // UTIL_GEOMETRY_S2POLYLINE_H__

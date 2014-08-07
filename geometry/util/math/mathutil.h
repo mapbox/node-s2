@@ -288,8 +288,8 @@ class MathUtil {
   // --------------------------------------------------------------------
   template <class IntOut, class FloatIn>
   static IntOut Round(FloatIn x) {
-    COMPILE_ASSERT(!MathLimits<FloatIn>::kIsInteger, FloatIn_is_integer);
-    COMPILE_ASSERT(MathLimits<IntOut>::kIsInteger, IntOut_is_not_integer);
+    static_assert(!MathLimits<FloatIn>::kIsInteger, "FloatIn_is_integer");
+    static_assert(MathLimits<IntOut>::kIsInteger, "IntOut_is_not_integer");
 
     // We don't use sgn(x) below because there is no need to distinguish the
     // (x == 0) case.  Also note that there are specialized faster versions

@@ -39,12 +39,13 @@
 // the expression is false, most compilers will issue a warning/error
 // containing the name of the variable.
 
-template <bool>
-struct CompileAssert {
-};
+// template <bool>
+// struct CompileAssert {
+// };
 
-#define COMPILE_ASSERT(expr, msg) \
-  typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
+// #define COMPILE_ASSERT(expr, msg) typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
+
+// NOTE: switched to static_assert
 
 // Implementation details of COMPILE_ASSERT:
 //
