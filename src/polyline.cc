@@ -6,6 +6,7 @@
 #include "angle.h"
 #include "cap.h"
 #include "cell.h"
+#include "latlng.h"
 #include "latlngrect.h"
 #include "point.h"
 #include "polyline.h"
@@ -14,6 +15,9 @@
 #include "s2cell.h"
 #include "s2latlngrect.h"
 #include "s2polyline.h"
+
+#include <string>
+#include <vector>
 
 using namespace v8;
 
@@ -39,6 +43,7 @@ void Polyline::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "nearlyCoversPolyline", NearlyCoversPolyline);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getRectBound", GetRectBound);
     NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "size", Size);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -62,17 +67,33 @@ Handle<Value> Polyline::New(const Arguments& args) {
         return args.This();
     }
 
-
-    Polyline* obj = new Polyline();
-
-    obj->Wrap(args.This());
-
-    obj->this_ = S2Polyline();
-
-    if (args.Length() == 0) {
-        return NanThrowError("(latlng) required");
+    if (args.Length() != 1) {
+        return NanThrowError("array<LatLng> required");
     }
 
+    if (!args[0]->IsArray()) {
+       return NanThrowError("array<LatLng> required");
+    }
+
+    // unwrap array into std::vector
+    v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(args[0]);
+    std::vector<S2LatLng> coordinate_vector;
+    for (unsigned i = 0; i < array->Length(); i++) {
+        v8::Handle<v8::Value> value = array->Get(i);
+        if (value->IsUndefined() || value->IsNull()) {
+            return NanThrowError("array entry undefined");
+        }
+        LatLng* ll = node::ObjectWrap::Unwrap<LatLng>(value->ToObject());
+        coordinate_vector.emplace_back(ll->get());
+        // TODO: complete
+
+        std::cout << "[" << i << "] " << coordinate_vector.at(i).lat() << "," << coordinate_vector.at(i).lng() << std::endl;
+    }
+    Polyline* obj = new Polyline();
+    obj->Wrap(args.This());
+
+    // pass std::vector<S2LatLng> to c'tor
+    obj->this_ = S2Polyline(coordinate_vector);
     return args.This();
 }
 
@@ -159,4 +180,10 @@ NAN_METHOD(Polyline::Contains) {
     Polyline* polyline = node::ObjectWrap::Unwrap<Polyline>(args.This());
     S2Cell other = node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
     NanReturnValue(NanNew<Boolean>(polyline->this_.Contains(other)));
+}
+
+NAN_METHOD(Polyline::Size) {
+    NanScope();
+    Polyline* polyline = node::ObjectWrap::Unwrap<Polyline>(args.This());
+    NanReturnValue(NanNew<Integer>(polyline->this_.num_vertices()));
 }

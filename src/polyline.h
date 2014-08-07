@@ -27,6 +27,7 @@ protected:
     static NAN_METHOD(NearlyCoversPolyline);
     static NAN_METHOD(GetRectBound);
     static NAN_METHOD(Contains);
+    static NAN_METHOD(Size);
 
     S2Polyline this_;
 };
