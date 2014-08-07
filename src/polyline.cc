@@ -39,7 +39,6 @@ void Polyline::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "nearlyCoversPolyline", NearlyCoversPolyline);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getRectBound", GetRectBound);
     NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
-    // NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -71,6 +70,7 @@ Handle<Value> Polyline::New(const Arguments& args) {
     obj->this_ = S2Polyline();
 
     if (args.Length() == 0) {
+        return NanThrowError("(latlng) required");
     }
 
     return args.This();
