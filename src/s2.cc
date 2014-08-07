@@ -18,6 +18,7 @@
 #include "cellid.h"
 #include "interval.h"
 #include "point.h"
+#include "polyline.h"
 #include "cap.h"
 #include "regioncoverer.h"
 #include "angle.h"
@@ -203,6 +204,7 @@ void RegisterModule(Handle<Object> exports) {
     CellId::Init(exports);
     Point::Init(exports);
     Interval::Init(exports);
+    Polyline::Init(exports);
     exports->Set(NanNew<String>("getCover"),
         NanNew<FunctionTemplate>(GetCover)->GetFunction());
 }
