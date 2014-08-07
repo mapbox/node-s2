@@ -87,7 +87,7 @@ Handle<Value> Polyline::New(const Arguments& args) {
         coordinate_vector.emplace_back(ll->get());
         // TODO: complete
 
-        std::cout << "[" << i << "] " << coordinate_vector.at(i).lat() << "," << coordinate_vector.at(i).lng() << std::endl;
+        // std::cout << "[" << i << "] " << coordinate_vector.at(i).lat() << "," << coordinate_vector.at(i).lng() << std::endl;
     }
     Polyline* obj = new Polyline();
     obj->Wrap(args.This());
