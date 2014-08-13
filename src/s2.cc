@@ -1,5 +1,6 @@
 #include <node.h>
 #include <nan.h>
+#include <memory>
 #include <vector>
 #include "node_object_wrap.h"           // for ObjectWrap
 #include "v8.h"                         // for Handle, String, Integer, etc
