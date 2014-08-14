@@ -26,8 +26,8 @@ test('S2CellId', function(t) {
         t.ok(fromlat, 'generates cellid object from latlng');
         t.equal((new s2.S2LatLng(fromlat.toPoint())).toString(), '40.000000,20.000000', 'gets values');
         t.equal(typeof fromlat.id(), 'number', '.id');
-        t.equal(Math.round(fromlat.toLatLng().lng()), 20, '.toLatLng');
-        t.equal(Math.round(fromlat.toLatLng().lat()), 40, '.toLatLng');
+        t.equal(Math.round(fromlat.toLatLng().lng), 20, '.toLatLng');
+        t.equal(Math.round(fromlat.toLatLng().lat), 40, '.toLatLng');
         t.equal(fromlat.level(), 30);
         t.equal(fromlat.toString(), '0/212231203032221333101101033102');
         t.equal(fromlat.parent().level(), 29);

@@ -22,13 +22,15 @@ void LatLng::Init(Handle<Object> target) {
     constructor->SetClassName(name);
 
     // Add all prototype methods, getters and setters here.
-    NODE_SET_PROTOTYPE_METHOD(constructor, "lat", Lat);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "lng", Lng);
     NODE_SET_PROTOTYPE_METHOD(constructor, "normalized", Normalized);
     NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", IsValid);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toPoint", ToPoint);
     NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Distance);
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
+
+    Local<ObjectTemplate> proto = constructor->PrototypeTemplate();
+    proto->SetAccessor(NanNew<String>("lat"), Lat);
+    proto->SetAccessor(NanNew<String>("lng"), Lng);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -86,13 +88,13 @@ Handle<Value> LatLng::New(S2LatLng s2latlng) {
     return scope.Close(handleObject);
 }
 
-NAN_METHOD(LatLng::Lat) {
+NAN_GETTER(LatLng::Lat) {
     NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
     NanReturnValue(NanNew<Number>(obj->this_.lat().degrees()));
 }
 
-NAN_METHOD(LatLng::Lng) {
+NAN_GETTER(LatLng::Lng) {
     NanScope();
     LatLng* obj = ObjectWrap::Unwrap<LatLng>(args.This());
     NanReturnValue(NanNew<Number>(obj->this_.lng().degrees()));

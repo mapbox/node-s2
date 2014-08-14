@@ -16,8 +16,8 @@ protected:
     LatLng();
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static NAN_METHOD(Lat);
-    static NAN_METHOD(Lng);
+    static NAN_GETTER(Lat);
+    static NAN_GETTER(Lng);
     static NAN_METHOD(IsValid);
     static NAN_METHOD(Normalized);
     static NAN_METHOD(ToPoint);
