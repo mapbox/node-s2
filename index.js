@@ -4,7 +4,7 @@ module.exports = s2;
 s2.S2LatLng.prototype.toGeoJSON = function() {
     return {
         type: 'Point',
-        coordinates: [this.lng(), this.lat()]
+        coordinates: [this.lng, this.lat]
     };
 };
 
@@ -18,7 +18,7 @@ s2.S2Cell.prototype.toGeoJSON = function() {
         type: 'Polygon',
         coordinates: [
             vs.map(function(v) {
-                return [v.lng(), v.lat()];
+                return [v.lng, v.lat];
             })
         ]
     };
@@ -35,7 +35,7 @@ s2.S2LatLngRect.prototype.toGeoJSON = function() {
         coordinates: [
             [
                 vs.map(function(v) {
-                    return [v.lng(), v.lat()];
+                    return [v.lng, v.lat];
                 })
             ]
         ]
