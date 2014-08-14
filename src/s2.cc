@@ -2,8 +2,8 @@
 #include <nan.h>
 #include <memory>
 #include <vector>
-#include "node_object_wrap.h"           // for ObjectWrap
-#include "v8.h"                         // for Handle, String, Integer, etc
+#include "node_object_wrap.h"  // for ObjectWrap
+#include "v8.h"                // for Handle, String, Integer, etc
 
 #include "s2latlng.h"
 #include "s2cellid.h"
@@ -24,7 +24,6 @@
 #include "regioncoverer.h"
 #include "angle.h"
 
-using std::vector;
 using namespace v8;
 
 struct CoverConfiguration {
@@ -48,10 +47,11 @@ struct CoverConfiguration {
 
 class CoverWorker : public NanAsyncWorker {
  private:
-    std::vector<S2CellId> cellids_vector;
+  std::vector<S2CellId> cellids_vector;
 
  public:
-  CoverWorker(NanCallback *callback, std::shared_ptr<CoverConfiguration> coverConfiguration)
+  CoverWorker(NanCallback *callback,
+              std::shared_ptr<CoverConfiguration> coverConfiguration)
       : NanAsyncWorker(callback), coverConfiguration(coverConfiguration) {}
   ~CoverWorker() {}
 
@@ -75,27 +75,18 @@ class CoverWorker : public NanAsyncWorker {
     }
 
     // check for types and call appropriate getCovering function
-    if ("polygon" == coverConfiguration->type || "multipolygon" == coverConfiguration->type)
-    {
-        coverer.GetCovering(coverConfiguration->polygon, &cellids_vector);
-    }
-    else if ("polyline" == coverConfiguration->type)
-    {
-        coverer.GetCovering((*coverConfiguration->polyline), &cellids_vector);
-    }
-    else if ("rect" == coverConfiguration->type)
-    {
-        coverer.GetCovering(coverConfiguration->rect, &cellids_vector);
-    }
-    else if ("cell" == coverConfiguration->type)
-    {
-        coverer.GetCovering(coverConfiguration->cell, &cellids_vector);
-    }
-    else if ("cap" == coverConfiguration->type)
-    {
-        coverer.GetCovering(coverConfiguration->cap, &cellids_vector);
-    } else
-    {
+    if ("polygon" == coverConfiguration->type ||
+        "multipolygon" == coverConfiguration->type) {
+      coverer.GetCovering(coverConfiguration->polygon, &cellids_vector);
+    } else if ("polyline" == coverConfiguration->type) {
+      coverer.GetCovering((*coverConfiguration->polyline), &cellids_vector);
+    } else if ("rect" == coverConfiguration->type) {
+      coverer.GetCovering(coverConfiguration->rect, &cellids_vector);
+    } else if ("cell" == coverConfiguration->type) {
+      coverer.GetCovering(coverConfiguration->cell, &cellids_vector);
+    } else if ("cap" == coverConfiguration->type) {
+      coverer.GetCovering(coverConfiguration->cap, &cellids_vector);
+    } else {
     }
   }
 
@@ -107,29 +98,20 @@ class CoverWorker : public NanAsyncWorker {
 
     Local<Array> out = Array::New(cellids_vector.size());
     for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
-        out->Set(i, Cell::New(cellids_vector.at(i)));
+      out->Set(i, Cell::New(cellids_vector.at(i)));
     }
-    if(cellids_vector.empty()){
-        //return NanThrowError("NO CELLS WERE FOUND");
-    }
-    if (coverConfiguration->type == "undefined")
-    {
+    if (coverConfiguration->type == "undefined") {
       v8::Local<v8::Value> argv[] = {NanNull(), NanNull()};
       callback->Call(2, argv);
-    }
-    else
-    {
+    } else {
       v8::Local<v8::Value> argv[] = {NanNull(), out};
       callback->Call(2, argv);
     }
   }
 
-  void HandleErrorCallback () {
-
+  void HandleErrorCallback() {
     NanScope();
-    Local<Value> argv[] = {
-      Exception::Error(String::New("fail!"))
-    };
+    Local<Value> argv[] = {Exception::Error(String::New("fail!"))};
     callback->Call(1, argv);
   };
 
@@ -137,360 +119,352 @@ class CoverWorker : public NanAsyncWorker {
   std::shared_ptr<CoverConfiguration> coverConfiguration;
 };
 
-
 NAN_METHOD(GetCoverAsync) {
-    NanScope();
+  NanScope();
 
-    if (args.Length() < 1) {
-        return NanThrowError("(array, [min, max, mod]) required");
+  if (args.Length() < 1) {
+    return NanThrowError("(array, [min, max, mod]) required");
+  }
+
+  typedef std::vector<pair<S2Point, S2Point>> EdgeList;
+  std::shared_ptr<CoverConfiguration> coverConfiguration =
+      std::make_shared<CoverConfiguration>();
+
+  if (args.Length() > 1) {
+    Handle<Object> opt = args[1]->ToObject();
+    if (opt->Has(NanNew<String>("min"))) {
+      coverConfiguration->min_level =
+          opt->Get(NanNew<String>("min"))->ToInteger()->Value();
+    }
+    if (opt->Has(NanNew<String>("max"))) {
+      coverConfiguration->max_level =
+          opt->Get(NanNew<String>("max"))->ToInteger()->Value();
+    }
+    if (opt->Has(NanNew<String>("mod"))) {
+      coverConfiguration->level_mod =
+          opt->Get(NanNew<String>("mod"))->ToInteger()->Value();
+    }
+    if (opt->Has(NanNew<String>("max_cells"))) {
+      coverConfiguration->max_cells =
+          opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value();
+    }
+  }
+
+  // Check the number of arguments. we need size-1 as the callback always goes
+  // last
+  NanCallback *callback =
+      new NanCallback(args[args.Length() - 1].As<Function>());
+  if (args[0]->IsArray()) {
+    Handle<Array> array = Handle<Array>::Cast(args[0]);
+
+    if (args.Length() > 2) {
+      Handle<Object> opt = args[1]->ToObject();
+      coverConfiguration->type =
+          *NanAsciiString(opt->Get(NanNew<String>("type")));
     }
 
-    typedef vector<pair<S2Point, S2Point> > EdgeList;
-    std::shared_ptr<CoverConfiguration> coverConfiguration = std::make_shared<CoverConfiguration>();
+    if (coverConfiguration->type == "polygon") {
+      S2PolygonBuilderOptions polyOptions;
+      polyOptions.set_validate(true);
+      // Don't silently eliminate duplicate edges.
+      polyOptions.set_xor_edges(false);
+      S2PolygonBuilder builder(polyOptions);
 
-    if (args.Length() > 1) {
-        Handle<Object> opt = args[1]->ToObject();
-        if (opt->Has(NanNew<String>("min"))) {
-            coverConfiguration->min_level = opt->Get(NanNew<String>("min"))->ToInteger()->Value();
+      std::vector<S2Point> rings;
+      for (std::size_t i = 0; i < array->Length(); ++i) {
+        std::vector<S2Point> points;
+        Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
+
+        for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
+          Local<Object> obj = pointArray->Get(ii)->ToObject();
+          if (NanHasInstance(Point::constructor, obj)) {
+            S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
+            points.push_back(p);
+          } else {
+            return NanThrowError("array must contain only points");
+          }
         }
-        if (opt->Has(NanNew<String>("max"))) {
-            coverConfiguration->max_level = opt->Get(NanNew<String>("max"))->ToInteger()->Value();
+        // construct polygon loop
+        S2Loop loop(points);
+        loop.Normalize();
+
+        // outer ring should not be a hole
+        if (i == 0 && loop.is_hole()) {
+          loop.Invert();
         }
-        if (opt->Has(NanNew<String>("mod"))) {
-            coverConfiguration->level_mod = opt->Get(NanNew<String>("mod"))->ToInteger()->Value();
+        // inner rings should be holes
+        else if (i == 1 && !loop.is_hole()) {
+          loop.Invert();
         }
-        if (opt->Has(NanNew<String>("max_cells"))) {
-            coverConfiguration->max_cells = opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value();
+        if (!loop.IsValid()) {
+          return NanThrowError("invalid loop");
         }
+        builder.AddLoop(&loop);
+      }
+      // get cover
+      EdgeList edgeList;
+      builder.AssemblePolygon(&coverConfiguration->polygon, &edgeList);
+    } else if (coverConfiguration->type == "polyline") {
+      std::vector<S2Point> points;
+      for (std::size_t i = 0; i < array->Length(); ++i) {
+        Local<Object> obj = array->Get(i)->ToObject();
+        if (NanHasInstance(Point::constructor, obj)) {
+          S2Point p =
+              node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
+          points.push_back(p);
+        } else {
+          return NanThrowError("array must contain only points");
+        }
+      }
+      coverConfiguration->polyline = std::make_shared<S2Polyline>(points);
+    } else if (coverConfiguration->type == "multipolygon") {
+      S2PolygonBuilderOptions polyOptions;
+      polyOptions.set_validate(true);
+      // Don't silently eliminate duplicate edges.
+      polyOptions.set_xor_edges(false);
+      S2PolygonBuilder builder(polyOptions);
+      std::vector<S2Point> rings;
+
+      for (std::size_t k = 0; k < array->Length(); ++k) {
+        Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
+        for (std::size_t i = 0; i < ringArray->Length(); ++i) {
+          std::vector<S2Point> points;
+          Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
+          for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
+            Local<Object> obj = pointArray->Get(ii)->ToObject();
+            if (NanHasInstance(Point::constructor, obj)) {
+              S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
+              points.push_back(p);
+            } else {
+              return NanThrowError("array must contain only points");
+            }
+          }
+          // construct polygon loop
+          S2Loop loop(points);
+          loop.Normalize();
+
+          // outer ring should not be a hole
+          if (i == 0 && loop.is_hole()) {
+            loop.Invert();
+          }
+          // inner rings should be holes
+          else if (i == 1 && !loop.is_hole()) {
+            loop.Invert();
+          }
+          if (!loop.IsValid()) {
+            return NanThrowError("invalid loop");
+          }
+          builder.AddLoop(&loop);
+        }
+      }
+      // get cover
+      EdgeList edgeList;
+      builder.AssemblePolygon(&coverConfiguration->polygon, &edgeList);
     }
+  } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
+    coverConfiguration->type = "rect";
+    coverConfiguration->rect =
+        node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
+  } else if (NanHasInstance(Cell::constructor, args[0])) {
+    coverConfiguration->type = "cell";
+    coverConfiguration->cell =
+        node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
+  } else if (NanHasInstance(Cap::constructor, args[0])) {
+    coverConfiguration->type = "cap";
+    coverConfiguration->cap =
+        node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
+  } else {
+    coverConfiguration->type = "undefined";
+  }
 
-    // Check the number of arguments. we need size-1 as the callback always goes last
-    NanCallback *callback = new NanCallback(args[args.Length()-1].As<Function>());
-    if (args[0]->IsArray()) {
-        Handle<Array> array = Handle<Array>::Cast(args[0]);
-
-        if (args.Length() > 2) {
-            Handle<Object> opt = args[1]->ToObject();
-            coverConfiguration->type = *NanAsciiString(opt->Get(NanNew<String>("type")));
-        }
-
-        if (coverConfiguration->type == "polygon") {
-            S2PolygonBuilderOptions polyOptions;
-            polyOptions.set_validate(true);
-            // Don't silently eliminate duplicate edges.
-            polyOptions.set_xor_edges(false);
-            S2PolygonBuilder builder(polyOptions);
-
-            std::vector<S2Point> rings;
-            for (std::size_t i = 0; i < array->Length(); ++i) {
-                std::vector<S2Point> points;
-                Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
-
-                for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
-                    Local<Object> obj = pointArray->Get(ii)->ToObject();
-                    if (NanHasInstance(Point::constructor, obj)) {
-                        S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
-                        points.push_back(p);
-                    } else {
-                        return NanThrowError("array must contain only points");
-                    }
-                }
-                // construct polygon loop
-                S2Loop loop(points);
-                loop.Normalize();
-
-                // outer ring should not be a hole
-                if (i==0 && loop.is_hole()) {
-                    loop.Invert();
-                }
-                // inner rings should be holes
-                else if (i==1 && !loop.is_hole()) {
-                    loop.Invert();
-                }
-
-                if (!loop.IsValid()) {
-                    return NanThrowError("invalid loop");
-                }
-
-                builder.AddLoop(&loop);
-            }
-            // get cover
-            EdgeList edgeList;
-            builder.AssemblePolygon(&coverConfiguration->polygon, &edgeList);
-            // NanAsyncQueueWorker(new CoverWorker(callback, coverConfiguration));
-            // NanReturnUndefined();
-        } else if (coverConfiguration->type == "polyline") {
-            std::vector<S2Point> points;
-
-            for (std::size_t i = 0; i < array->Length(); ++i) {
-                Local<Object> obj = array->Get(i)->ToObject();
-                if (NanHasInstance(Point::constructor, obj)) {
-                    S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
-                    points.push_back(p);
-                } else {
-                    return NanThrowError("array must contain only points");
-                }
-            }
-            coverConfiguration->polyline = std::make_shared<S2Polyline>(points);
-            // NanAsyncQueueWorker(new CoverWorker(callback, coverConfiguration));
-            // NanReturnUndefined();
-        } else if (coverConfiguration->type == "multipolygon") {
-            S2PolygonBuilderOptions polyOptions;
-            polyOptions.set_validate(true);
-            // Don't silently eliminate duplicate edges.
-            polyOptions.set_xor_edges(false);
-            S2PolygonBuilder builder(polyOptions);
-            std::vector<S2Point> rings;
-
-            for (std::size_t k = 0; k < array->Length(); ++k) {
-                Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
-                for (std::size_t i = 0; i < ringArray->Length(); ++i) {
-                    std::vector<S2Point> points;
-                    Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
-                    for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
-                        Local<Object> obj = pointArray->Get(ii)->ToObject();
-                        if (NanHasInstance(Point::constructor, obj)) {
-                            S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
-                            points.push_back(p);
-                        } else {
-                            return NanThrowError("array must contain only points");
-                        }
-                    }
-                    // construct polygon loop
-                    S2Loop loop(points);
-                    loop.Normalize();
-
-                    // outer ring should not be a hole
-                    if (i==0 && loop.is_hole()) {
-                        loop.Invert();
-                    }
-                    // inner rings should be holes
-                    else if (i==1 && !loop.is_hole()) {
-                        loop.Invert();
-                    }
-
-                    if (!loop.IsValid()) {
-                        return NanThrowError("invalid loop");
-                    }
-
-                    builder.AddLoop(&loop);
-                }
-            }
-            // get cover
-            EdgeList edgeList;
-
-            builder.AssemblePolygon(&coverConfiguration->polygon, &edgeList);
-            // NanAsyncQueueWorker(new CoverWorker(callback, coverConfiguration));
-            // NanReturnUndefined();
-        }
-        // NanAsyncQueueWorker(new CoverWorker(callback, coverConfiguration));
-        // NanReturnUndefined();
-
-    } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
-        coverConfiguration->type = "rect";
-        coverConfiguration->rect = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
-        // NanReturnUndefined();
-    } else if (NanHasInstance(Cell::constructor, args[0])) {
-        coverConfiguration->type = "cell";
-        coverConfiguration->cell = node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
-        // NanReturnUndefined();
-    } else if (NanHasInstance(Cap::constructor, args[0])) {
-        coverConfiguration->type = "cap";
-        coverConfiguration->cap = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
-        // NanReturnUndefined();
-    } else {
-        coverConfiguration->type = "undefined";
-        // return NanThrowError("incompatible object to cover");
-    }
-
-    NanAsyncQueueWorker(new CoverWorker(callback, coverConfiguration));
-    NanReturnUndefined();
+  NanAsyncQueueWorker(new CoverWorker(callback, coverConfiguration));
+  NanReturnUndefined();
 }
 
 NAN_METHOD(GetCover) {
-    NanScope();
+  NanScope();
 
-    if (args.Length() < 1) {
-        return NanThrowError("(array, [min, max, mod]) required");
+  if (args.Length() < 1) {
+    return NanThrowError("(array, [min, max, mod]) required");
+  }
+
+  typedef std::vector<pair<S2Point, S2Point>> EdgeList;
+  std::vector<S2CellId> cellids_vector;
+  S2RegionCoverer coverer;
+
+  std::string type{"polygon"};
+
+  if (args.Length() > 1) {
+    Handle<Object> opt = args[1]->ToObject();
+    if (opt->Has(NanNew<String>("min"))) {
+      coverer.set_min_level(
+          opt->Get(NanNew<String>("min"))->ToInteger()->Value());
     }
+    if (opt->Has(NanNew<String>("max"))) {
+      coverer.set_max_level(
+          opt->Get(NanNew<String>("max"))->ToInteger()->Value());
+    }
+    if (opt->Has(NanNew<String>("mod"))) {
+      coverer.set_level_mod(
+          opt->Get(NanNew<String>("mod"))->ToInteger()->Value());
+    }
+    if (opt->Has(NanNew<String>("max_cells"))) {
+      coverer.set_max_cells(
+          opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value());
+    }
+  }
 
-    typedef vector<pair<S2Point, S2Point> > EdgeList;
-    std::vector<S2CellId> cellids_vector;
-    S2RegionCoverer coverer;
-
-    std::string type = "polygon";
+  if (args[0]->IsArray()) {
+    Handle<Array> array = Handle<Array>::Cast(args[0]);
 
     if (args.Length() > 1) {
-        Handle<Object> opt = args[1]->ToObject();
-        if (opt->Has(NanNew<String>("min"))) {
-            coverer.set_min_level(opt->Get(NanNew<String>("min"))->ToInteger()->Value());
-        }
-        if (opt->Has(NanNew<String>("max"))) {
-            coverer.set_max_level(opt->Get(NanNew<String>("max"))->ToInteger()->Value());
-        }
-        if (opt->Has(NanNew<String>("mod"))) {
-            coverer.set_level_mod(opt->Get(NanNew<String>("mod"))->ToInteger()->Value());
-        }
-        if (opt->Has(NanNew<String>("max_cells"))) {
-            coverer.set_max_cells(opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value());
-        }
+      Handle<Object> opt = args[1]->ToObject();
+      type = *NanAsciiString(opt->Get(NanNew<String>("type")));
     }
 
-    if (args[0]->IsArray()) {
-        Handle<Array> array = Handle<Array>::Cast(args[0]);
+    if (type == "polygon") {
+      S2PolygonBuilderOptions polyOptions;
+      polyOptions.set_validate(true);
+      // Don't silently eliminate duplicate edges.
+      polyOptions.set_xor_edges(false);
+      S2PolygonBuilder builder(polyOptions);
+      S2Polygon polygon;
+      std::vector<S2Point> rings;
 
-        if (args.Length() > 1) {
-            Handle<Object> opt = args[1]->ToObject();
-            type = *NanAsciiString(opt->Get(NanNew<String>("type")));
+      for (std::size_t i = 0; i < array->Length(); ++i) {
+        std::vector<S2Point> points;
+        Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
+
+        for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
+          Local<Object> obj = pointArray->Get(ii)->ToObject();
+          if (NanHasInstance(Point::constructor, obj)) {
+            S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
+            points.push_back(p);
+          } else {
+            return NanThrowError("array must contain only points");
+          }
+        }
+        // construct polygon loop
+        S2Loop loop(points);
+        loop.Normalize();
+
+        // outer ring should not be a hole
+        if (i == 0 && loop.is_hole()) {
+          loop.Invert();
+        }
+        // inner rings should be holes
+        else if (i == 1 && !loop.is_hole()) {
+          loop.Invert();
         }
 
-        if (type == "polygon") {
-            S2PolygonBuilderOptions polyOptions;
-            polyOptions.set_validate(true);
-            // Don't silently eliminate duplicate edges.
-            polyOptions.set_xor_edges(false);
-            S2PolygonBuilder builder(polyOptions);
-            S2Polygon polygon;
-            std::vector<S2Point> rings;
+        if (!loop.IsValid()) {
+          return NanThrowError("invalid loop");
+        }
 
-            for (std::size_t i = 0; i < array->Length(); ++i) {
-                std::vector<S2Point> points;
-                Handle<Array> pointArray = Handle<Array>::Cast(array->Get(i));
+        builder.AddLoop(&loop);
+      }
+      // get cover
+      EdgeList edgeList;
+      builder.AssemblePolygon(&polygon, &edgeList);
+      coverer.GetCovering(polygon, &cellids_vector);
+    } else if (type == "polyline") {
+      std::vector<S2Point> points;
+      for (std::size_t i = 0; i < array->Length(); ++i) {
+        Local<Object> obj = array->Get(i)->ToObject();
+        if (NanHasInstance(Point::constructor, obj)) {
+          S2Point p =
+              node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
+          points.push_back(p);
+        } else {
+          return NanThrowError("array must contain only points");
+        }
+      }
+      S2Polyline polyline(points);
+      coverer.GetCovering(polyline, &cellids_vector);
+    } else if (type == "multipolygon") {
+      S2PolygonBuilderOptions polyOptions;
+      polyOptions.set_validate(true);
+      // Don't silently eliminate duplicate edges.
+      polyOptions.set_xor_edges(false);
+      S2PolygonBuilder builder(polyOptions);
+      S2Polygon polygon;
+      std::vector<S2Point> rings;
 
-                for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
-                    Local<Object> obj = pointArray->Get(ii)->ToObject();
-                    if (NanHasInstance(Point::constructor, obj)) {
-                        S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
-                        points.push_back(p);
-                    } else {
-                        return NanThrowError("array must contain only points");
-                    }
-                }
-                // construct polygon loop
-                S2Loop loop(points);
-                loop.Normalize();
-
-                // outer ring should not be a hole
-                if (i==0 && loop.is_hole()) {
-                    loop.Invert();
-                }
-                // inner rings should be holes
-                else if (i==1 && !loop.is_hole()) {
-                    loop.Invert();
-                }
-
-                if (!loop.IsValid()) {
-                    return NanThrowError("invalid loop");
-                }
-
-                builder.AddLoop(&loop);
+      for (std::size_t k = 0; k < array->Length(); ++k) {
+        Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
+        for (std::size_t i = 0; i < ringArray->Length(); ++i) {
+          std::vector<S2Point> points;
+          Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
+          for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
+            Local<Object> obj = pointArray->Get(ii)->ToObject();
+            if (NanHasInstance(Point::constructor, obj)) {
+              S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
+              points.push_back(p);
+            } else {
+              return NanThrowError("array must contain only points");
             }
-            // get cover
-            EdgeList edgeList;
-            builder.AssemblePolygon(&polygon, &edgeList);
-            coverer.GetCovering(polygon, &cellids_vector);
-        } else if (type == "polyline") {
-            std::vector<S2Point> points;
+          }
+          // construct polygon loop
+          S2Loop loop(points);
+          loop.Normalize();
 
-            for (std::size_t i = 0; i < array->Length(); ++i) {
-                Local<Object> obj = array->Get(i)->ToObject();
-                if (NanHasInstance(Point::constructor, obj)) {
-                    S2Point p = node::ObjectWrap::Unwrap<Point>(array->Get(i)->ToObject())->get();
-                    points.push_back(p);
-                } else {
-                    return NanThrowError("array must contain only points");
-                }
-            }
+          // outer ring should not be a hole
+          if (i == 0 && loop.is_hole()) {
+            loop.Invert();
+          }
+          // inner rings should be holes
+          else if (i == 1 && !loop.is_hole()) {
+            loop.Invert();
+          }
 
-            S2Polyline polyline(points);
-            coverer.GetCovering(polyline, &cellids_vector);
-        } else if (type == "multipolygon") {
-            S2PolygonBuilderOptions polyOptions;
-            polyOptions.set_validate(true);
-            // Don't silently eliminate duplicate edges.
-            polyOptions.set_xor_edges(false);
-            S2PolygonBuilder builder(polyOptions);
-            S2Polygon polygon;
-            std::vector<S2Point> rings;
+          if (!loop.IsValid()) {
+            return NanThrowError("invalid loop");
+          }
 
-            for (std::size_t k = 0; k < array->Length(); ++k) {
-                Handle<Array> ringArray = Handle<Array>::Cast(array->Get(k));
-                for (std::size_t i = 0; i < ringArray->Length(); ++i) {
-                    std::vector<S2Point> points;
-                    Handle<Array> pointArray = Handle<Array>::Cast(ringArray->Get(i));
-                    for (std::size_t ii = 0; ii < pointArray->Length(); ++ii) {
-                        Local<Object> obj = pointArray->Get(ii)->ToObject();
-                        if (NanHasInstance(Point::constructor, obj)) {
-                            S2Point p = node::ObjectWrap::Unwrap<Point>(obj)->get();
-                            points.push_back(p);
-                        } else {
-                            return NanThrowError("array must contain only points");
-                        }
-                    }
-                    // construct polygon loop
-                    S2Loop loop(points);
-                    loop.Normalize();
-
-                    // outer ring should not be a hole
-                    if (i==0 && loop.is_hole()) {
-                        loop.Invert();
-                    }
-                    // inner rings should be holes
-                    else if (i==1 && !loop.is_hole()) {
-                        loop.Invert();
-                    }
-
-                    if (!loop.IsValid()) {
-                        return NanThrowError("invalid loop");
-                    }
-
-                    builder.AddLoop(&loop);
-                }
-            }
-            // get cover
-            EdgeList edgeList;
-            builder.AssemblePolygon(&polygon, &edgeList);
-            coverer.GetCovering(polygon, &cellids_vector);
+          builder.AddLoop(&loop);
         }
-    } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
-        S2LatLngRect rect = node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
-        coverer.GetCovering(rect, &cellids_vector);
-    } else if (NanHasInstance(Cell::constructor, args[0])) {
-        S2Cell cell = node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
-        coverer.GetCovering(cell, &cellids_vector);
-    } else if (NanHasInstance(Cap::constructor, args[0])) {
-        S2Cap cap = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
-        coverer.GetCovering(cap, &cellids_vector);
-    } else {
-        return NanThrowError("incompatible object to cover");
+      }
+      // get cover
+      EdgeList edgeList;
+      builder.AssemblePolygon(&polygon, &edgeList);
+      coverer.GetCovering(polygon, &cellids_vector);
     }
+  } else if (NanHasInstance(LatLngRect::constructor, args[0])) {
+    S2LatLngRect rect =
+        node::ObjectWrap::Unwrap<LatLngRect>(args[0]->ToObject())->get();
+    coverer.GetCovering(rect, &cellids_vector);
+  } else if (NanHasInstance(Cell::constructor, args[0])) {
+    S2Cell cell = node::ObjectWrap::Unwrap<Cell>(args[0]->ToObject())->get();
+    coverer.GetCovering(cell, &cellids_vector);
+  } else if (NanHasInstance(Cap::constructor, args[0])) {
+    S2Cap cap = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
+    coverer.GetCovering(cap, &cellids_vector);
+  } else {
+    return NanThrowError("incompatible object to cover");
+  }
 
-    Local<Array> out = Array::New(cellids_vector.size());
+  Local<Array> out = Array::New(cellids_vector.size());
+  for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+    out->Set(i, Cell::New(cellids_vector.at(i)));
+  }
 
-    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
-        out->Set(i, Cell::New(cellids_vector.at(i)));
-    }
-    if(cellids_vector.empty()){
-        //return NanThrowError("NO CELLS WERE FOUND");
-    }
-    NanReturnValue(out);
+  NanReturnValue(out);
 }
 
 void RegisterModule(Handle<Object> exports) {
-    LatLng::Init(exports);
-    LatLngRect::Init(exports);
-    Cap::Init(exports);
-    Angle::Init(exports);
-    Cell::Init(exports);
-    CellId::Init(exports);
-    Point::Init(exports);
-    Interval::Init(exports);
-    Polyline::Init(exports);
-    exports->Set(NanNew<String>("getCover"),
-        NanNew<FunctionTemplate>(GetCover)->GetFunction());
-    exports->Set(NanNew<String>("getCoverAsync"),
-        NanNew<FunctionTemplate>(GetCoverAsync)->GetFunction());
+  LatLng::Init(exports);
+  LatLngRect::Init(exports);
+  Cap::Init(exports);
+  Angle::Init(exports);
+  Cell::Init(exports);
+  CellId::Init(exports);
+  Point::Init(exports);
+  Interval::Init(exports);
+  Polyline::Init(exports);
+  exports->Set(NanNew<String>("getCover"),
+               NanNew<FunctionTemplate>(GetCover)->GetFunction());
+  exports->Set(NanNew<String>("getCoverAsync"),
+               NanNew<FunctionTemplate>(GetCoverAsync)->GetFunction());
 }
 
 NODE_MODULE(_s2, RegisterModule);
-
