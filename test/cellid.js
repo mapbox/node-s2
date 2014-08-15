@@ -60,6 +60,19 @@ test('S2CellId', function(t) {
         t.end();
     });
 
+    t.test('contains', function(t) {
+        var childcell = new s2.S2CellId(new s2.S2LatLng(40, 20));
+        t.ok(childcell);
+        var parentcell = childcell.parent();
+        var grandparentcell = parentcell.parent();
+        t.ok(parentcell.contains(childcell), 'parent contains child');
+        t.ok(grandparentcell.contains(childcell), 'grandparent contains child');
+        t.ok(grandparentcell.contains(parentcell), 'grandparent contains parent');
+        t.notOk(childcell.contains(parentcell), 'child does not contain parent');
+        t.notOk(childcell.contains(grandparentcell), 'child does not contain grandparent');
+        t.notOk(parentcell.contains(grandparentcell), 'parent does not contain grandparent');
+        t.end();
+    });
+
     t.end();
 });
-
