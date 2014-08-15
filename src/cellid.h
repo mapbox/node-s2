@@ -31,6 +31,7 @@ protected:
     static NAN_METHOD(RangeMax);
     static NAN_METHOD(Id);
     static NAN_METHOD(Child);
+    static NAN_METHOD(contains);
 
     S2CellId this_;
 };

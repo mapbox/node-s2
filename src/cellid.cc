@@ -39,6 +39,7 @@ void CellId::Init(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "rangeMax", RangeMax);
     NODE_SET_PROTOTYPE_METHOD(constructor, "id", Id);
     NODE_SET_PROTOTYPE_METHOD(constructor, "child", Child);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "contains", contains);
 
     target->Set(name, constructor->GetFunction());
 }
@@ -168,6 +169,21 @@ NAN_METHOD(CellId::RangeMax) {
     NanScope();
     CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
     NanReturnValue(CellId::New(obj->this_.range_max()));
+}
+
+NAN_METHOD(CellId::contains) {
+    NanScope();
+    CellId* obj = node::ObjectWrap::Unwrap<CellId>(args.This());
+    if (args.Length() != 1) {
+        return NanThrowError("(S3CellId) required");
+    }
+    Handle<Object> fromObj = args[0]->ToObject();
+    if (NanHasInstance(CellId::constructor, fromObj)) {
+        S2CellId other = node::ObjectWrap::Unwrap<CellId>(fromObj)->get();
+        NanReturnValue(NanNew<Boolean>(obj->this_.contains(other)));
+    } else {
+        return NanThrowError("Invalid input");
+    }
 }
 
 NAN_METHOD(CellId::Id) {
