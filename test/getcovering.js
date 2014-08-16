@@ -10,13 +10,13 @@ test('getCovering', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover([input]);
+    var cover = s2.getCoverSync([input]);
     t.ok(cover, 'generates sync cover object');
     t.equal(cover.length, 8, 'cover.length');
     t.end();
 });
 
-test('getCoveringAsync', function(t) {
+test('getCovering', function(t) {
     var input = [
         [10, 10],
         [30, 20],
@@ -25,7 +25,7 @@ test('getCoveringAsync', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    s2.getCoverAsync([input], function (err, cover) {
+    s2.getCover([input], function (err, cover) {
         t.ok(cover, 'generates async cover object');
         t.equal(cover.length, 8, 'cover.length');
         t.end();
@@ -35,7 +35,7 @@ test('getCoveringAsync', function(t) {
 test('getCoveringSync - llrect', function(t) {
     var ll2 = new s2.S2LatLngRect(new s2.S2LatLng(10, 20), new s2.S2LatLng(20, 30));
 
-    var llcover = s2.getCover(ll2, {
+    var llcover = s2.getCoverSync(ll2, {
         max_cells: 100
     });
 
@@ -43,10 +43,10 @@ test('getCoveringSync - llrect', function(t) {
     t.end();
 });
 
-test('getCoveringAsync - llrect', function(t) {
+test('getCovering- llrect', function(t) {
     var ll2 = new s2.S2LatLngRect(new s2.S2LatLng(10, 20), new s2.S2LatLng(20, 30));
 
-    s2.getCoverAsync(ll2, {
+    s2.getCover(ll2, {
         max_cells: 100
     }, function (err, cover) {
         t.ok(cover, 'generates async cover object');
@@ -59,7 +59,7 @@ test('getCoveringAsync - llrect', function(t) {
 test('getCovering - cell', function(t) {
     var cell = new s2.S2Cell(new s2.S2LatLng(10, 20));
 
-    var llcover = s2.getCover(cell, {
+    var llcover = s2.getCoverSync(cell, {
         max_cells: 100
     });
 
@@ -67,10 +67,10 @@ test('getCovering - cell', function(t) {
     t.end();
 });
 
-test('getCoveringAsync - cell', function(t) {
+test('getCovering- cell', function(t) {
     var cell = new s2.S2Cell(new s2.S2LatLng(10, 20));
 
-    s2.getCoverAsync(cell, {
+    s2.getCover(cell, {
         max_cells: 100}, function (err, cover) {
         t.ok(cover, 'generates async cover object');
         t.equal(cover.length, 1, 'cover.length');
@@ -81,7 +81,7 @@ test('getCoveringAsync - cell', function(t) {
 /*test('getCovering - cap', function(t) {
     var cap = new s2.S2Cap();
 
-    var llcover = s2.getCover(cap, {
+    var llcover = s2.getCoverSync(cap, {
         max_cells: 100
     });
 
@@ -91,17 +91,18 @@ test('getCoveringAsync - cell', function(t) {
 
 test('getCovering - invalid', function(t) {
     t.throws(function() {
-        var llcover = s2.getCover(1, {
+        var llcover = s2.getCoverSync(1, {
             max_cells: 100
         });
     });
     t.end();
 });
 
-test('getCoveringAsync - invalid', function(t) {
-    s2.getCoverAsync(1, {
+test('getCovering - invalid', function(t) {
+    s2.getCover(1, {
         max_cells: 100
     }, function (err, cover) {
+        t.equal(err.message, 'cover type not specified', 'returns error');
         t.type(cover, "null", "cover is null");
         t.end();
     });
@@ -109,14 +110,14 @@ test('getCoveringAsync - invalid', function(t) {
 
 test('getCoveringSync invalid - none', function(t) {
     t.throws(function() {
-        new s2.getCover();
+        new s2.getCoverSync();
     }, 'invalid arguments');
     t.end();
 });
 
-test('getCoveringAsync invalid - none', function(t) {
+test('getCovering invalid - none', function(t) {
     t.throws(function() {
-        new s2.getCoverAsync();
+        new s2.getCover();
     }, 'invalid arguments');
     t.end();
 });
@@ -130,7 +131,7 @@ test('getCovering - polygon', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover([input], {
+    var cover = s2.getCoverSync([input], {
         type: 'polygon',
         min: 1,
         max: 30,
@@ -142,7 +143,7 @@ test('getCovering - polygon', function(t) {
     t.end();
 });
 
-test('getCoveringAsync - polygon', function(t) {
+test('getCovering - polygon', function(t) {
     var input = [
         [3, 30],
         [0, 20],
@@ -151,13 +152,14 @@ test('getCoveringAsync - polygon', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    s2.getCoverAsync([input], {
+    s2.getCover([input], {
         type: 'polygon',
         min: 1,
         max: 30,
         max_cells: 8
     }, function (err, cover) {
         t.ok(cover, 'generates cover object');
+        t.equal(err, null, 'no error');
         t.equal(cover.length, 8, 'cover.length');
         t.end();
     });
@@ -172,7 +174,7 @@ test('getCovering - polyline', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover(input, {
+    var cover = s2.getCoverSync(input, {
         type: 'polyline'
     });
 
@@ -181,7 +183,7 @@ test('getCovering - polyline', function(t) {
     t.end();
 });
 
-test('getCoveringAsync - polyline', function(t) {
+test('getCovering - polyline', function(t) {
     var input = [
         [0, 2],
         [1, 1],
@@ -190,10 +192,11 @@ test('getCoveringAsync - polyline', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    s2.getCoverAsync(input, {
+    s2.getCover(input, {
         type: 'polyline'
     }, function (err, cover) {
         t.ok(cover, 'generates cover object');
+        t.equal(err, null, 'no error');
         t.equal(cover.length, 8, 'cover.length');
         t.end();
     });
@@ -234,7 +237,7 @@ test('getCovering - polygon with hole', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover([outerRing, holeRing], {
+    var cover = s2.getCoverSync([outerRing, holeRing], {
         type: 'polygon'
     });
 
@@ -243,7 +246,7 @@ test('getCovering - polygon with hole', function(t) {
     t.end();
 });
 
-test('getCoveringAsync - polygon with hole', function(t) {
+test('getCovering - polygon with hole', function(t) {
     var outerRing = [
         [
           15.776367187499998,
@@ -278,10 +281,11 @@ test('getCoveringAsync - polygon with hole', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    s2.getCoverAsync([outerRing, holeRing], {
+    s2.getCover([outerRing, holeRing], {
         type: 'polygon'
     }, function (err, cover) {
         t.ok(cover, 'generates cover object');
+        t.equal(err, null, 'no error');
         t.equal(cover.length, 8, 'cover.length');
         t.end();
     });
@@ -339,7 +343,7 @@ test('getCovering - multipolygon', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    var cover = s2.getCover([[ring1], [ring2, hole]], {
+    var cover = s2.getCoverSync([[ring1], [ring2, hole]], {
         type: 'multipolygon'
     });
 
@@ -348,7 +352,7 @@ test('getCovering - multipolygon', function(t) {
     t.end();
 });
 
-test('getCoveringAsync - multipolygon', function(t) {
+test('getCovering - multipolygon', function(t) {
     var ring1 = [
         [
           -2.48565673828125,
@@ -400,10 +404,11 @@ test('getCoveringAsync - multipolygon', function(t) {
         return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
     });
 
-    s2.getCoverAsync([[ring1], [ring2, hole]], {
+    s2.getCover([[ring1], [ring2, hole]], {
         type: 'multipolygon'
     }, function (err, cover) {
         t.ok(cover, 'generates cover object');
+        t.equal(err, null, 'no error');
         t.equal(cover.length, 8, 'cover.length');
         t.end();
     });

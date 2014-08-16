@@ -101,7 +101,7 @@ class CoverWorker : public NanAsyncWorker {
       out->Set(i, Cell::New(cellids_vector.at(i)));
     }
     if (coverConfiguration->type == "undefined") {
-      v8::Local<v8::Value> argv[] = {NanNull(), NanNull()};
+      v8::Local<v8::Value> argv[] = {Exception::Error(String::New("cover type not specified")), NanNull()};
       callback->Call(2, argv);
     } else {
       v8::Local<v8::Value> argv[] = {NanNull(), out};
@@ -119,7 +119,7 @@ class CoverWorker : public NanAsyncWorker {
   std::shared_ptr<CoverConfiguration> coverConfiguration;
 };
 
-NAN_METHOD(GetCoverAsync) {
+NAN_METHOD(GetCover) {
   NanScope();
 
   if (args.Length() < 1) {
@@ -281,7 +281,7 @@ NAN_METHOD(GetCoverAsync) {
   NanReturnUndefined();
 }
 
-NAN_METHOD(GetCover) {
+NAN_METHOD(GetCoverSync) {
   NanScope();
 
   if (args.Length() < 1) {
@@ -461,10 +461,10 @@ void RegisterModule(Handle<Object> exports) {
   Point::Init(exports);
   Interval::Init(exports);
   Polyline::Init(exports);
+  exports->Set(NanNew<String>("getCoverSync"),
+               NanNew<FunctionTemplate>(GetCoverSync)->GetFunction());
   exports->Set(NanNew<String>("getCover"),
                NanNew<FunctionTemplate>(GetCover)->GetFunction());
-  exports->Set(NanNew<String>("getCoverAsync"),
-               NanNew<FunctionTemplate>(GetCoverAsync)->GetFunction());
 }
 
 NODE_MODULE(_s2, RegisterModule);
