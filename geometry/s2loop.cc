@@ -6,6 +6,9 @@ using std::max;
 using std::swap;
 using std::reverse;
 
+#include <memory>
+using std::unique_ptr;
+
 #include <set>
 using std::set;
 using std::multiset;
@@ -25,7 +28,6 @@ using std::make_pair;
 
 #include "base/commandlineflags.h"
 #include "base/logging.h"
-#include "base/scoped_ptr.h"
 #include "util/coding/coder.h"
 #include "s2cap.h"
 #include "s2cell.h"

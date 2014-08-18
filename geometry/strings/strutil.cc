@@ -43,7 +43,6 @@ using std::vector;
 
 
 #include "base/logging.h"
-#include "base/scoped_ptr.h"
 //#include "strutil-inl.h"
 //#include "third_party/utf/utf.h"  // for runetochar
 //#include "util/gtl/stl_util-inl.h"  // for string_as_array

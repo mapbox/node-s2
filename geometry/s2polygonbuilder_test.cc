@@ -2,6 +2,9 @@
 
 #include "s2polygonbuilder.h"
 
+#include <memory>
+using std::unique_ptr;
+
 #include <set>
 using std::set;
 using std::multiset;
@@ -9,7 +12,6 @@ using std::multiset;
 
 #include "base/logging.h"
 #include "base/macros.h"
-#include "base/scoped_ptr.h"
 #include "strings/stringprintf.h"
 #include "testing/base/public/gunit.h"
 #include "s2cap.h"
@@ -217,7 +219,7 @@ void GetVertices(char const* str, Matrix3x3_d const& m,
                  vector<S2Point>* vertices) {
   // Parse the vertices and transform them into the given frame.
 
-  scoped_ptr<S2Polyline> line(S2Testing::MakePolyline(str));
+  unique_ptr<S2Polyline> line(S2Testing::MakePolyline(str));
   for (int i = 0; i < line->num_vertices(); ++i) {
     vertices->push_back((m * line->vertex(i)).Normalize());
   }
