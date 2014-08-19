@@ -35,8 +35,8 @@ using std::make_pair;
 #include <vector>
 using std::vector;
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 // for strcasecmp (check SuSv3 -- this is the only header it's in!)
 // MSVC doesn't have <strings.h>. Luckily, it defines equivalent
@@ -56,7 +56,6 @@ static const int kFastToBufferSize =       32;
 #include "base/basictypes.h"
 #include "base/logging.h"  // for CHECK
 #include "base/strtoint.h"
-#include "base/int128.h"
 #include "ascii_ctype.h"
 //#include "charset.h"
 //#include "escaping.h"
