@@ -67,18 +67,14 @@ static const int kFastToBufferSize =       32;
 //#include "endian.h"
 
 // ----------------------------------------------------------------------
-// FpToString()
 // FloatToString()
 // IntToString()
 // Int64ToString()
 // UInt64ToString()
 //    Convert various types to their string representation, possibly padded
 //    with spaces, using snprintf format specifiers.
-//    "Fp" here stands for fingerprint: a 64-bit entity
-//    represented in 16 hex digits.
 // ----------------------------------------------------------------------
 
-string FpToString(Fprint fp);
 string FloatToString(float f, const char* format);
 string IntToString(int i, const char* format);
 string Int64ToString(int64 i64, const char* format);

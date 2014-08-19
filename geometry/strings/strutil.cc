@@ -42,11 +42,6 @@ using std::string;
 using std::vector;
 
 
-#include "base/logging.h"
-//#include "strutil-inl.h"
-//#include "third_party/utf/utf.h"  // for runetochar
-//#include "util/gtl/stl_util-inl.h"  // for string_as_array
-//#include "util/hash/hash.h"
 #include "split.h"
 
 #ifdef OS_WINDOWS
@@ -57,18 +52,11 @@ using std::vector;
 #endif
 
 // ----------------------------------------------------------------------
-// FpToString()
 // FloatToString()
 // IntToString()
 //    Convert various types to their string representation.  These
 //    all do the obvious, trivial thing.
 // ----------------------------------------------------------------------
-
-string FpToString(Fprint fp) {
-  char buf[17];
-  snprintf(buf, sizeof(buf), "%016llx", fp);
-  return string(buf);
-}
 
 string FloatToString(float f, const char* format) {
   char buf[80];

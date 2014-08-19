@@ -38,7 +38,6 @@ using std::reverse;
 #include "base/basictypes.h"
 #include "base/logging.h"
 #include "base/template_util.h"
-#include "base/type_traits.h"
 #include "util/math/mathutil.h"
 #include "util/math/vector2.h"
 #include "util/math/vector4.h"
@@ -341,7 +340,7 @@ Vector3<VType> Vector3<VType>::Fabs() const {
 
 template <typename VType>
 Vector3<VType> Vector3<VType>::Abs() const {
-  static_assert(base::is_integral<VType>::value, "use_Fabs_for_float_types");
+  static_assert(std::is_integral<VType>::value, "use_Fabs_for_float_types");
   static_assert(static_cast<VType>(-1) == -1, "type_must_be_signed");
   static_assert(sizeof(VType) <= sizeof(int), "Abs_truncates_to_int");
   return Self(abs(c_[0]), abs(c_[1]), abs(c_[2]));

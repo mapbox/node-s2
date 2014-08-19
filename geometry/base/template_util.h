@@ -70,7 +70,6 @@ struct if_<false, A, B> {
 // type_equals_ is a template type comparator, similar to Loki IsSameType.
 // type_equals_<A, B>::value is true iff "A" is the same type as "B".
 //
-// New code should prefer base::is_same, defined in base/type_traits.h.
 // It is functionally identical, but is_same is the standard spelling.
 template<typename A, typename B>
 struct type_equals_ : public false_ {
