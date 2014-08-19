@@ -33,24 +33,24 @@ const DomainId kIllegalDomainId = static_cast<DomainId>(0);
 // To get a complete picture of all the datatypes used for PageRank
 // and the functions to convert between them, please see google3/
 // pagerank/prtype.h
-typedef uint16 DocumentPageRank;  // value in [0, kNumPageRankValues)
-const int kNumPageRankValues = 1 << (sizeof(DocumentPageRank) * 8);
-const DocumentPageRank kIllegalPagerank = 0;
+// typedef uint16 DocumentPageRank;  // value in [0, kNumPageRankValues)
+// const int kNumPageRankValues = 1 << (sizeof(DocumentPageRank) * 8);
+// const DocumentPageRank kIllegalPagerank = 0;
 
-// Used for fielded search
-typedef int32 FieldValue;
-const FieldValue kIllegalFieldValue = static_cast<FieldValue>(INT_MAX);
+// // Used for fielded search
+// typedef int32 FieldValue;
+// const FieldValue kIllegalFieldValue = static_cast<FieldValue>(INT_MAX);
 
-// It is expected that we *never* have a collision of Fingerprints for
-// 2 distinct objects.  No object has kIllegalFprint as its Fingerprint.
-typedef uint64 Fprint;
-const Fprint  kIllegalFprint = static_cast<Fprint>(0);
-const Fprint  kMaxFprint = static_cast<Fprint>(kuint64max);
+// // It is expected that we *never* have a collision of Fingerprints for
+// // 2 distinct objects.  No object has kIllegalFprint as its Fingerprint.
+// typedef uint64 Fprint;
+// const Fprint  kIllegalFprint = static_cast<Fprint>(0);
+// const Fprint  kMaxFprint = static_cast<Fprint>(kuint64max);
 
-// 64 bit checksum (see common/checksummer.{h,cc})
-typedef uint64 Checksum64;
+// // 64 bit checksum (see common/checksummer.{h,cc})
+// typedef uint64 Checksum64;
 
-const Checksum64 kIllegalChecksum = static_cast<Checksum64>(0);
+// const Checksum64 kIllegalChecksum = static_cast<Checksum64>(0);
 
 // In contrast to Fingerprints, we *do* expect Hash<i> values to collide
 // from time to time (although we obviously prefer them not to).  Also
