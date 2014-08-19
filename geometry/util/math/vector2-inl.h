@@ -31,7 +31,6 @@
 #include <math.h>
 #include "base/basictypes.h"
 #include "base/logging.h"
-#include "base/template_util.h"
 #include "util/math/mathutil.h"
 #include "util/math/vector3.h"
 #include "util/math/vector4.h"

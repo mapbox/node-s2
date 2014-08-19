@@ -37,7 +37,6 @@ using std::reverse;
 #include <math.h>
 #include "base/basictypes.h"
 #include "base/logging.h"
-#include "base/template_util.h"
 #include "util/math/mathutil.h"
 #include "util/math/vector2.h"
 #include "util/math/vector4.h"
