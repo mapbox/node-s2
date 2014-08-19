@@ -31,8 +31,6 @@
 #include <math.h>
 #include "base/basictypes.h"
 #include "base/logging.h"
-#include "base/template_util.h"
-#include "base/type_traits.h"
 #include "util/math/mathutil.h"
 #include "util/math/vector3.h"
 #include "util/math/vector4.h"
@@ -219,7 +217,7 @@ typename Vector2<VType>::FloatType Vector2<VType>::Angle(const Self &v) const {
 
 template <typename VType>
 Vector2<VType> Vector2<VType>::Normalize() const {
-  static_assert(!base::is_integral<VType>::value, "must_be_floating_point");
+  static_assert(!std::is_integral<VType>::value, "must_be_floating_point");
   VType n = Norm();
   if (n != 0) {
     n = 1.0 / n;
@@ -282,7 +280,7 @@ Vector2<VType> Vector2<VType>::Fabs() const {
 
 template <typename VType>
 Vector2<VType> Vector2<VType>::Abs() const {
-  static_assert(base::is_integral<VType>::value, "use_Fabs_for_float_types");
+  static_assert(std::is_integral<VType>::value, "use_Fabs_for_float_types");
   static_assert(static_cast<VType>(-1) == -1, "type_must_be_signed");
   static_assert(sizeof(VType) <= sizeof(int), "Abs_truncates_to_int");
   return Self(abs(c_[0]), abs(c_[1]));
@@ -352,10 +350,5 @@ std::ostream &operator <<(std::ostream &out, const Vector2<VType> &va) {
       << va[1] << "]";
   return out;
 }
-
-// TODO(user): Vector2<T> does not actually satisfy the definition of a POD
-// type even when T is a POD. Pretending that Vector2<T> is a POD probably
-// won't cause any immediate problems, but eventually this should be fixed.
-PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT(Vector2);
 
 #endif  // UTIL_MATH_VECTOR2_INL_H__

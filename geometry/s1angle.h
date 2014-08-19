@@ -95,7 +95,8 @@ class S1Angle {
   explicit S1Angle(double radians) : radians_(radians) {}
   double radians_;
 };
-DECLARE_POD(S1Angle);
+
+// static_assert(std::is_pod<S1Angle>::value_type, "S1Angle isn't a pod");
 
 inline bool operator==(S1Angle const& x, S1Angle const& y) {
   return x.radians() == y.radians();

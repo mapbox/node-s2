@@ -177,7 +177,6 @@ class R1Interval {
  private:
   Vector2_d bounds_;
 };
-DECLARE_POD(R1Interval);
 
 inline ostream& operator<<(ostream& os, R1Interval const& x) {
   return os << "[" << x.lo() << ", " << x.hi() << "]";

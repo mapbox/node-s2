@@ -2,15 +2,16 @@
 
 #include "s2polyline.h"
 
+#include <memory>
+using std::unique_ptr;
+
 #include <vector>
 using std::vector;
 
 
 #include "base/commandlineflags.h"
-#include "base/scoped_ptr.h"
 #include "base/stringprintf.h"
 #include "testing/base/public/gunit.h"
-#include "util/coding/coder.h"
 #include "s2cell.h"
 #include "s2latlng.h"
 #include "s2testing.h"
@@ -20,11 +21,11 @@ DECLARE_bool(s2debug);
 namespace {
 
 S2Polyline* MakePolyline(string const& str) {
-  scoped_ptr<S2Polyline> polyline(S2Testing::MakePolyline(str));
+  unique_ptr<S2Polyline> polyline(S2Testing::MakePolyline(str));
   Encoder encoder;
   polyline->Encode(&encoder);
   Decoder decoder(encoder.base(), encoder.length());
-  scoped_ptr<S2Polyline> decoded_polyline(new S2Polyline);
+  unique_ptr<S2Polyline> decoded_polyline(new S2Polyline);
   decoded_polyline->Decode(&decoder);
   return decoded_polyline.release();
 }
@@ -213,22 +214,22 @@ TEST(S2Polyline, IsOnRight) {
 }
 
 TEST(S2Polyline, IntersectsEmptyPolyline) {
-  scoped_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4"));
+  unique_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4"));
   S2Polyline empty_polyline;
   EXPECT_FALSE(empty_polyline.Intersects(line1.get()));
 }
 
 TEST(S2Polyline, IntersectsOnePointPolyline) {
-  scoped_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4"));
-  scoped_ptr<S2Polyline> line2(S2Testing::MakePolyline("1:1"));
+  unique_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4"));
+  unique_ptr<S2Polyline> line2(S2Testing::MakePolyline("1:1"));
   EXPECT_FALSE(line1->Intersects(line2.get()));
 }
 
 TEST(S2Polyline, Intersects) {
-  scoped_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4"));
-  scoped_ptr<S2Polyline> small_crossing(S2Testing::MakePolyline("1:2, 2:1"));
-  scoped_ptr<S2Polyline> small_noncrossing(S2Testing::MakePolyline("1:2, 2:3"));
-  scoped_ptr<S2Polyline> big_crossing(S2Testing::MakePolyline("1:2, 2:3, 4:3"));
+  unique_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4"));
+  unique_ptr<S2Polyline> small_crossing(S2Testing::MakePolyline("1:2, 2:1"));
+  unique_ptr<S2Polyline> small_noncrossing(S2Testing::MakePolyline("1:2, 2:3"));
+  unique_ptr<S2Polyline> big_crossing(S2Testing::MakePolyline("1:2, 2:3, 4:3"));
 
   EXPECT_TRUE(line1->Intersects(small_crossing.get()));
   EXPECT_FALSE(line1->Intersects(small_noncrossing.get()));
@@ -236,21 +237,21 @@ TEST(S2Polyline, Intersects) {
 }
 
 TEST(S2Polyline, IntersectsAtVertex) {
-  scoped_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4, 4:6"));
-  scoped_ptr<S2Polyline> line2(S2Testing::MakePolyline("1:1, 1:2"));
-  scoped_ptr<S2Polyline> line3(S2Testing::MakePolyline("5:1, 4:4, 2:2"));
+  unique_ptr<S2Polyline> line1(S2Testing::MakePolyline("1:1, 4:4, 4:6"));
+  unique_ptr<S2Polyline> line2(S2Testing::MakePolyline("1:1, 1:2"));
+  unique_ptr<S2Polyline> line3(S2Testing::MakePolyline("5:1, 4:4, 2:2"));
   EXPECT_TRUE(line1->Intersects(line2.get()));
   EXPECT_TRUE(line1->Intersects(line3.get()));
 }
 
 TEST(S2Polyline, IntersectsVertexOnEdge)  {
-  scoped_ptr<S2Polyline> horizontal_left_to_right(
+  unique_ptr<S2Polyline> horizontal_left_to_right(
       S2Testing::MakePolyline("0:1, 0:3"));
-  scoped_ptr<S2Polyline> vertical_bottom_to_top(
+  unique_ptr<S2Polyline> vertical_bottom_to_top(
       S2Testing::MakePolyline("-1:2, 0:2, 1:2"));
-  scoped_ptr<S2Polyline> horizontal_right_to_left(
+  unique_ptr<S2Polyline> horizontal_right_to_left(
       S2Testing::MakePolyline("0:3, 0:1"));
-  scoped_ptr<S2Polyline> vertical_top_to_bottom(
+  unique_ptr<S2Polyline> vertical_top_to_bottom(
       S2Testing::MakePolyline("1:2, 0:2, -1:2"));
   EXPECT_TRUE(horizontal_left_to_right->Intersects(
       vertical_bottom_to_top.get()));
@@ -278,7 +279,7 @@ void CheckSubsample(char const* polyline_str, double tolerance_degrees,
                     char const* expected_str) {
   SCOPED_TRACE(StringPrintf("\"%s\", tolerance %f",
                             polyline_str, tolerance_degrees));
-  scoped_ptr<S2Polyline> polyline(MakePolyline(polyline_str));
+  unique_ptr<S2Polyline> polyline(MakePolyline(polyline_str));
   vector<int> indices;
   polyline->SubsampleVertices(S1Angle::Degrees(tolerance_degrees), &indices);
   EXPECT_EQ(expected_str, JoinInts(indices));
@@ -343,8 +344,8 @@ TEST(S2Polyline, SubsampleVerticesGuarantees) {
 static bool TestEquals(char const* a_str,
                        char const* b_str,
                        double max_error) {
-  scoped_ptr<S2Polyline> a(MakePolyline(a_str));
-  scoped_ptr<S2Polyline> b(MakePolyline(b_str));
+  unique_ptr<S2Polyline> a(MakePolyline(a_str));
+  unique_ptr<S2Polyline> b(MakePolyline(b_str));
   return a->ApproxEquals(b.get(), max_error);
 }
 
@@ -369,7 +370,7 @@ TEST(S2Polyline, ApproxEquals) {
 }
 
 TEST(S2Polyline, EncodeDecode) {
-  scoped_ptr<S2Polyline> polyline(MakePolyline("0:0, 0:10, 10:20, 20:30"));
+  unique_ptr<S2Polyline> polyline(MakePolyline("0:0, 0:10, 10:20, 20:30"));
   Encoder encoder;
   polyline->Encode(&encoder);
   Decoder decoder(encoder.base(), encoder.length());
@@ -383,8 +384,8 @@ void TestNearlyCovers(string const& a_str, string const& b_str,
                       bool expect_a_covers_b) {
   SCOPED_TRACE(StringPrintf("a=\"%s\", b=\"%s\", max error=%f",
                             a_str.c_str(), b_str.c_str(), max_error_degrees));
-  scoped_ptr<S2Polyline> a(S2Testing::MakePolyline(a_str));
-  scoped_ptr<S2Polyline> b(S2Testing::MakePolyline(b_str));
+  unique_ptr<S2Polyline> a(S2Testing::MakePolyline(a_str));
+  unique_ptr<S2Polyline> b(S2Testing::MakePolyline(b_str));
   S1Angle max_error = S1Angle::Degrees(max_error_degrees);
   EXPECT_EQ(expect_b_covers_a, b->NearlyCoversPolyline(*a, max_error));
   EXPECT_EQ(expect_a_covers_b, a->NearlyCoversPolyline(*b, max_error));

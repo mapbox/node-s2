@@ -5,7 +5,6 @@
 // is done in those unit tests.
 
 #include "s2latlngrect.h"
-#include "util/coding/coder.h"
 #include "s2edgeutil.h"
 #include "s2cap.h"
 #include "s2cell.h"
@@ -328,16 +327,6 @@ TEST(S2LatLngRect, CellOps) {
                               bound202.hi().lat().degrees() - 3,
                               bound202.hi().lng().degrees() - 3),
               cell202, 2);
-}
-
-TEST(S2LatLngRect, EncodeDecode) {
-  S2LatLngRect r = RectFromDegrees(-20, -80, 10, 20);
-  Encoder encoder;
-  r.Encode(&encoder);
-  Decoder decoder(encoder.base(), encoder.length());
-  S2LatLngRect decoded_rect = S2LatLngRect::Empty();
-  EXPECT_TRUE(decoded_rect.Decode(&decoder));
-  EXPECT_EQ(r, decoded_rect);
 }
 
 TEST(S2LatLngRect, Area) {

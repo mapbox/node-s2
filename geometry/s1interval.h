@@ -182,7 +182,6 @@ class S1Interval {
 
   Vector2_d bounds_;
 };
-DECLARE_POD(S1Interval);
 
 inline S1Interval::S1Interval(double lo, double hi) : bounds_(lo, hi) {
   if (lo == -M_PI && hi != M_PI) set_lo(M_PI);

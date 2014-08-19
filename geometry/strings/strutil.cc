@@ -42,12 +42,6 @@ using std::string;
 using std::vector;
 
 
-#include "base/logging.h"
-#include "base/scoped_ptr.h"
-//#include "strutil-inl.h"
-//#include "third_party/utf/utf.h"  // for runetochar
-//#include "util/gtl/stl_util-inl.h"  // for string_as_array
-//#include "util/hash/hash.h"
 #include "split.h"
 
 #ifdef OS_WINDOWS
@@ -58,24 +52,17 @@ using std::vector;
 #endif
 
 // ----------------------------------------------------------------------
-// FpToString()
 // FloatToString()
 // IntToString()
 //    Convert various types to their string representation.  These
 //    all do the obvious, trivial thing.
 // ----------------------------------------------------------------------
 
-string FpToString(Fprint fp) {
-  char buf[17];
-  snprintf(buf, sizeof(buf), "%016llx", fp);
-  return string(buf);
-}
-
-string FloatToString(float f, const char* format) {
-  char buf[80];
-  snprintf(buf, sizeof(buf), format, f);
-  return string(buf);
-}
+// string FloatToString(float f, const char* format) {
+//   char buf[80];
+//   snprintf(buf, sizeof(buf), format, f);
+//   return string(buf);
+// }
 
 string IntToString(int i, const char* format) {
   char buf[80];
@@ -96,7 +83,7 @@ string UInt64ToString(uint64 ui64, const char* format) {
 }
 
 // Default arguments
-string FloatToString(float f)   { return FloatToString(f, "%7f"); }
+// string FloatToString(float f)   { return FloatToString(f, "%7f"); }
 string IntToString(int i)       { return IntToString(i, "%7d"); }
 string Int64ToString(int64 i64) {
   return Int64ToString(i64, "%7" GG_LL_FORMAT "d");

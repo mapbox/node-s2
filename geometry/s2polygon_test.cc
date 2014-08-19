@@ -10,6 +10,9 @@ using std::max;
 using std::swap;
 using std::reverse;
 
+#include <memory>
+using std::unique_ptr;
+
 #include <cstdio>
 #include <string>
 using std::string;
@@ -21,11 +24,9 @@ using std::vector;
 #include "base/commandlineflags.h"
 #include "base/logging.h"
 #include "base/macros.h"
-#include "base/scoped_ptr.h"
 #include "strings/stringprintf.h"
 // #include "testing/base/public/benchmark.h"
 #include "testing/base/public/gunit.h"
-#include "util/coding/coder.h"
 #include "s2.h"
 #include "s2cap.h"
 #include "s2cellunion.h"
@@ -37,11 +38,6 @@ using std::vector;
 #include "s2testing.h"
 #include "util/math/matrix3x3.h"
 #include "util/math/matrix3x3-inl.h"
-
-DEFINE_int32(num_loops_per_polygon_for_bm,
-             10,
-             "Number of loops per polygon to use for an s2polygon "
-             "encode/decode benchmark. Can be a maximum of 90.");
 
 // A set of nested loops around the point 0:0 (lat:lng).
 // Every vertex of kNear0 is a vertex of kNear1.
@@ -152,27 +148,17 @@ class S2PolygonTestBase : public testing::Test {
   S2Polygon const* const far_H_south_H;
 };
 
-static S2Polygon* MakePolygon(string const& str) {
-  scoped_ptr<S2Polygon> polygon(S2Testing::MakePolygon(str));
-  Encoder encoder;
-  polygon->Encode(&encoder);
-  Decoder decoder(encoder.base(), encoder.length());
-  scoped_ptr<S2Polygon> decoded_polygon(new S2Polygon);
-  decoded_polygon->Decode(&decoder);
-  return decoded_polygon.release();
-}
-
 static void CheckContains(string const& a_str, string const& b_str) {
   S2Polygon* a = MakePolygon(a_str);
   S2Polygon* b = MakePolygon(b_str);
-  scoped_ptr<S2Polygon> delete_a(a);
-  scoped_ptr<S2Polygon> delete_b(b);
+  unique_ptr<S2Polygon> delete_a(a);
+  unique_ptr<S2Polygon> delete_b(b);
   EXPECT_TRUE(a->Contains(b));
   EXPECT_TRUE(a->ApproxContains(b, S1Angle::Radians(1e-15)));
 }
 
 static void CheckContainsPoint(string const& a_str, string const& b_str) {
-  scoped_ptr<S2Polygon> a(S2Testing::MakePolygon(a_str));
+  unique_ptr<S2Polygon> a(S2Testing::MakePolygon(a_str));
   EXPECT_TRUE(a->VirtualContainsPoint(S2Testing::MakePoint(b_str)))
     << " " << a_str << " did not contain " << b_str;
 }
@@ -325,7 +311,7 @@ static void TestUnion(S2Polygon const* a, S2Polygon const* b) {
   polygons.back()->Copy(a);
   polygons.push_back(new S2Polygon);
   polygons.back()->Copy(b);
-  scoped_ptr<S2Polygon> c_destructive_union(
+  unique_ptr<S2Polygon> c_destructive_union(
       S2Polygon::DestructiveUnion(&polygons));
 
   CheckEqual(&c_union, c_destructive_union.get());
@@ -578,11 +564,11 @@ TEST_F(S2PolygonTestBase, Operations) {
   for (int i = 0; i < arraysize(test_cases); ++i) {
     SCOPED_TRACE(StringPrintf("Polygon operation test case %d", i));
     TestCase* test = test_cases + i;
-    scoped_ptr<S2Polygon> a(MakePolygon(test->a));
-    scoped_ptr<S2Polygon> b(MakePolygon(test->b));
-    scoped_ptr<S2Polygon> expected_a_and_b(MakePolygon(test->a_and_b));
-    scoped_ptr<S2Polygon> expected_a_or_b(MakePolygon(test->a_or_b));
-    scoped_ptr<S2Polygon> expected_a_minus_b(MakePolygon(test->a_minus_b));
+    unique_ptr<S2Polygon> a(MakePolygon(test->a));
+    unique_ptr<S2Polygon> b(MakePolygon(test->b));
+    unique_ptr<S2Polygon> expected_a_and_b(MakePolygon(test->a_and_b));
+    unique_ptr<S2Polygon> expected_a_or_b(MakePolygon(test->a_or_b));
+    unique_ptr<S2Polygon> expected_a_minus_b(MakePolygon(test->a_minus_b));
 
     // The intersections in the "expected" data were computed in lat-lng
     // space, while the actual intersections are computed using geodesics.
@@ -673,9 +659,9 @@ TEST_F(S2PolygonTestBase, PolylineIntersection) {
   for (int i = 0; i < arraysize(test_cases); ++i) {
     SCOPED_TRACE(StringPrintf("Polyline intersection test case %d", i));
     TestCase* test = test_cases + i;
-    scoped_ptr<S2Polygon> a(MakePolygon(test->a));
-    scoped_ptr<S2Polygon> b(MakePolygon(test->b));
-    scoped_ptr<S2Polygon> expected_a_and_b(MakePolygon(test->a_and_b));
+    unique_ptr<S2Polygon> a(MakePolygon(test->a));
+    unique_ptr<S2Polygon> b(MakePolygon(test->b));
+    unique_ptr<S2Polygon> expected_a_and_b(MakePolygon(test->a_and_b));
 
     vector<S2Point> points;
     vector<S2Polyline *> polylines;
@@ -770,8 +756,8 @@ static void SplitAndAssemble(S2Polygon const* polygon) {
     // because this always joins a single original piece to the current union
     // rather than doing the unions according to a random tree structure.
     while (pieces.size() > 1) {
-      scoped_ptr<S2Polygon> a(ChoosePiece(&pieces));
-      scoped_ptr<S2Polygon> b(ChoosePiece(&pieces));
+      unique_ptr<S2Polygon> a(ChoosePiece(&pieces));
+      unique_ptr<S2Polygon> b(ChoosePiece(&pieces));
       S2Polygon* c = new S2Polygon;
       c->InitToUnion(a.get(), b.get());
       pieces.push_back(c);
@@ -779,7 +765,7 @@ static void SplitAndAssemble(S2Polygon const* polygon) {
               << "\n  With piece b: " << S2Testing::ToString(b.get())
               << "\n  To get piece c: " << S2Testing::ToString(c);
     }
-    scoped_ptr<S2Polygon> result(pieces[0]);
+    unique_ptr<S2Polygon> result(pieces[0]);
     pieces.pop_back();
 
     // The moment of truth!
@@ -856,16 +842,6 @@ TEST(S2Polygon, InitToCellUnionBorder) {
   }
 }
 
-TEST_F(S2PolygonTestBase, TestEncodeDecode) {
-  Encoder encoder;
-  cross1->Encode(&encoder);
-  Decoder decoder(encoder.base(), encoder.length());
-  S2Polygon decoded_polygon;
-  ASSERT_TRUE(decoded_polygon.Decode(&decoder));
-  EXPECT_TRUE(cross1->BoundaryEquals(&decoded_polygon));
-  EXPECT_EQ(cross1->GetRectBound(), decoded_polygon.GetRectBound());
-}
-
 // This test checks that S2Polygons created directly from S2Cells behave
 // identically to S2Polygons created from the vertices of those cells; this
 // previously was not the case, because S2Cells calculate their bounding
@@ -883,7 +859,7 @@ TEST(S2Polygon, TestS2CellConstructorAndContains) {
 }
 
 TEST(S2PolygonTest, Project) {
-  scoped_ptr<S2Polygon> polygon(MakePolygon(kNear0 + kNear2));
+  unique_ptr<S2Polygon> polygon(MakePolygon(kNear0 + kNear2));
   S2Point point;
   S2Point projected;
 
@@ -1057,7 +1033,7 @@ TEST_F(S2PolygonSimplifierTest, EdgesOverlap) {
   // Two loops, One edge of the second one ([0:1 - 0:2]) is part of an
   // edge of the first one..
   SetInput("0:0, 0:3, 1:0; 0:1, -1:1, 0:2", 0.01);
-  scoped_ptr<S2Polygon> true_poly(
+  unique_ptr<S2Polygon> true_poly(
       S2Testing::MakePolygon("0:3, 1:0, 0:0, 0:1, -1:1, 0:2"));
   EXPECT_TRUE(simplified->BoundaryApproxEquals(true_poly.get()));
 }
@@ -1090,56 +1066,6 @@ TEST_F(S2PolygonSimplifierTest, LargeRegularPolygon) {
   EXPECT_GE(250, simplified->num_vertices());
   EXPECT_LE(200, simplified->num_vertices());
 }
-
-string GenerateInputForBenchmark(int num_vertices_per_loop_for_bm) {
-  CHECK_LE(FLAGS_num_loops_per_polygon_for_bm, 90);
-  vector<S2Loop*> loops;
-  for (int li = 0; li < FLAGS_num_loops_per_polygon_for_bm; ++li) {
-    vector<S2Point> vertices;
-    double radius_degrees =
-        1.0 + (50.0 * li) / FLAGS_num_loops_per_polygon_for_bm;
-    for (int vi = 0; vi < num_vertices_per_loop_for_bm; ++vi) {
-      double angle_radians = (2 * M_PI * vi) / num_vertices_per_loop_for_bm;
-      double lat = radius_degrees * cos(angle_radians);
-      double lng = radius_degrees * sin(angle_radians);
-      vertices.push_back(S2LatLng::FromDegrees(lat, lng).ToPoint());
-    }
-    loops.push_back(new S2Loop(vertices));
-  }
-  S2Polygon polygon_to_encode(&loops);
-
-  Encoder encoder;
-  polygon_to_encode.Encode(&encoder);
-  string encoded(encoder.base(), encoder.length());
-
-  return encoded;
-}
-
-// static void BM_S2Decoding(int iters, int num_vertices_per_loop_for_bm) {
-//   StopBenchmarkTiming();
-//   string encoded = GenerateInputForBenchmark(num_vertices_per_loop_for_bm);
-//   StartBenchmarkTiming();
-//   for (int i = 0; i < iters; ++i) {
-//     Decoder decoder(encoded.data(), encoded.size());
-//     S2Polygon decoded_polygon;
-//     decoded_polygon.Decode(&decoder);
-//   }
-// }
-// BENCHMARK_RANGE(BM_S2Decoding, 8, 131072);
-
-// static void BM_S2DecodingWithinScope(int iters,
-//                                      int num_vertices_per_loop_for_bm) {
-//   StopBenchmarkTiming();
-//   string encoded = GenerateInputForBenchmark(num_vertices_per_loop_for_bm);
-//   StartBenchmarkTiming();
-//   for (int i = 0; i < iters; ++i) {
-//     Decoder decoder(encoded.data(), encoded.size());
-//     S2Polygon decoded_polygon;
-//     decoded_polygon.DecodeWithinScope(&decoder);
-//   }
-// }
-// BENCHMARK_RANGE(BM_S2DecodingWithinScope, 8, 131072);
-
 
 // void ConcentricLoops(S2Point center,
 //                      int num_loops,

@@ -10,10 +10,11 @@
 #ifndef BASE_CASTS_H_
 #define BASE_CASTS_H_
 
-#include <assert.h>         // for use with down_cast<>
-#include <string.h>         // for memcpy
-#include <limits.h>         // for enumeration casts and tests
+#include <cassert>         // for use with down_cast<>
+#include <cstring>         // for memcpy
+#include <climits>         // for enumeration casts and tests
 #include <typeinfo>         // for enumeration casts and tests
+#include <type_traits>
 
 #include "base/macros.h"
 
@@ -86,8 +87,8 @@ inline To down_cast(From* f) {                   // so we only accept pointers
 // compiler will just bind From to const T.
 template<typename To, typename From>
 inline To down_cast(From& f) {
-  static_assert(base::is_reference<To>::value, "target_type_not_a_reference");
-  typedef typename base::remove_reference<To>::type* ToAsPointer;
+  static_assert(std::is_reference<To>::value, "target_type_not_a_reference");
+  typedef typename std::remove_reference<To>::type* ToAsPointer;
   if (false) {
     // Compile-time check that To inherits from From. See above for details.
     implicit_cast<From*, ToAsPointer>(0);

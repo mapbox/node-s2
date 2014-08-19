@@ -12,6 +12,9 @@ using std::reverse;
 using std::map;
 using std::multimap;
 
+#include <memory>
+using std::unique_ptr;
+
 #include <set>
 using std::set;
 using std::multiset;
@@ -22,10 +25,8 @@ using std::vector;
 
 #include "base/commandlineflags.h"
 #include "base/logging.h"
-#include "base/scoped_ptr.h"
 // #include "testing/base/public/benchmark.h"
 #include "testing/base/public/gunit.h"
-#include "util/coding/coder.h"
 #include "s2cell.h"
 #include "s2edgeindex.h"
 #include "s2edgeutil.h"
@@ -176,7 +177,7 @@ TEST_F(S2LoopTestBase, GetRectBound) {
                          S2LatLng::FromDegrees(-80, 180)));
 
   // Create a loop that contains the complement of the "arctic_80" loop.
-  scoped_ptr<S2Loop> arctic_80_inv(arctic_80->Clone());
+  unique_ptr<S2Loop> arctic_80_inv(arctic_80->Clone());
   arctic_80_inv->Invert();
   // The highest latitude of each edge is attained at its midpoint.
   S2Point mid = 0.5 * (arctic_80_inv->vertex(0) + arctic_80_inv->vertex(1));
@@ -233,7 +234,7 @@ TEST_F(S2LoopTestBase, GetAreaAndCentroid) {
   }
 }
 
-static void Rotate(scoped_ptr<S2Loop>* ptr) {
+static void Rotate(unique_ptr<S2Loop>* ptr) {
   S2Loop* loop = ptr->get();
   vector<S2Point> vertices;
   for (int i = 1; i <= loop->num_vertices(); ++i) {
@@ -246,7 +247,7 @@ static void Rotate(scoped_ptr<S2Loop>* ptr) {
 // rotated, and that the sign is inverted when the vertices are reversed.
 static void CheckTurningAngleInvariants(S2Loop const* loop) {
   double expected = loop->GetTurningAngle();
-  scoped_ptr<S2Loop> loop_copy(loop->Clone());
+  unique_ptr<S2Loop> loop_copy(loop->Clone());
   for (int i = 0; i < loop->num_vertices(); ++i) {
     loop_copy->Invert();
     EXPECT_EQ(-expected, loop_copy->GetTurningAngle());
@@ -279,7 +280,7 @@ TEST_F(S2LoopTestBase, GetTurningAngle) {
 static void CheckNormalizeAndContain(S2Loop const* loop) {
   S2Point p = S2Testing::MakePoint("40:40");
 
-  scoped_ptr<S2Loop> flip(loop->Clone());
+  unique_ptr<S2Loop> flip(loop->Clone());
   flip->Invert();
   EXPECT_TRUE(loop->IsNormalized() ^ loop->Contains(p));
   EXPECT_TRUE(flip->IsNormalized() ^ flip->Contains(p));
@@ -303,10 +304,10 @@ TEST_F(S2LoopTestBase, Contains) {
   EXPECT_TRUE(candy_cane->Contains(S2LatLng::FromDegrees(5, 71).ToPoint()));
 
   // Create copies of these loops so that we can change the vertex order.
-  scoped_ptr<S2Loop> north_copy(north_hemi->Clone());
-  scoped_ptr<S2Loop> south_copy(south_hemi->Clone());
-  scoped_ptr<S2Loop> west_copy(west_hemi->Clone());
-  scoped_ptr<S2Loop> east_copy(east_hemi->Clone());
+  unique_ptr<S2Loop> north_copy(north_hemi->Clone());
+  unique_ptr<S2Loop> south_copy(south_hemi->Clone());
+  unique_ptr<S2Loop> west_copy(west_hemi->Clone());
+  unique_ptr<S2Loop> east_copy(east_hemi->Clone());
   for (int i = 0; i < 4; ++i) {
     EXPECT_TRUE(north_copy->Contains(S2Point(0, 0, 1)));
     EXPECT_FALSE(north_copy->Contains(S2Point(0, 0, -1)));
@@ -507,8 +508,8 @@ TEST(S2Loop, LoopRelations2) {
     S2CellId b_end = b_begin.advance(rnd.Skewed(6) + 1);
     if (!a_end.is_valid() || !b_end.is_valid()) continue;
 
-    scoped_ptr<S2Loop> a(MakeCellLoop(a_begin, a_end));
-    scoped_ptr<S2Loop> b(MakeCellLoop(b_begin, b_end));
+    unique_ptr<S2Loop> a(MakeCellLoop(a_begin, a_end));
+    unique_ptr<S2Loop> b(MakeCellLoop(b_begin, b_end));
     if (a.get() && b.get()) {
       bool contained = (a_begin <= b_begin && b_end <= a_end);
       bool intersects = (a_begin < b_end && b_begin < a_end);
@@ -574,8 +575,8 @@ void DebugDumpCrossings(S2Loop const* loop) {
 
 static void TestNear(char const* a_str, char const* b_str,
                      double max_error, bool expected) {
-  scoped_ptr<S2Loop> a(S2Testing::MakeLoop(a_str));
-  scoped_ptr<S2Loop> b(S2Testing::MakeLoop(b_str));
+  unique_ptr<S2Loop> a(S2Testing::MakeLoop(a_str));
+  unique_ptr<S2Loop> b(S2Testing::MakeLoop(b_str));
   EXPECT_EQ(a->BoundaryNear(b.get(), max_error), expected);
   EXPECT_EQ(b->BoundaryNear(a.get(), max_error), expected);
 }
@@ -603,66 +604,6 @@ TEST(S2Loop, BoundaryNear) {
                    "0.2:4, 1:4.1, 2:4, 3:4, 4:4, 5:4";
   TestNear(t1, t2, 1.5 * degree, true);
   TestNear(t1, t2, 0.5 * degree, false);
-}
-
-TEST(S2Loop, EncodeDecode) {
-  scoped_ptr<S2Loop> l(S2Testing::MakeLoop("30:20, 40:20, 39:43, 33:35"));
-  l->set_depth(3);
-
-  Encoder encoder;
-  l->Encode(&encoder);
-
-  Decoder decoder(encoder.base(), encoder.length());
-
-  S2Loop decoded_loop;
-  ASSERT_TRUE(decoded_loop.Decode(&decoder));
-  EXPECT_TRUE(l->BoundaryEquals(&decoded_loop));
-  EXPECT_EQ(l->depth(), decoded_loop.depth());
-  EXPECT_EQ(l->GetRectBound(), decoded_loop.GetRectBound());
-}
-
-TEST(S2Loop, EncodeDecodeWithinScope) {
-  scoped_ptr<S2Loop> l(S2Testing::MakeLoop("30:20, 40:20, 39:43, 33:35"));
-  l->set_depth(3);
-  Encoder encoder;
-  l->Encode(&encoder);
-  Decoder decoder1(encoder.base(), encoder.length());
-
-  // Initialize the loop using DecodeWithinScope and check that it is the
-  // same as the original loop.
-  S2Loop loop1;
-  ASSERT_TRUE(loop1.DecodeWithinScope(&decoder1));
-  EXPECT_TRUE(l->BoundaryEquals(&loop1));
-  EXPECT_EQ(l->depth(), loop1.depth());
-  EXPECT_EQ(l->GetRectBound(), loop1.GetRectBound());
-
-  // Initialize the same loop using Init with a vector of vertices, and
-  // check that it doesn't deallocate the original memory.
-  vector<S2Point> vertices;
-  vertices.push_back(loop1.vertex(0));
-  vertices.push_back(loop1.vertex(2));
-  vertices.push_back(loop1.vertex(3));
-  loop1.Init(vertices);
-  Decoder decoder2(encoder.base(), encoder.length());
-  S2Loop loop2;
-  ASSERT_TRUE(loop2.DecodeWithinScope(&decoder2));
-  EXPECT_TRUE(l->BoundaryEquals(&loop2));
-  EXPECT_EQ(l->vertex(1), loop2.vertex(1));
-  EXPECT_NE(loop1.vertex(1), loop2.vertex(1));
-
-  // Initialize loop2 using Decode with a decoder on different data.
-  // Check that the original memory is not deallocated or overwritten.
-  scoped_ptr<S2Loop> l2(S2Testing::MakeLoop("30:40, 40:75, 39:43, 80:35"));
-  l2->set_depth(2);
-  Encoder encoder2;
-  l2->Encode(&encoder2);
-  Decoder decoder3(encoder2.base(), encoder2.length());
-  ASSERT_TRUE(loop2.Decode(&decoder3));
-  Decoder decoder4(encoder.base(), encoder.length());
-  ASSERT_TRUE(loop1.DecodeWithinScope(&decoder4));
-  EXPECT_TRUE(l->BoundaryEquals(&loop1));
-  EXPECT_EQ(l->vertex(1), loop1.vertex(1));
-  EXPECT_NE(loop1.vertex(1), loop2.vertex(1));
 }
 
 // This test checks that S2Loops created directly from S2Cells behave

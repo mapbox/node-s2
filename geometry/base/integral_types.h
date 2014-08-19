@@ -10,6 +10,7 @@
 #ifndef BASE_INT_TYPES_H_
 #define BASE_INT_TYPES_H_
 
+#include <cstdint>
 // These typedefs are also defined in base/google.swig. In the
 // SWIG environment, we use those definitions and avoid duplicate
 // definitions here with an ifdef. The definitions should be the
@@ -22,11 +23,7 @@ typedef signed char         schar;
 typedef signed char         int8;
 typedef short               int16;
 typedef int                 int32;
-#ifdef COMPILER_MSVC
-typedef __int64             int64;
-#else
-typedef long long           int64;
-#endif /* COMPILER_MSVC */
+typedef int64_t             int64;
 
 // NOTE: unsigned types are DANGEROUS in loops and other arithmetical
 // places.  Use the signed types unless your variable represents a bit
@@ -37,11 +34,7 @@ typedef long long           int64;
 typedef unsigned char      uint8;
 typedef unsigned short     uint16;
 typedef unsigned int       uint32;
-#ifdef COMPILER_MSVC
-typedef unsigned __int64   uint64;
-#else
-typedef unsigned long long uint64;
-#endif /* COMPILER_MSVC */
+typedef uint64_t           uint64;
 
 // A type to represent a Unicode code-point value. As of Unicode 4.0,
 // such values require up to 21 bits.
