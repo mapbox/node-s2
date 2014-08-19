@@ -313,7 +313,6 @@ class S2CellId {
 
   uint64 id_;
 } PACKED;  // Necessary so that structures containing S2CellId's can be PACKED.
-DECLARE_POD(S2CellId);
 
 inline bool operator==(S2CellId const& x, S2CellId const& y) {
   return x.id() == y.id();

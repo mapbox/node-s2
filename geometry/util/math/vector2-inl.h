@@ -353,9 +353,4 @@ std::ostream &operator <<(std::ostream &out, const Vector2<VType> &va) {
   return out;
 }
 
-// TODO(user): Vector2<T> does not actually satisfy the definition of a POD
-// type even when T is a POD. Pretending that Vector2<T> is a POD probably
-// won't cause any immediate problems, but eventually this should be fixed.
-PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT(Vector2);
-
 #endif  // UTIL_MATH_VECTOR2_INL_H__

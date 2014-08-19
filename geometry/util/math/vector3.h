@@ -34,7 +34,7 @@ class Vector3 {
   // FloatType is the type returned by Norm() and Angle().  These methods are
   // special because they return floating-point values even when VType is an
   // integer.
-  typedef typename base::if_<base::is_integral<VType>::value,
+  typedef typename std::conditional<std::is_integral<VType>::value,
                              double, VType>::type FloatType;
 
  public:

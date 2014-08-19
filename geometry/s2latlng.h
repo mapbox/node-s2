@@ -114,7 +114,6 @@ class S2LatLng {
 
   Vector2_d coords_;
 };
-DECLARE_POD(S2LatLng);
 
 inline S2LatLng::S2LatLng(S1Angle const& lat, S1Angle const& lng)
     : coords_(lat.radians(), lng.radians()) {}

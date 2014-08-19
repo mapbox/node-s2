@@ -6,7 +6,6 @@ using std::unique_ptr;
 #include "s2pointregion.h"
 
 #include "testing/base/public/gunit.h"
-#include "util/coding/coder.h"
 #include "s2cap.h"
 #include "s2cell.h"
 #include "s2latlngrect.h"
@@ -31,23 +30,6 @@ TEST(S2PointRegionTest, Basic) {
   S2Cell cell(p);
   EXPECT_FALSE(r0.Contains(cell));
   EXPECT_TRUE(r0.MayIntersect(cell));
-}
-
-TEST(S2PointRegionTest, EncodeAndDecode) {
-  S2Point p(.6, .8, 0);
-  S2PointRegion r(p);
-
-  Encoder encoder;
-  r.Encode(&encoder);
-
-  Decoder decoder(encoder.base(), encoder.length());
-  S2PointRegion decoded_r(S2Point(1, 0, 0));
-  decoded_r.Decode(&decoder);
-  S2Point decoded_p = decoded_r.point();
-
-  EXPECT_EQ(0.6, decoded_p[0]);
-  EXPECT_EQ(0.8, decoded_p[1]);
-  EXPECT_EQ(0.0, decoded_p[2]);
 }
 
 }  // namespace

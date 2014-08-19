@@ -12,10 +12,12 @@
 
 #include <stddef.h>         // For size_t
 
+// #include <type_traits>
+
 // We use our own  local  version of type traits while we're waiting
 // for TR1 type traits to be standardized. Define some macros so that
 // most google3 code doesn't have to work with type traits directly.
-#include "base/type_traits.h"
+// #include "base/type_traits.h"
 
 // The swigged version of an abstract class must be concrete if any methods
 // return objects of the abstract type. We keep it abstract in C++ and
@@ -23,70 +25,6 @@
 #ifndef SWIG
 #define ABSTRACT = 0
 #endif
-
-// The COMPILE_ASSERT macro can be used to verify that a compile time
-// expression is true. For example, you could use it to verify the
-// size of a static array:
-//
-//   COMPILE_ASSERT(ARRAYSIZE(content_type_names) == CONTENT_NUM_TYPES,
-//                  content_type_names_incorrect_size);
-//
-// or to make sure a struct is smaller than a certain size:
-//
-//   COMPILE_ASSERT(sizeof(foo) < 128, foo_too_large);
-//
-// The second argument to the macro is the name of the variable. If
-// the expression is false, most compilers will issue a warning/error
-// containing the name of the variable.
-
-// template <bool>
-// struct CompileAssert {
-// };
-
-// #define COMPILE_ASSERT(expr, msg) typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
-
-// NOTE: switched to static_assert
-
-// Implementation details of COMPILE_ASSERT:
-//
-// - COMPILE_ASSERT works by defining an array type that has -1
-//   elements (and thus is invalid) when the expression is false.
-//
-// - The simpler definition
-//
-//     #define COMPILE_ASSERT(expr, msg) typedef char msg[(expr) ? 1 : -1]
-//
-//   does not work, as gcc supports variable-length arrays whose sizes
-//   are determined at run-time (this is gcc's extension and not part
-//   of the C++ standard).  As a result, gcc fails to reject the
-//   following code with the simple definition:
-//
-//     int foo;
-//     COMPILE_ASSERT(foo, msg); // not supposed to compile as foo is
-//                               // not a compile-time constant.
-//
-// - By using the type CompileAssert<(bool(expr))>, we ensures that
-//   expr is a compile-time constant.  (Template arguments must be
-//   determined at compile-time.)
-//
-// - The outter parentheses in CompileAssert<(bool(expr))> are necessary
-//   to work around a bug in gcc 3.4.4 and 4.0.1.  If we had written
-//
-//     CompileAssert<bool(expr)>
-//
-//   instead, these compilers will refuse to compile
-//
-//     COMPILE_ASSERT(5 > 0, some_message);
-//
-//   (They seem to think the ">" in "5 > 0" marks the end of the
-//   template argument list.)
-//
-// - The array size is (bool(expr) ? 1 : -1), instead of simply
-//
-//     ((expr) ? 1 : -1).
-//
-//   This is to avoid running into a bug in MS VC 7.1, which
-//   causes ((0.0) ? 1 : -1) to incorrectly evaluate to 1.
 
 
 // A macro to disallow the copy constructor and operator= functions
@@ -222,11 +160,11 @@ char (&ArraySizeHelper(const T (&array)[N]))[N];
 // protected members, or virtual functions, and all of its member
 // variables must themselves be PODs.
 
-#define DECLARE_POD(TypeName)                       \
-namespace base {                                    \
-template<> struct is_pod<TypeName> : true_type { }; \
-}                                                   \
-typedef int Dummy_Type_For_DECLARE_POD              \
+// #define DECLARE_POD(TypeName)                                   \
+// namespace base {                                                \
+// template<> struct std::is_pod<TypeName> : std::true_type { };   \
+// }                                                               \
+// typedef int Dummy_Type_For_DECLARE_POD                          \
 
 // We once needed a different technique to assert that a nested class
 // is a POD. This is no longer necessary, and DECLARE_NESTED_POD is
@@ -235,14 +173,14 @@ typedef int Dummy_Type_For_DECLARE_POD              \
 // code. Regardless of whether you use DECLARE_POD or
 // DECLARE_NESTED_POD: use it after the outer class. Using it within a
 // class definition will give a compiler error.
-#define DECLARE_NESTED_POD(TypeName) DECLARE_POD(TypeName)
+// #define DECLARE_NESTED_POD(TypeName) DECLARE_POD(TypeName)
 
 // Declare that TemplateName<T> is a POD whenever T is
-#define PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT(TemplateName)             \
-namespace base {                                                       \
-template <typename T> struct is_pod<TemplateName<T> > : is_pod<T> { }; \
-}                                                                      \
-typedef int Dummy_Type_For_PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT
+// #define PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT(TemplateName)             \
+// namespace base {                                                       \
+// template <typename T> struct is_pod<TemplateName<T> > : is_pod<T> { }; \
+// }                                                                      \
+// typedef int Dummy_Type_For_PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT
 
 // Macro that does nothing if TypeName is a POD, and gives a compiler
 // error if TypeName is a non-POD.  You should put a descriptive
@@ -252,11 +190,11 @@ typedef int Dummy_Type_For_PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT
 // Implementation note: this works by taking the size of a type that's
 // complete when TypeName is a POD and incomplete otherwise.
 
-template <bool IsPod> struct ERROR_TYPE_MUST_BE_POD;
-template <> struct ERROR_TYPE_MUST_BE_POD<true> { };
-#define ENFORCE_POD(TypeName)                                             \
-  enum { dummy_##TypeName                                                 \
-           = sizeof(ERROR_TYPE_MUST_BE_POD<                               \
-                      base::is_pod<TypeName>::value>) }
+// template <bool IsPod> struct ERROR_TYPE_MUST_BE_POD;
+// template <> struct ERROR_TYPE_MUST_BE_POD<true> { };
+// #define ENFORCE_POD(TypeName)                                             \
+//   enum { dummy_##TypeName                                                 \
+//            = sizeof(ERROR_TYPE_MUST_BE_POD<                               \
+//                       base::is_pod<TypeName>::value>) }
 
 #endif  // BASE_MACROS_H_

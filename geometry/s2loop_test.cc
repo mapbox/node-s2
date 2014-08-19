@@ -27,7 +27,6 @@ using std::vector;
 #include "base/logging.h"
 // #include "testing/base/public/benchmark.h"
 #include "testing/base/public/gunit.h"
-#include "util/coding/coder.h"
 #include "s2cell.h"
 #include "s2edgeindex.h"
 #include "s2edgeutil.h"
@@ -605,66 +604,6 @@ TEST(S2Loop, BoundaryNear) {
                    "0.2:4, 1:4.1, 2:4, 3:4, 4:4, 5:4";
   TestNear(t1, t2, 1.5 * degree, true);
   TestNear(t1, t2, 0.5 * degree, false);
-}
-
-TEST(S2Loop, EncodeDecode) {
-  unique_ptr<S2Loop> l(S2Testing::MakeLoop("30:20, 40:20, 39:43, 33:35"));
-  l->set_depth(3);
-
-  Encoder encoder;
-  l->Encode(&encoder);
-
-  Decoder decoder(encoder.base(), encoder.length());
-
-  S2Loop decoded_loop;
-  ASSERT_TRUE(decoded_loop.Decode(&decoder));
-  EXPECT_TRUE(l->BoundaryEquals(&decoded_loop));
-  EXPECT_EQ(l->depth(), decoded_loop.depth());
-  EXPECT_EQ(l->GetRectBound(), decoded_loop.GetRectBound());
-}
-
-TEST(S2Loop, EncodeDecodeWithinScope) {
-  unique_ptr<S2Loop> l(S2Testing::MakeLoop("30:20, 40:20, 39:43, 33:35"));
-  l->set_depth(3);
-  Encoder encoder;
-  l->Encode(&encoder);
-  Decoder decoder1(encoder.base(), encoder.length());
-
-  // Initialize the loop using DecodeWithinScope and check that it is the
-  // same as the original loop.
-  S2Loop loop1;
-  ASSERT_TRUE(loop1.DecodeWithinScope(&decoder1));
-  EXPECT_TRUE(l->BoundaryEquals(&loop1));
-  EXPECT_EQ(l->depth(), loop1.depth());
-  EXPECT_EQ(l->GetRectBound(), loop1.GetRectBound());
-
-  // Initialize the same loop using Init with a vector of vertices, and
-  // check that it doesn't deallocate the original memory.
-  vector<S2Point> vertices;
-  vertices.push_back(loop1.vertex(0));
-  vertices.push_back(loop1.vertex(2));
-  vertices.push_back(loop1.vertex(3));
-  loop1.Init(vertices);
-  Decoder decoder2(encoder.base(), encoder.length());
-  S2Loop loop2;
-  ASSERT_TRUE(loop2.DecodeWithinScope(&decoder2));
-  EXPECT_TRUE(l->BoundaryEquals(&loop2));
-  EXPECT_EQ(l->vertex(1), loop2.vertex(1));
-  EXPECT_NE(loop1.vertex(1), loop2.vertex(1));
-
-  // Initialize loop2 using Decode with a decoder on different data.
-  // Check that the original memory is not deallocated or overwritten.
-  unique_ptr<S2Loop> l2(S2Testing::MakeLoop("30:40, 40:75, 39:43, 80:35"));
-  l2->set_depth(2);
-  Encoder encoder2;
-  l2->Encode(&encoder2);
-  Decoder decoder3(encoder2.base(), encoder2.length());
-  ASSERT_TRUE(loop2.Decode(&decoder3));
-  Decoder decoder4(encoder.base(), encoder.length());
-  ASSERT_TRUE(loop1.DecodeWithinScope(&decoder4));
-  EXPECT_TRUE(l->BoundaryEquals(&loop1));
-  EXPECT_EQ(l->vertex(1), loop1.vertex(1));
-  EXPECT_NE(loop1.vertex(1), loop2.vertex(1));
 }
 
 // This test checks that S2Loops created directly from S2Cells behave

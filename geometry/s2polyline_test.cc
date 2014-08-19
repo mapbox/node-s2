@@ -12,7 +12,6 @@ using std::vector;
 #include "base/commandlineflags.h"
 #include "base/stringprintf.h"
 #include "testing/base/public/gunit.h"
-#include "util/coding/coder.h"
 #include "s2cell.h"
 #include "s2latlng.h"
 #include "s2testing.h"
