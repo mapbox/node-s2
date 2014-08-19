@@ -58,11 +58,11 @@ using std::vector;
 //    all do the obvious, trivial thing.
 // ----------------------------------------------------------------------
 
-string FloatToString(float f, const char* format) {
-  char buf[80];
-  snprintf(buf, sizeof(buf), format, f);
-  return string(buf);
-}
+// string FloatToString(float f, const char* format) {
+//   char buf[80];
+//   snprintf(buf, sizeof(buf), format, f);
+//   return string(buf);
+// }
 
 string IntToString(int i, const char* format) {
   char buf[80];
@@ -83,7 +83,7 @@ string UInt64ToString(uint64 ui64, const char* format) {
 }
 
 // Default arguments
-string FloatToString(float f)   { return FloatToString(f, "%7f"); }
+// string FloatToString(float f)   { return FloatToString(f, "%7f"); }
 string IntToString(int i)       { return IntToString(i, "%7d"); }
 string Int64ToString(int64 i64) {
   return Int64ToString(i64, "%7" GG_LL_FORMAT "d");
