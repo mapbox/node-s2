@@ -11,11 +11,6 @@
 #define BASE_INT_TYPES_H_
 
 #include <cstdint>
-// These typedefs are also defined in base/google.swig. In the
-// SWIG environment, we use those definitions and avoid duplicate
-// definitions here with an ifdef. The definitions should be the
-// same in both files, and ideally be only defined in this file.
-#ifndef SWIG
 // Standard typedefs
 // All Google2 code is compiled with -funsigned-char to make "char"
 // unsigned.  Google2 code therefore doesn't need a "uchar" type.
@@ -54,8 +49,6 @@ typedef unsigned long      uword_t;
 // A signed natural machine word. In general you want to use "int"
 // rather than "sword_t"
 typedef long sword_t;
-
-#endif /* SWIG */
 
 // long long macros to be used because gcc and vc++ use different suffixes,
 // and different size specifiers in format strings
