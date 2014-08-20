@@ -55,7 +55,7 @@ static const int kFastToBufferSize =       32;
 
 #include "base/basictypes.h"
 #include "base/logging.h"  // for CHECK
-#include "base/strtoint.h"
+#include "strtoint.h"
 //#include "charset.h"
 //#include "escaping.h"
 //#include "host_port.h"
