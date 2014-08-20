@@ -60,9 +60,7 @@ static const int kFastToBufferSize =       32;
 //#include "escaping.h"
 //#include "host_port.h"
 #include "stringprintf.h"
-#include "base/stl_decl.h"
 #include "base/port.h"
-//#include "endian.h"
 
 // ----------------------------------------------------------------------
 // FloatToString()
