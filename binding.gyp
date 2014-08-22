@@ -70,12 +70,20 @@
               'MACOSX_DEPLOYMENT_TARGET': '10.7',
             }
         }],
-        ['OS=="linux"', {
+        ['OS=="linux" and <!(gcc --version | grep ^gcc | sed "s/^.* //g" | awk -F \. {\'print $1 "." $2\'})>=4.8', {
             'cflags_cc' : [
               '-Wno-deprecated',
               '-Wno-ignored-qualifiers',
               '-DARCH_K8 -DS2_USE_EXACTFLOAT',
               '-std=c++11'
+            ],
+        }],
+        ['OS=="linux" and <!(gcc --version | grep ^gcc | sed "s/^.* //g" | awk -F \. {\'print $1 "." $2\'})<4.8', {
+            'cflags_cc' : [
+              '-Wno-deprecated',
+              '-Wno-ignored-qualifiers',
+              '-DARCH_K8 -DS2_USE_EXACTFLOAT',
+              '-std=c++0x'
             ],
         }]
       ]
