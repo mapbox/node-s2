@@ -17,17 +17,27 @@ using std::string;
 #include <vector>
 using std::vector;
 
-#include "base/stl_decl.h"
 #include "base/port.h"
-#include "base/stringprintf.h"
+#include "stringprintf.h"
 
-// This file formerly contained
-//   StringPrintf, SStringPrintf, StringAppendF, and StringAppendV.
-// These routines have moved to base/stringprintf.{h,cc} to allow
-// using them from files in base.  We include base/stringprintf.h
-// in this file since so many clients were dependent on these
-// routines being defined in stringprintf.h.
+// Return a C++ string
+extern string StringPrintf(const char* format, ...)
+    // Tell the compiler to do printf format string checking.
+    PRINTF_ATTRIBUTE(1,2);
 
+// Store result into a supplied string and return it
+extern const string& SStringPrintf(string* dst, const char* format, ...)
+    // Tell the compiler to do printf format string checking.
+    PRINTF_ATTRIBUTE(2,3);
+
+// Append result to a supplied string
+extern void StringAppendF(string* dst, const char* format, ...)
+    // Tell the compiler to do printf format string checking.
+    PRINTF_ATTRIBUTE(2,3);
+
+// Lower-level routine that takes a va_list and appends to a specified
+// string.  All other routines are just convenience wrappers around it.
+extern void StringAppendV(string* dst, const char* format, va_list ap);
 
 // The max arguments supported by StringPrintfVector
 extern const int kStringPrintfVectorMaxArgs;

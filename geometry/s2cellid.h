@@ -486,7 +486,6 @@ inline S2CellId S2CellId::End(int level) {
 
 ostream& operator<<(ostream& os, S2CellId const& id);
 
-#ifndef SWIG
 #include <unordered_set>
 namespace std {
 
@@ -499,7 +498,5 @@ template<> struct hash<S2CellId> {
 
 
 }  // namespace std
-
-#endif  // SWIG
 
 #endif  // UTIL_GEOMETRY_S2CELLID_H_
