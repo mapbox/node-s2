@@ -33,7 +33,7 @@ test('getCovering', function(t) {
 });
 
 
-test('getCovering - with options', function(t) {
+test('getCovering - llrect - with options', function(t) {
     var ll2 = new s2.S2LatLngRect(
         new s2.S2LatLng(37.790, -122.539),
         new s2.S2LatLng(37.820, -122.395)
@@ -46,6 +46,31 @@ test('getCovering - with options', function(t) {
         t.end();
     });
 });
+
+test('getCovering - polygon - with options', function(t) {
+    var input = [
+        [37.790, -122.539],
+        [37.820, -122.539],
+        [37.820, -122.395],
+        [37.790, -122.395]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCoverSync([input], {
+        type: 'polygon',
+        min: 1,
+        max: 30,
+        max_cells: 1
+    });
+
+    t.ok(cover, 'generates cover object');
+    t.equal(cover.length, 1, 'cover.length');
+    t.equal(cover[0].id().level(), 8, 'cover.length');
+    t.end();
+
+});
+
 
 test('getCoveringSync - llrect', function(t) {
     var ll2 = new s2.S2LatLngRect(new s2.S2LatLng(10, 20), new s2.S2LatLng(20, 30));
