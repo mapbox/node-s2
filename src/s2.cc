@@ -32,12 +32,14 @@ struct CoverConfiguration {
         max_level(std::numeric_limits<int>::min()),
         level_mod(std::numeric_limits<int>::min()),
         max_cells(std::numeric_limits<int>::min()),
-        type("polygon") {}
+        type("polygon"),
+        result_type("cell") {}
   int min_level;
   int max_level;
   int level_mod;
   int max_cells;
   std::string type;
+  std::string result_type;
   S2Polygon polygon;
   std::shared_ptr<S2Polyline> polyline;
   S2LatLngRect rect;
@@ -97,8 +99,26 @@ class CoverWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Array> out = Array::New(cellids_vector.size());
-    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
-      out->Set(i, Cell::New(cellids_vector.at(i)));
+    if (coverConfiguration->result_type == "cell") {
+      for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+        out->Set(i, Cell::New(cellids_vector.at(i)));
+      }
+    } else if (coverConfiguration->result_type == "cellId") {
+      for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+        out->Set(i, CellId::New(cellids_vector.at(i)));
+      }
+    } else if (coverConfiguration->result_type == "string") {
+      for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+        out->Set(i, NanNew<String>(cellids_vector.at(i).ToString()));
+      }
+    } else if (coverConfiguration->result_type == "token") {
+      for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+        out->Set(i, NanNew<String>(cellids_vector.at(i).ToToken()));
+      }
+    } else if (coverConfiguration->result_type == "point") {
+            for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+        out->Set(i, Point::New(cellids_vector.at(i).ToPoint()));
+      }
     }
     if (coverConfiguration->type == "undefined") {
       v8::Local<v8::Value> argv[] = {Exception::Error(String::New("cover type not specified")), NanNull()};
@@ -130,7 +150,7 @@ NAN_METHOD(GetCover) {
   std::shared_ptr<CoverConfiguration> coverConfiguration =
       std::make_shared<CoverConfiguration>();
 
-  if (args.Length() > 1) {
+  if (args.Length() > 2) {
     Handle<Object> opt = args[1]->ToObject();
     if (opt->Has(NanNew<String>("min"))) {
       coverConfiguration->min_level =
@@ -148,6 +168,14 @@ NAN_METHOD(GetCover) {
       coverConfiguration->max_cells =
           opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value();
     }
+    if (opt->Has(NanNew<String>("type"))) {
+      coverConfiguration->type =
+          *NanAsciiString(opt->Get(NanNew<String>("type")));
+    }
+    if (opt->Has(NanNew<String>("result_type"))) {
+      coverConfiguration->result_type =
+          *NanAsciiString(opt->Get(NanNew<String>("result_type")));
+    }
   }
 
   // Check the number of arguments. we need size-1 as the callback always goes
@@ -156,12 +184,6 @@ NAN_METHOD(GetCover) {
       new NanCallback(args[args.Length() - 1].As<Function>());
   if (args[0]->IsArray()) {
     Handle<Array> array = Handle<Array>::Cast(args[0]);
-
-    if (args.Length() > 2) {
-      Handle<Object> opt = args[1]->ToObject();
-      coverConfiguration->type =
-          *NanAsciiString(opt->Get(NanNew<String>("type")));
-    }
 
     if (coverConfiguration->type == "polygon") {
       S2PolygonBuilderOptions polyOptions;
@@ -293,6 +315,7 @@ NAN_METHOD(GetCoverSync) {
   S2RegionCoverer coverer;
 
   std::string type{"polygon"};
+  std::string result_type{"cell"};
 
   if (args.Length() > 1) {
     Handle<Object> opt = args[1]->ToObject();
@@ -312,15 +335,16 @@ NAN_METHOD(GetCoverSync) {
       coverer.set_max_cells(
           opt->Get(NanNew<String>("max_cells"))->ToInteger()->Value());
     }
+    if (opt->Has(NanNew<String>("type"))) {
+      type = *NanAsciiString(opt->Get(NanNew<String>("type")));
+    }
+    if (opt->Has(NanNew<String>("result_type"))) {
+      result_type = *NanAsciiString(opt->Get(NanNew<String>("result_type")));
+    }
   }
 
   if (args[0]->IsArray()) {
     Handle<Array> array = Handle<Array>::Cast(args[0]);
-
-    if (args.Length() > 1) {
-      Handle<Object> opt = args[1]->ToObject();
-      type = *NanAsciiString(opt->Get(NanNew<String>("type")));
-    }
 
     if (type == "polygon") {
       S2PolygonBuilderOptions polyOptions;
@@ -444,8 +468,26 @@ NAN_METHOD(GetCoverSync) {
   }
 
   Local<Array> out = Array::New(cellids_vector.size());
-  for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
-    out->Set(i, Cell::New(cellids_vector.at(i)));
+  if (result_type == "cell") {
+    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+      out->Set(i, Cell::New(cellids_vector.at(i)));
+    }
+  } else if (result_type == "cellId") {
+    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+      out->Set(i, CellId::New(cellids_vector.at(i)));
+    }
+  } else if (result_type == "string") {
+    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+      out->Set(i, NanNew<String>(cellids_vector.at(i).ToString()));
+    }
+  } else if (result_type == "token") {
+    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+      out->Set(i, NanNew<String>(cellids_vector.at(i).ToToken()));
+    }
+  } else if (result_type == "point") {
+    for (std::size_t i = 0; i < cellids_vector.size(); ++i) {
+      out->Set(i, Point::New(cellids_vector.at(i).ToPoint()));
+    }
   }
 
   NanReturnValue(out);
