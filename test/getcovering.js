@@ -1,7 +1,7 @@
 var test = require('tap').test,
     s2 = require('../');
 
-test('getCovering', function(t) {
+test('getCoveringSync', function(t) {
     var input = [
         [10, 10],
         [30, 20],
@@ -13,6 +13,9 @@ test('getCovering', function(t) {
     var cover = s2.getCoverSync([input]);
     t.ok(cover, 'generates sync cover object');
     t.equal(cover.length, 8, 'cover.length');
+    cover.forEach(function(cell) {
+        t.ok(cell instanceof s2.S2Cell, 'result type cell');
+    });
     t.end();
 });
 
@@ -28,6 +31,9 @@ test('getCovering', function(t) {
     s2.getCover([input], function (err, cover) {
         t.ok(cover, 'generates async cover object');
         t.equal(cover.length, 8, 'cover.length');
+        cover.forEach(function(cell) {
+            t.ok(cell instanceof s2.S2Cell, 'result type cell');
+        });
         t.end();
     });
 });
@@ -410,6 +416,154 @@ test('getCovering - multipolygon', function(t) {
         t.ok(cover, 'generates cover object');
         t.equal(err, null, 'no error');
         t.equal(cover.length, 8, 'cover.length');
+        t.end();
+    });
+});
+
+test('getCoveringSync - cellId result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCoverSync([input], {result_type: 'cellId'});
+    t.ok(cover, 'generates sync cover object');
+    t.equal(cover.length, 8, 'cover.length');
+    cover.forEach(function(cellId) {
+        t.ok(cellId instanceof s2.S2CellId, 'result type cellId');
+    });
+    t.end();
+});
+
+test('getCoveringSync - string result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCoverSync([input], {result_type: 'string'});
+    t.ok(cover, 'generates sync cover object');
+    t.equal(cover.length, 8, 'cover.length');
+    cover.forEach(function(string) {
+        t.equal(typeof string, 'string', 'result type string');
+    });
+    t.end();
+});
+
+test('getCoveringSync - token result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCoverSync([input], {result_type: 'token'});
+    t.ok(cover, 'generates sync cover object');
+    t.equal(cover.length, 8, 'cover.length');
+    cover.forEach(function(token) {
+        t.equal(typeof token, 'string', 'result type token');
+    });
+    t.end();
+});
+
+test('getCoveringSync - point result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    var cover = s2.getCoverSync([input], {result_type: 'point'});
+    t.ok(cover, 'generates sync cover object');
+    t.equal(cover.length, 8, 'cover.length');
+    cover.forEach(function(point) {
+        t.ok(point instanceof s2.S2Point, 'result type point');
+    });
+    t.end();
+});
+
+test('getCovering - cellId result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    s2.getCover([input], {result_type: 'cellId'}, function (err, cover) {
+        t.ok(cover, 'generates async cover object');
+        t.equal(cover.length, 8, 'cover.length');
+        cover.forEach(function(cellId) {
+            t.ok(cellId instanceof s2.S2CellId, 'result type cellId');
+        });
+        t.end();
+    });
+});
+
+test('getCovering - string result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    s2.getCover([input], {result_type: 'string'}, function (err, cover) {
+        t.ok(cover, 'generates async cover object');
+        t.equal(cover.length, 8, 'cover.length');
+        cover.forEach(function(string) {
+            t.equal(typeof string, 'string', 'result type string');
+        });
+        t.end();
+    });
+});
+
+test('getCovering - token result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    s2.getCover([input], {result_type: 'token'}, function (err, cover) {
+        t.ok(cover, 'generates async cover object');
+        t.equal(cover.length, 8, 'cover.length');
+        cover.forEach(function(token) {
+            t.equal(typeof token, 'string', 'result type token');
+        });
+        t.end();
+    });
+});
+
+test('getCovering - point result', function(t) {
+    var input = [
+        [10, 10],
+        [30, 20],
+        [20, 20]
+    ].map(function(p) {
+        return (new s2.S2LatLng(p[0], p[1])).normalized().toPoint();
+    });
+
+    s2.getCover([input], {result_type: 'point'}, function (err, cover) {
+        t.ok(cover, 'generates async cover object');
+        t.equal(cover.length, 8, 'cover.length');
+        cover.forEach(function(point) {
+            t.ok(point instanceof s2.S2Point, 'result type point');
+        });
         t.end();
     });
 });
