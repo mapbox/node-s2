@@ -1,3 +1,7 @@
+## 0.4.0
+
+* [Add `result_type` option to GetCover](https://github.com/mapbox/node-s2/pull/78)
+
 ## 0.2.0
 
 * Added `.toGeoJSON()` convenience functions

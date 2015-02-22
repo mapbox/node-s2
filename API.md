@@ -418,3 +418,4 @@ Options is an optional object that includes:
 max|maximum level|30||
 max_cells|max number of cells to be computed|null||
 |level_mod|modulo for skipping levels|1|defines branch velocity. 1:4x; 2:16x; 3:64x|
+|result_type|encoding of cells|cell|one of cell, cellId, string, token, point|
