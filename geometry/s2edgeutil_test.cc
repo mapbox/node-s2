@@ -375,9 +375,9 @@ TEST(S2EdgeUtil, Interpolate) {
   // Test that interpolation is done using distances on the sphere rather than
   // linear distances.
   CheckInterpolate(1./3, S2Point(1, 0, 0), S2Point(0, 1, 0),
-                   S2Point(sqrt((double)3), 1, 0));
+                   S2Point(sqrt(3.), 1, 0));
   CheckInterpolate(2./3, S2Point(1, 0, 0), S2Point(0, 1, 0),
-                   S2Point(1, sqrt((double)3), 0));
+                   S2Point(1, sqrt(3.), 0));
 
   // Test that interpolation is accurate on a long edge (but not so long that
   // the definition of the edge itself becomes too unstable).

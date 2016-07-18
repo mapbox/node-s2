@@ -131,7 +131,7 @@ class S2PolygonBuilderOptions {
   S1Angle vertex_merge_radius() const { return vertex_merge_radius_; }
   void set_vertex_merge_radius(S1Angle const& vertex_merge_radius);
 
-  // Default value: 0.866 (approximately sqrt((double)3)/2).
+  // Default value: 0.866 (approximately sqrt(3.)/2).
   //
   // The edge splice radius is automatically set to this fraction of the vertex
   // merge radius.  If the edge splice radius is positive, then all vertices
@@ -143,7 +143,7 @@ class S2PolygonBuilderOptions {
   // save some time if you don't need this feature, or you don't want vertices
   // to be spliced into nearby edges for some reason.
   //
-  // Note that the edge splice fraction must be less than sqrt((double)3)/2 in order to
+  // Note that the edge splice fraction must be less than sqrt(3.)/2 in order to
   // avoid infinite loops in the merge algorithm.  The default value is very
   // close to this maximum and therefore results in the maximum amount of edge
   // splicing for a given vertex merge radius.

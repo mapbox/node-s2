@@ -510,7 +510,7 @@ double S2::Area(S2Point const& a, S2Point const& b, S2Point const& c) {
   //
   // Since we don't know E, we would like a conservative upper bound on
   // the triangle area in terms of s and dmin.  It's possible to show that
-  // E <= k1 * s * sqrt((double)s * dmin), where k1 = 2*sqrt((double)3)/Pi (about 1).
+  // E <= k1 * s * sqrt((double)s * dmin), where k1 = 2*sqrt(3.)/Pi (about 1).
   // Using this, it's easy to show that we should always use l'Huilier's
   // method if dmin >= k2 * s^5, where k2 is about 1e-2.  Furthermore,
   // if dmin < k2 * s^5, the triangle area is at most k3 * s^4, where
@@ -664,8 +664,8 @@ S2::LengthMetric const S2::kAvgAngleSpan(M_PI / 2);                    // 1.571
 
 S2::LengthMetric const S2::kMinWidth(
     S2_PROJECTION == S2_LINEAR_PROJECTION ? sqrt(2. / 3) :             // 0.816
-    S2_PROJECTION == S2_TAN_PROJECTION ? M_PI / (2 * sqrt((double)2)) :        // 1.111
-    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 2 * sqrt((double)2) / 3 :       // 0.943
+    S2_PROJECTION == S2_TAN_PROJECTION ? M_PI / (2 * sqrt(2.)) :        // 1.111
+    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 2 * sqrt(2.) / 3 :       // 0.943
     0);
 
 S2::LengthMetric const S2::kMaxWidth(S2::kMaxAngleSpan.deriv());
@@ -678,9 +678,9 @@ S2::LengthMetric const S2::kAvgWidth(
     0);
 
 S2::LengthMetric const S2::kMinEdge(
-    S2_PROJECTION == S2_LINEAR_PROJECTION ? 2 * sqrt((double)2) / 3 :          // 0.943
-    S2_PROJECTION == S2_TAN_PROJECTION ? M_PI / (2 * sqrt((double)2)) :        // 1.111
-    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 2 * sqrt((double)2) / 3 :       // 0.943
+    S2_PROJECTION == S2_LINEAR_PROJECTION ? 2 * sqrt(2.) / 3 :          // 0.943
+    S2_PROJECTION == S2_TAN_PROJECTION ? M_PI / (2 * sqrt(2.)) :        // 1.111
+    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 2 * sqrt(2.) / 3 :       // 0.943
     0);
 
 S2::LengthMetric const S2::kMaxEdge(S2::kMaxAngleSpan.deriv());
@@ -693,13 +693,13 @@ S2::LengthMetric const S2::kAvgEdge(
     0);
 
 S2::LengthMetric const S2::kMinDiag(
-    S2_PROJECTION == S2_LINEAR_PROJECTION ? 2 * sqrt((double)2) / 3 :          // 0.943
-    S2_PROJECTION == S2_TAN_PROJECTION ? M_PI * sqrt((double)2) / 3 :          // 1.481
-    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 8 * sqrt((double)2) / 9 :       // 1.257
+    S2_PROJECTION == S2_LINEAR_PROJECTION ? 2 * sqrt(2.) / 3 :          // 0.943
+    S2_PROJECTION == S2_TAN_PROJECTION ? M_PI * sqrt(2.) / 3 :          // 1.481
+    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 8 * sqrt(2.) / 9 :       // 1.257
     0);
 
 S2::LengthMetric const S2::kMaxDiag(
-    S2_PROJECTION == S2_LINEAR_PROJECTION ? 2 * sqrt((double)2) :              // 2.828
+    S2_PROJECTION == S2_LINEAR_PROJECTION ? 2 * sqrt(2.) :              // 2.828
     S2_PROJECTION == S2_TAN_PROJECTION ? M_PI * sqrt(2. / 3) :         // 2.565
     S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 2.438654594434021032 :  // 2.439
     0);
@@ -711,9 +711,9 @@ S2::LengthMetric const S2::kAvgDiag(
     0);
 
 S2::AreaMetric const S2::kMinArea(
-    S2_PROJECTION == S2_LINEAR_PROJECTION ? 4 / (3 * sqrt((double)3)) :        // 0.770
-    S2_PROJECTION == S2_TAN_PROJECTION ? (M_PI*M_PI) / (4*sqrt((double)2)) :   // 1.745
-    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 8 * sqrt((double)2) / 9 :       // 1.257
+    S2_PROJECTION == S2_LINEAR_PROJECTION ? 4 / (3 * sqrt(3.)) :        // 0.770
+    S2_PROJECTION == S2_TAN_PROJECTION ? (M_PI*M_PI) / (4*sqrt(2.)) :   // 1.745
+    S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 8 * sqrt(2.) / 9 :       // 1.257
     0);
 
 S2::AreaMetric const S2::kMaxArea(
@@ -726,10 +726,10 @@ S2::AreaMetric const S2::kAvgArea(4 * M_PI / 6);                       // 2.094
 // This is true for all projections.
 
 double const S2::kMaxEdgeAspect = (
-    S2_PROJECTION == S2_LINEAR_PROJECTION ? sqrt((double)2) :                  // 1.414
-    S2_PROJECTION == S2_TAN_PROJECTION ?  sqrt((double)2) :                    // 1.414
+    S2_PROJECTION == S2_LINEAR_PROJECTION ? sqrt(2.) :                  // 1.414
+    S2_PROJECTION == S2_TAN_PROJECTION ?  sqrt(2.) :                    // 1.414
     S2_PROJECTION == S2_QUADRATIC_PROJECTION ? 1.442615274452682920 :  // 1.443
     0);
 
-double const S2::kMaxDiagAspect = sqrt((double)3);                             // 1.732
+double const S2::kMaxDiagAspect = sqrt(3.);                             // 1.732
 // This is true for all projections.

@@ -185,7 +185,7 @@ TestCase test_cases[] = {
   // all edge pairs that need to be XORed are separated by no more than
   // 'min_merge' below.
 
-  { 0, 1, true, 1.7, 5.8, 70.0,  // XOR, min_merge > sqrt((double)2), max_merge < 6.
+  { 0, 1, true, 1.7, 5.8, 70.0,  // XOR, min_merge > sqrt(2.), max_merge < 6.
     { { "-8:-8, -8:0", false },
       { "-8:1, -8:8", false },
       { "0:-9, 1:-1", false },
