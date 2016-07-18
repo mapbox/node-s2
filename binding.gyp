@@ -70,6 +70,14 @@
               'MACOSX_DEPLOYMENT_TARGET': '10.7',
             }
         }],
+        ['OS=="solaris"',{
+            'cflags_cc' : [
+              '-Wno-deprecated',
+              '-Wno-ignored-qualifiers',
+              '-DARCH_K8 -DS2_USE_EXACTFLOAT',
+              '-std=c++11'
+             ]
+        }],
         ['OS=="linux"', {
             'cflags_cc' : [
               '-Wno-deprecated',
