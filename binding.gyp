@@ -49,9 +49,19 @@
         "./geometry/base/",
         "./geometry/util/",
         "./geometry/util/math/",
-        "./geometry/strings/"
+        "./geometry/strings/",
+        "<(node_root_dir)/deps/openssl/openssl/include"
       ],
       'conditions': [
+        ["target_arch=='ia32'", {
+          "include_dirs": [ "<(node_root_dir)/deps/openssl/config/piii" ]
+        }],
+        ["target_arch=='x64'", {
+          "include_dirs": [ "<(node_root_dir)/deps/openssl/config/k8" ]
+        }],
+        ["target_arch=='arm'", {
+          "include_dirs": [ "<(node_root_dir)/deps/openssl/config/arm" ]
+        }],
         ['OS=="mac"', {
             'xcode_settings': {
               'OTHER_CPLUSPLUSFLAGS':[
