@@ -267,7 +267,7 @@ S2Point S2Testing::SamplePoint(S2Cap const& cap) {
 
   double h = rnd.RandDouble() * cap.height();
   double theta = 2 * M_PI * rnd.RandDouble();
-  double r = sqrt(h * (2 - h));  // Radius of circle.
+  double r = sqrt((double)h * (2 - h));  // Radius of circle.
 
   // The result should already be very close to unit-length, but we might as
   // well make it accurate as possible.

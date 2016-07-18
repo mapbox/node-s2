@@ -48,11 +48,11 @@ bool MathUtil::RealRootsForCubic(long double const a,
 
   long double const R_squared = R*R;
   long double const Q_cubed = Q*Q*Q;
-  long double const root_Q = sqrt(Q);
+  long double const root_Q = sqrt((double)Q);
 
   if (R_squared < Q_cubed) {
     long double const two_pi_third = 2.0 * M_PI / 3.0;
-    long double const theta_third = acos(R / sqrt(Q_cubed)) / 3.0;
+    long double const theta_third = acos(R / sqrt((double)Q_cubed)) / 3.0;
     long double const minus_two_root_Q = -2.0 * root_Q;
 
     *r1 = minus_two_root_Q * cos(theta_third) - a_third;
@@ -63,7 +63,7 @@ bool MathUtil::RealRootsForCubic(long double const a,
   }
 
   long double const A =
-    -sgn(R) * pow(fabs(R) + sqrt(R_squared - Q_cubed), 1.0/3.0L);
+    -sgn(R) * pow(fabs(R) + sqrt((double)R_squared - Q_cubed), 1.0/3.0L);
 
   if (A != 0.0) {  // in which case, B from NR is zero
     *r1 = A + Q / A - a_third;

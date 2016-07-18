@@ -441,7 +441,7 @@ class Matrix3x3 {
     return Vector2<VType>(temp[0] / temp[2], temp[1] / temp[2]);
   }
 
-  // Return the Frobenius norm of the matrix: sqrt(sum(aij^2))
+  // Return the Frobenius norm of the matrix: sqrt((double)sum(aij^2))
   VType FrobeniusNorm() const {
     VType sum = VType();
     for (int i = 0; i < 3; i++) {
@@ -449,7 +449,7 @@ class Matrix3x3 {
         sum += m_[i][j] * m_[i][j];
       }
     }
-    return sqrt(sum);
+    return sqrt((double)sum);
   }
 
   // Finds the eigen values of the matrix. Return the number of real eigenvalues
@@ -498,8 +498,8 @@ class Matrix3x3 {
     double r = (2*c2*c2*c2-9*c2*c1+27*c0)/54.0;
     // Assume R^3 <Q^3 so there are three real roots
     if (q < 0) q = 0;
-    double sqrt_q = -2.0 * sqrt(q);
-    double theta = acos(r / sqrt(q * q * q));
+    double sqrt_q = -2.0 * sqrt((double)q);
+    double theta = acos(r / sqrt((double)q * q * q));
     double c2_3 = c2 / 3;
     (*eig_val)[0] = sqrt_q * cos(theta / 3.0) - c2_3;
     (*eig_val)[1] = sqrt_q * cos((theta + 2.0 * M_PI)/3.0) - c2_3;
@@ -539,7 +539,7 @@ class Matrix3x3 {
   bool IsNaN() const {
     for ( int i = 0; i < 3; ++i ) {
       for ( int j = 0; j < 3; ++j ) {
-        if ( isnan(m_[i][j]) ) {
+        if ( std::isnan(m_[i][j]) ) {
           return true;
         }
       }

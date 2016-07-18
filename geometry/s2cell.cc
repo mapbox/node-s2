@@ -100,7 +100,7 @@ double S2Cell::ApproxArea() const {
   // Now, compensate for the curvature of the cell surface by pretending
   // that the cell is shaped like a spherical cap.  The ratio of the
   // area of a spherical cap to the area of its projected disc turns out
-  // to be 2 / (1 + sqrt(1 - r*r)) where "r" is the radius of the disc.
+  // to be 2 / (1 + sqrt((double)1 - r*r)) where "r" is the radius of the disc.
   // For example, when r=0 the ratio is 1, and when r=1 the ratio is 2.
   // Here we set Pi*r*r == flat_area to find the equivalent disc.
   return flat_area * 2 / (1 + sqrt(1 - min(M_1_PI * flat_area, 1.0)));

@@ -149,7 +149,7 @@ S2LatLngRect S2Cap::GetRectBound() const {
     //
     // The formula for sin(a) follows from the relationship h = 1 - cos(a).
 
-    double sin_a = sqrt(height_ * (2 - height_));
+    double sin_a = sqrt((double)height_ * (2 - height_));
     double sin_c = cos(axis_ll.lat().radians());
     if (sin_a <= sin_c) {
       double angle_A = asin(sin_a / sin_c);

@@ -700,9 +700,9 @@ inline double S2::STtoUV(double s) {
 
 inline double S2::UVtoST(double u) {
   if (u >= 0)
-    return 0.5 * sqrt(1 + 3 * u);
+    return 0.5 * sqrt((double)1 + 3 * u);
   else
-    return 1 - 0.5 * sqrt(1 - 3 * u);
+    return 1 - 0.5 * sqrt((double)1 - 3 * u);
 }
 
 #else

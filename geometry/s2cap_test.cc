@@ -177,7 +177,7 @@ TEST(S2Cap, S2CellMethods) {
   // and then check for the expected intersection/containment results.
 
   // The distance from the center of a face to one of its vertices.
-  static const double kFaceRadius = atan(sqrt(2));
+  static const double kFaceRadius = atan(sqrt((double)2));
 
   for (int face = 0; face < 6; ++face) {
     // The cell consisting of the entire face.

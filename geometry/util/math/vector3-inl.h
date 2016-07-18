@@ -273,7 +273,7 @@ VType Vector3<VType>::Norm2(void) const {
 
 template <typename VType>
 typename Vector3<VType>::FloatType Vector3<VType>::Norm(void) const {
-  return sqrt(Norm2());
+  return sqrt((double)Norm2());
 }
 
 template <typename VType>
@@ -329,7 +329,7 @@ typename Vector3<VType>::FloatType Vector3<VType>::Angle(const Self &va) const {
 
 template <typename VType>
 Vector3<VType> Vector3<VType>::Sqrt() const {
-  return Self(sqrt(c_[0]), sqrt(c_[1]), sqrt(c_[2]));
+  return Self(sqrt((double)c_[0]), sqrt((double)c_[1]), sqrt((double)c_[2]));
 }
 
 template <typename VType>
@@ -372,7 +372,7 @@ void Vector3<VType>::Clear() {
 
 template <typename VType>
 bool Vector3<VType>::IsNaN() const {
-  return isnan(c_[0]) || isnan(c_[1]) || isnan(c_[2]);
+  return std::isnan(c_[0]) || std::isnan(c_[1]) || std::isnan(c_[2]);
 }
 
 template <typename VType>

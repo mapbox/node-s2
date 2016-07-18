@@ -218,7 +218,7 @@ S1Angle S2EdgeUtil::GetDistance(S2Point const& x,
   // accurate for small but not large distances (approaching Pi).
 
   double linear_dist2 = min((x-a).Norm2(), (x-b).Norm2());
-  return S1Angle::Radians(2 * asin(min(1.0, 0.5 * sqrt(linear_dist2))));
+  return S1Angle::Radians(2 * asin(min(1.0, 0.5 * sqrt((double)linear_dist2))));
 }
 
 S1Angle S2EdgeUtil::GetDistance(S2Point const& x,

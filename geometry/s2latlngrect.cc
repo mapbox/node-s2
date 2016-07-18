@@ -242,7 +242,7 @@ bool S2LatLngRect::IntersectsLatEdge(S2Point const& a, S2Point const& b,
   }
   DCHECK_GT(x[2], 0);
   double cos_theta = sin_lat / x[2];
-  double sin_theta = sqrt(1 - cos_theta * cos_theta);
+  double sin_theta = sqrt((double)1 - cos_theta * cos_theta);
   double theta = atan2(sin_theta, cos_theta);
 
   // The candidate intersection points are located +/- theta in the x-y

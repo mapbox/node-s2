@@ -54,7 +54,7 @@ S1Angle S2LatLng::GetDistance(S2LatLng const& o) const {
   double dlat = sin(0.5 * (lat2 - lat1));
   double dlng = sin(0.5 * (lng2 - lng1));
   double x = dlat * dlat + dlng * dlng * cos(lat1) * cos(lat2);
-  return S1Angle::Radians(2 * atan2(sqrt(x), sqrt(max(0.0, 1.0 - x))));
+  return S1Angle::Radians(2 * atan2(sqrt((double)x), sqrt(max(0.0, 1.0 - x))));
 }
 
 string S2LatLng::ToStringInDegrees() const {
