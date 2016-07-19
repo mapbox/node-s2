@@ -1,4 +1,16 @@
 {
+  'conditions': [
+    ['OS=="mac"', {
+      "variables": {
+        'geometry': 'geometry_osx'
+       }
+    }],
+    ['OS!="mac"', {
+      "variables": {
+        'geometry': 'geometry'
+       }
+    }]
+  ],
   "targets": [
     {
       "target_name": "_s2",
@@ -13,29 +25,29 @@
         "./src/polyline.cc",
         "./src/interval.cc",
         "./src/cap.cc",
-        "./geometry/s2.cc",
-        "./geometry/s1interval.cc",
-        "./geometry/util/math/exactfloat/exactfloat.cc",
-        "./geometry/strings/strutil.cc",
-        "./geometry/strings/stringprintf.cc",
-  	    "./geometry/s2cap.cc",
-  	    "./geometry/s1angle.cc",
-  	    "./geometry/s2cell.cc",
-  	    "./geometry/s2cellunion.cc",
-  	    "./geometry/s2cellid.cc",
-  	    "./geometry/s2edgeindex.cc",
-  	    "./geometry/s2edgeutil.cc",
-  	    "./geometry/s2latlngrect.cc",
-  	    "./geometry/s2loop.cc",
-  	    "./geometry/s2pointregion.cc",
-  	    "./geometry/s2latlng.cc",
-  	    "./geometry/s2polygon.cc",
-  	    "./geometry/s2polygonbuilder.cc",
-  	    "./geometry/s2polyline.cc",
-  	    "./geometry/s2r2rect.cc",
-  	    "./geometry/s2region.cc",
-  	    "./geometry/s2regioncoverer.cc",
-  	    "./geometry/s2regionintersection.cc",
+        "./<(geometry)/s2.cc",
+        "./<(geometry)/s1interval.cc",
+        "./<(geometry)/util/math/exactfloat/exactfloat.cc",
+        "./<(geometry)/strings/strutil.cc",
+        "./<(geometry)/strings/stringprintf.cc",
+  	    "./<(geometry)/s2cap.cc",
+  	    "./<(geometry)/s1angle.cc",
+  	    "./<(geometry)/s2cell.cc",
+  	    "./<(geometry)/s2cellunion.cc",
+  	    "./<(geometry)/s2cellid.cc",
+  	    "./<(geometry)/s2edgeindex.cc",
+  	    "./<(geometry)/s2edgeutil.cc",
+  	    "./<(geometry)/s2latlngrect.cc",
+  	    "./<(geometry)/s2loop.cc",
+  	    "./<(geometry)/s2pointregion.cc",
+  	    "./<(geometry)/s2latlng.cc",
+  	    "./<(geometry)/s2polygon.cc",
+  	    "./<(geometry)/s2polygonbuilder.cc",
+  	    "./<(geometry)/s2polyline.cc",
+  	    "./<(geometry)/s2r2rect.cc",
+  	    "./<(geometry)/s2region.cc",
+  	    "./<(geometry)/s2regioncoverer.cc",
+  	    "./<(geometry)/s2regionintersection.cc",
   	    "./viewfinder/viewfinder.cc",
         "./src/s2.cc",
       ],
@@ -45,11 +57,11 @@
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
         "./viewfinder/",
-        "./geometry/",
-        "./geometry/base/",
-        "./geometry/util/",
-        "./geometry/util/math/",
-        "./geometry/strings/",
+        "./<(geometry)/",
+        "./<(geometry)/base/",
+        "./<(geometry)/util/",
+        "./<(geometry)/util/math/",
+        "./<(geometry)/strings/",
         "<(node_root_dir)/deps/openssl/openssl/include"
       ],
       'conditions': [
