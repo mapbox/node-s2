@@ -129,8 +129,8 @@ class MathUtil {
     // According to Numerical Recipes (p. 184), it would be a mistake to
     // solve for the roots using
     //
-    //     r1 = 2c / (-b + sqrt(b^2 - 4ac)),
-    //     r2 = 2c / (-b - sqrt(b^2 - 4ac)).
+    //     r1 = 2c / (-b + sqrt((double)b^2 - 4ac)),
+    //     r2 = 2c / (-b - sqrt((double)b^2 - 4ac)).
     //
     // If a*c is small, then one of the roots above will involve the
     // subtraction of b from a very nearly equal quantity (the discriminant),
@@ -138,7 +138,7 @@ class MathUtil {
     // the following rearrangement.  (Note we don't use sgn(b) because we
     // need sgn(0) = +1 or -1.)
     long double const q = -0.5 *
-        (b + ((b >= 0) ? sqrt(discriminant) : -sqrt(discriminant)));
+        (b + ((b >= 0) ? sqrt((double)discriminant) : -sqrt((double)discriminant)));
     *r1 = q / a;  // If a is very small this produces +/- HUGE_VAL.
     *r2 = c / q;  // q cannot be too small.
     return true;

@@ -32,7 +32,7 @@
 //
 //  - ExactFloat only supports calculations where the result can be
 //    represented exactly.  Therefore it supports intrinsics such as fabs()
-//    but not transcendentals such as sin(), sqrt(), etc.
+//    but not transcendentals such as sin(), sqrt((double)), etc.
 //
 // Syntax Compatibility with "float" and "double"
 // ----------------------------------------------
@@ -51,12 +51,12 @@
 //      if (x) { ... }           // ERROR: use (x != 0) instead
 //
 //  - The glibc floating-point classification macros (fpclassify, isfinite,
-//    isnormal, isnan, isinf) are not supported.  Instead there are
+//    isnormal, std::isnan, std::isinf) are not supported.  Instead there are
 //    zero-argument methods:
 //
 //      ExactFloat x;
-//      if (isnan(x)) { ... }  // ERROR: use (x.is_nan()) instead
-//      if (isinf(x)) { ... }  // ERROR: use (x.is_inf()) instead
+//      if (std::isnan(x)) { ... }  // ERROR: use (x.is_nan()) instead
+//      if (std::isinf(x)) { ... }  // ERROR: use (x.is_inf()) instead
 //
 // Using ExactFloat with Vector3, etc.
 // -----------------------------------
@@ -77,7 +77,7 @@
 //      y = Vector3_d::Cast(x);    // This doesn't.
 //      y = Vector3_d(x[0].ToDouble(), x[1].ToDouble(), x[2].ToDouble()); // OK
 //
-//  - IsNaN() is not supported because it calls isnan(), which is defined as a
+//  - IsNaN() is not supported because it calls std::isnan(), which is defined as a
 //    macro in <math.h> and therefore can't easily be overrided.
 //
 // Precision Semantics
@@ -222,7 +222,7 @@ class ExactFloat {
   // Set the value of the ExactFloat to NaN (Not-a-Number).
   void set_nan();
 
-  // Unfortunately, isinf(x), isnan(x), isnormal(x), and isfinite(x) are
+  // Unfortunately, std::isinf(x), std::isnan(x), isnormal(x), and isfinite(x) are
   // defined as macros in <math.h>.  Therefore we can't easily extend them
   // here.  Instead we provide methods with underscores in their names that do
   // the same thing: x.is_inf(), etc.

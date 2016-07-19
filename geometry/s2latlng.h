@@ -156,7 +156,7 @@ inline S2LatLng S2LatLng::Invalid() {
 inline S1Angle S2LatLng::Latitude(S2Point const& p) {
   // We use atan2 rather than asin because the input vector is not necessarily
   // unit length, and atan2 is much more accurate than asin near the poles.
-  return S1Angle::Radians(atan2(p[2], sqrt(p[0]*p[0] + p[1]*p[1])));
+  return S1Angle::Radians(atan2(p[2], sqrt((double)p[0]*p[0] + p[1]*p[1])));
 }
 
 inline S1Angle S2LatLng::Longitude(S2Point const& p) {

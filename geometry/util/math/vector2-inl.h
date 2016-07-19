@@ -207,7 +207,7 @@ VType Vector2<VType>::Norm2(void) const {
 
 template <typename VType>
 typename Vector2<VType>::FloatType Vector2<VType>::Norm(void) const {
-  return sqrt(Norm2());
+  return sqrt((double)Norm2());
 }
 
 template <typename VType>
@@ -270,7 +270,7 @@ Vector2<VType> Vector2<VType>::Ortho() const {
 
 template <typename VType>
 Vector2<VType> Vector2<VType>::Sqrt() const {
-  return Self(sqrt(c_[0]), sqrt(c_[1]));
+  return Self(sqrt((double)c_[0]), sqrt((double)c_[1]));
 }
 
 template <typename VType>
@@ -315,7 +315,7 @@ void Vector2<VType>::Clear() {
 
 template <typename VType>
 bool Vector2<VType>::IsNaN() const {
-  return isnan(c_[0]) || isnan(c_[1]);
+  return std::isnan(c_[0]) || std::isnan(c_[1]);
 }
 
 template <typename VType>
