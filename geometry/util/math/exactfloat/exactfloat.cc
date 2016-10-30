@@ -91,9 +91,9 @@ ExactFloat::ExactFloat(double v) {
   using std::signbit;
 #endif
   sign_ = signbit(v) ? -1 : 1;
-  if (std::isnan(v)) {
+  if (isnan(v)) {
     set_nan();
-  } else if (std::isinf(v)) {
+  } else if (isinf(v)) {
     set_inf(sign_);
   } else {
     // The following code is much simpler than messing about with bit masks,

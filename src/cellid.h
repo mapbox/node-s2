@@ -7,7 +7,7 @@
 
 class CellId : public node::ObjectWrap {
 public:
-    static v8::Persistent<v8::FunctionTemplate> constructor;
+    static Nan::Persistent<v8::FunctionTemplate> constructor;
     static void Init(v8::Handle<v8::Object> target);
     inline S2CellId get() { return this_; }
     static v8::Handle<v8::Value> New(const S2CellId c);
@@ -15,8 +15,7 @@ public:
 protected:
     CellId();
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-
+    static NAN_METHOD(New);
     static NAN_METHOD(Level);
     static NAN_METHOD(ToToken);
     static NAN_METHOD(ToPoint);

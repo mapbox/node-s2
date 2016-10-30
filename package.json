@@ -7,7 +7,7 @@
     "test": "jshint index.js && tap --tap test/*.js"
   },
   "dependencies": {
-    "nan": "1.3.0",
+    "nan": "^2.4.0",
     "node-pre-gyp": "^0.5.19"
   },
   "devDependencies": {
