@@ -17,59 +17,60 @@
 
 using namespace v8;
 
-Persistent<FunctionTemplate> RegionCoverer::constructor;
+Nan::Persistent<FunctionTemplate> RegionCoverer::constructor;
 
 void RegionCoverer::Init(Handle<Object> target) {
-    NanScope();
+    Local<FunctionTemplate> tpl =
+      Nan::New<FunctionTemplate>(RegionCoverer::New);
+    constructor.Reset(tpl);
+    Local<String> name = Nan::New("S2RegionCoverer").ToLocalChecked();
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(RegionCoverer::New));
-    Local<String> name = String::NewSymbol("S2RegionCoverer");
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(name);
 
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(name);
+    // Nan::SetPrototypeMethod(tpl, "getCenter", GetCenter);
 
-    // NODE_SET_PROTOTYPE_METHOD(constructor, "getCenter", GetCenter);
-
-    target->Set(name, constructor->GetFunction());
+    Nan::Set(target, name, tpl->GetFunction());
 }
 
 RegionCoverer::RegionCoverer()
     : ObjectWrap(),
       this_() {}
 
-Handle<Value> RegionCoverer::New(const Arguments& args) {
-    NanScope();
-
-    if (!args.IsConstructCall()) {
-        return NanThrowError("Use the new operator to create instances of this object.");
+NAN_METHOD(RegionCoverer::New) {
+    if (!info.IsConstructCall()) {
+        Nan::ThrowError("Use the new operator to create instances of this object.");
+        return;
     }
 
-    if (args[0]->IsExternal()) {
-        Local<External> ext = Local<External>::Cast(args[0]);
+    if (info[0]->IsExternal()) {
+        Local<External> ext = Local<External>::Cast(info[0]);
         void* ptr = ext->Value();
         RegionCoverer* ll = static_cast<RegionCoverer*>(ptr);
-        ll->Wrap(args.This());
-        return args.This();
+        ll->Wrap(info.This());
+        info.GetReturnValue().Set(info.This());
+        return;
     }
 
     RegionCoverer* obj = new RegionCoverer();
+    obj->Wrap(info.This());
 
-    obj->Wrap(args.This());
-
-    Handle<Object> ll = args[0]->ToObject();
+    Handle<Object> ll = info[0]->ToObject();
 
     S2RegionCoverer cov;
 
     obj->this_ = cov;
 
-    return args.This();
+    info.GetReturnValue().Set(info.This());
 }
 
 Handle<Value> RegionCoverer::New(S2RegionCoverer rc) {
-    NanScope();
+    Nan::EscapableHandleScope scope;
     RegionCoverer* obj = new RegionCoverer();
     obj->this_ = rc;
-    Handle<Value> ext = External::New(obj);
-    Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
-    return scope.Close(handleObject);
+    Handle<Value> ext = Nan::New<External>(obj);
+    Local<FunctionTemplate> constructorHandle = Nan::New(constructor);
+    Handle<Object> handleObject =
+      constructorHandle->GetFunction()->NewInstance(1, &ext);
+    return scope.Escape(handleObject);
 }

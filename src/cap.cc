@@ -12,102 +12,103 @@
 
 using namespace v8;
 
-Persistent<FunctionTemplate> Cap::constructor;
+Nan::Persistent<FunctionTemplate> Cap::constructor;
 
 void Cap::Init(Handle<Object> target) {
-    NanScope();
+    Local<FunctionTemplate> tpl =
+      Nan::New<FunctionTemplate>(Cap::New);
+    constructor.Reset(tpl);
+    Local<String> name = Nan::New("S2Cap").ToLocalChecked();
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Cap::New));
-    Local<String> name = String::NewSymbol("S2Cap");
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(name);
 
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(name);
+    Nan::SetPrototypeMethod(tpl, "getRectBound", GetRectBound);
+    Nan::SetPrototypeMethod(tpl, "intersects", Intersects);
+    Nan::SetPrototypeMethod(tpl, "interiorIntersects", InteriorIntersects);
+    Nan::SetPrototypeMethod(tpl, "contains", Contains);
+    Nan::SetPrototypeMethod(tpl, "complement", Complement);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getRectBound", GetRectBound);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "intersects", Intersects);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "interiorIntersects", InteriorIntersects);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "complement", Complement);
-
-    target->Set(name, constructor->GetFunction());
+    Nan::Set(target, name, tpl->GetFunction());
 }
 
 Cap::Cap()
     : ObjectWrap(),
       this_() {}
 
-Handle<Value> Cap::New(const Arguments& args) {
-    NanScope();
-
-    if (!args.IsConstructCall()) {
-        return NanThrowError("Use the new operator to create instances of this object.");
+NAN_METHOD(Cap::New) {
+    if (!info.IsConstructCall()) {
+        Nan::ThrowError("Use the new operator to create instances of this object.");
+        return;
     }
 
-    if (args[0]->IsExternal()) {
-        Local<External> ext = Local<External>::Cast(args[0]);
+    if (info[0]->IsExternal()) {
+        Local<External> ext = Local<External>::Cast(info[0]);
         void* ptr = ext->Value();
         Cap* ll = static_cast<Cap*>(ptr);
-        ll->Wrap(args.This());
-        return args.This();
+        ll->Wrap(info.This());
+        info.GetReturnValue().Set(info.This());
+        return;
     }
 
     Cap* obj = new Cap();
 
-    obj->Wrap(args.This());
+    obj->Wrap(info.This());
 
-    if (args.Length() == 2 && args[1]->IsNumber()) {
-        Handle<Object> fromObj = args[0]->ToObject();
-        if (NanHasInstance(Point::constructor, fromObj)) {
+    if (info.Length() == 2 && info[1]->IsNumber()) {
+        Handle<Object> fromObj = info[0]->ToObject();
+        Local<FunctionTemplate> constructorHandle =
+          Nan::New(Point::constructor);
+        if (constructorHandle->HasInstance(fromObj)) {
             S2Point p = node::ObjectWrap::Unwrap<Point>(fromObj)->get();
-            obj->this_ = S2Cap::FromAxisHeight(p, args[1]->ToNumber()->Value());
+            obj->this_ = S2Cap::FromAxisHeight(p, info[1]->ToNumber()->Value());
         } else {
-            return NanThrowError("S2Cap requires arguments (S2Point, number)");
+            Nan::ThrowError("S2Cap requires arguments (S2Point, number)");
+            return;
         }
     } else {
-        return NanThrowError("S2Cap requires arguments (S2Point, number)");
+        Nan::ThrowError("S2Cap requires arguments (S2Point, number)");
+        return;
     }
 
-    return args.This();
+    info.GetReturnValue().Set(info.This());
 }
 
 Handle<Value> Cap::New(S2Cap s2cap) {
-    NanScope();
+    Nan::EscapableHandleScope scope;
     Cap* obj = new Cap();
     obj->this_ = s2cap;
-    Handle<Value> ext = External::New(obj);
-    Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
-    return scope.Close(handleObject);
+    Handle<Value> ext = Nan::New<External>(obj);
+    Local<FunctionTemplate> constructorHandle = Nan::New(constructor);
+    Handle<Object> handleObject =
+      constructorHandle->GetFunction()->NewInstance(1, &ext);
+    return scope.Escape(handleObject);
 }
 
 NAN_METHOD(Cap::GetRectBound) {
-    NanScope();
-    Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
-    NanReturnValue(LatLngRect::New(cap->this_.GetRectBound()));
+    Cap* cap = node::ObjectWrap::Unwrap<Cap>(info.This());
+    info.GetReturnValue().Set(LatLngRect::New(cap->this_.GetRectBound()));
 }
 
 NAN_METHOD(Cap::Intersects) {
-    NanScope();
-    Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
-    S2Cap other = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
-    NanReturnValue(NanNew<Boolean>(cap->this_.Intersects(other)));
+    Cap* cap = node::ObjectWrap::Unwrap<Cap>(info.This());
+    S2Cap other = node::ObjectWrap::Unwrap<Cap>(info[0]->ToObject())->get();
+    info.GetReturnValue().Set(Nan::New<Boolean>(cap->this_.Intersects(other)));
 }
 
 NAN_METHOD(Cap::InteriorIntersects) {
-    NanScope();
-    Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
-    S2Cap other = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
-    NanReturnValue(NanNew<Boolean>(cap->this_.Intersects(other)));
+    Cap* cap = node::ObjectWrap::Unwrap<Cap>(info.This());
+    S2Cap other = node::ObjectWrap::Unwrap<Cap>(info[0]->ToObject())->get();
+    info.GetReturnValue().Set(Nan::New<Boolean>(cap->this_.Intersects(other)));
 }
 
 NAN_METHOD(Cap::Contains) {
-    NanScope();
-    Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
-    S2Cap other = node::ObjectWrap::Unwrap<Cap>(args[0]->ToObject())->get();
-    NanReturnValue(NanNew<Boolean>(cap->this_.Contains(other)));
+    Cap* cap = node::ObjectWrap::Unwrap<Cap>(info.This());
+    S2Cap other = node::ObjectWrap::Unwrap<Cap>(info[0]->ToObject())->get();
+    info.GetReturnValue().Set(Nan::New<Boolean>(cap->this_.Contains(other)));
 }
 
 NAN_METHOD(Cap::Complement) {
-    NanScope();
-    Cap* cap = node::ObjectWrap::Unwrap<Cap>(args.This());
-    NanReturnValue(Cap::New(cap->this_.Complement()));
+    Cap* cap = node::ObjectWrap::Unwrap<Cap>(info.This());
+    info.GetReturnValue().Set(Cap::New(cap->this_.Complement()));
 }

@@ -11,109 +11,102 @@
 
 using namespace v8;
 
-Persistent<FunctionTemplate> Interval::constructor;
+Nan::Persistent<FunctionTemplate> Interval::constructor;
 
 void Interval::Init(Handle<Object> target) {
-    NanScope();
+    Local<FunctionTemplate> tpl =
+      Nan::New<FunctionTemplate>(Interval::New);
+    constructor.Reset(tpl);
+    Local<String> name = Nan::New("S1Interval").ToLocalChecked();
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Interval::New));
-    Local<String> name = String::NewSymbol("S1Interval");
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(name);
 
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(name);
+    Nan::SetPrototypeMethod(tpl, "length", GetLength);
+    Nan::SetPrototypeMethod(tpl, "hi", GetHi);
+    Nan::SetPrototypeMethod(tpl, "lo", GetLo);
+    Nan::SetPrototypeMethod(tpl, "center", GetCenter);
+    Nan::SetPrototypeMethod(tpl, "complementLength", GetComplementCenter);
+    Nan::SetPrototypeMethod(tpl, "contains", Contains);
 
-    // Add all prototype methods, getters and setters here.
-    NODE_SET_PROTOTYPE_METHOD(constructor, "length", GetLength);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "hi", GetHi);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "lo", GetLo);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "center", GetCenter);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "complementLength", GetComplementCenter);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Contains);
-
-    // This has to be last, otherwise the properties won't show up on the
-    // object in JavaScript.
-    target->Set(name, constructor->GetFunction());
+    Nan::Set(target, name, tpl->GetFunction());
 }
 
 Interval::Interval()
     : ObjectWrap(),
       this_() {}
 
-Handle<Value> Interval::New(const Arguments& args) {
-    NanScope();
-
-    if (!args.IsConstructCall()) {
-        return NanThrowError("Use the new operator to create instances of this object.");
+NAN_METHOD(Interval::New) {
+    if (!info.IsConstructCall()) {
+        Nan::ThrowError("Use the new operator to create instances of this object.");
+        return;
     }
 
-    if (args[0]->IsExternal()) {
-        Local<External> ext = Local<External>::Cast(args[0]);
+    if (info[0]->IsExternal()) {
+        Local<External> ext = Local<External>::Cast(info[0]);
         void* ptr = ext->Value();
         Interval* ll = static_cast<Interval*>(ptr);
-        ll->Wrap(args.This());
-        return args.This();
+        ll->Wrap(info.This());
+        info.GetReturnValue().Set(info.This());
+        return;
     }
 
-    if (args.Length() != 1) {
-        return NanThrowError("(number) required");
+    if (info.Length() != 1) {
+        Nan::ThrowError("(number) required");
+        return;
     }
 
     Interval* obj = new Interval();
+    obj->Wrap(info.This());
 
-    obj->Wrap(args.This());
+    obj->this_ = S1Interval::FromPoint(info[0]->ToNumber()->Value());
 
-    obj->this_ = S1Interval::FromPoint(args[0]->ToNumber()->Value());
-
-    return args.This();
+    info.GetReturnValue().Set(info.This());
 }
 
 Handle<Value> Interval::New(S1Interval s1angle) {
-    NanScope();
+    Nan::EscapableHandleScope scope;
     Interval* obj = new Interval();
     obj->this_ = s1angle;
-    Handle<Value> ext = External::New(obj);
-    Handle<Object> handleObject = constructor->GetFunction()->NewInstance(1, &ext);
-    return scope.Close(handleObject);
+    Handle<Value> ext = Nan::New<External>(obj);
+    Local<FunctionTemplate> constructorHandle = Nan::New(constructor);
+    Handle<Object> handleObject =
+      constructorHandle->GetFunction()->NewInstance(1, &ext);
+    return scope.Escape(handleObject);
 }
 
 NAN_METHOD(Interval::GetLength) {
-    NanScope();
-    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
-    NanReturnValue(NanNew<Number>(obj->this_.GetLength()));
+    Interval* obj = ObjectWrap::Unwrap<Interval>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(obj->this_.GetLength()));
 }
 
 NAN_METHOD(Interval::GetCenter) {
-    NanScope();
-    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
-    NanReturnValue(NanNew<Number>(obj->this_.GetCenter()));
+    Interval* obj = ObjectWrap::Unwrap<Interval>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(obj->this_.GetCenter()));
 }
 
 NAN_METHOD(Interval::GetComplementCenter) {
-    NanScope();
-    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
-    NanReturnValue(NanNew<Number>(obj->this_.GetComplementCenter()));
+    Interval* obj = ObjectWrap::Unwrap<Interval>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(obj->this_.GetComplementCenter()));
 }
 
 NAN_METHOD(Interval::GetHi) {
-    NanScope();
-    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
-    NanReturnValue(NanNew<Number>(obj->this_.hi()));
+    Interval* obj = ObjectWrap::Unwrap<Interval>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(obj->this_.hi()));
 }
 
 NAN_METHOD(Interval::GetLo) {
-    NanScope();
-    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
-    NanReturnValue(NanNew<Number>(obj->this_.lo()));
+    Interval* obj = ObjectWrap::Unwrap<Interval>(info.This());
+    info.GetReturnValue().Set(Nan::New<Number>(obj->this_.lo()));
 }
 
 NAN_METHOD(Interval::Contains) {
-    NanScope();
-    Interval* obj = ObjectWrap::Unwrap<Interval>(args.This());
-    if (args.Length() != 1) {
-        NanThrowError("(number) required");
+    Interval* obj = ObjectWrap::Unwrap<Interval>(info.This());
+    if (info.Length() != 1) {
+        Nan::ThrowError("(number) required");
     }
-    if (!args[0]->IsNumber()) {
-        NanThrowError("(number) required");
+    if (!info[0]->IsNumber()) {
+        Nan::ThrowError("(number) required");
     }
-    NanReturnValue(NanNew<Boolean>(obj->this_.Contains(args[0]->ToNumber()->Value())));
+    info.GetReturnValue().Set(Nan::New<Boolean>(obj->this_.Contains(info[0]->ToNumber()->Value())));
 }

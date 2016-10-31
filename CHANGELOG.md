@@ -1,3 +1,7 @@
+## 0.5.0
+
+* [Upgrade addons to latest node APIs](https://github.com/mapbox/node-s2/pull/87)
+
 ## 0.4.0
 
 * [Add `result_type` option to GetCover](https://github.com/mapbox/node-s2/pull/78)
