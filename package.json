@@ -1,5 +1,5 @@
 {
-  "name": "s2",
+  "name": "@mapbox/s2",
   "version": "0.5.0",
   "main": "index.js",
   "scripts": {
