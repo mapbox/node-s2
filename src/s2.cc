@@ -64,7 +64,7 @@ class CoverWorker : public Nan::AsyncWorker {
   void Execute() {
     S2RegionCoverer coverer;
     if (coverConfiguration->min_level != std::numeric_limits<int>::min()) {
-      coverer.set_min_level(coverConfiguration->level_mod);
+      coverer.set_min_level(coverConfiguration->min_level);
     }
     if (coverConfiguration->max_level != std::numeric_limits<int>::min()) {
       coverer.set_max_level(coverConfiguration->max_level);
