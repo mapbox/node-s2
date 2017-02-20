@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/s2",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "index.js",
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build",
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "nan": "^2.4.0",
-    "node-pre-gyp": "^0.5.19"
+    "node-pre-gyp": "^0.6.33"
   },
   "devDependencies": {
     "tap": "~0.4.9",
