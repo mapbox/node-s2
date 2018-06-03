@@ -3,8 +3,12 @@ module.exports = s2;
 
 s2.S2LatLng.prototype.toGeoJSON = function() {
     return {
-        type: 'Point',
-        coordinates: [this.lng, this.lat]
+        type: 'Feature',
+        geometry: {
+            type: 'Point',
+            coordinates: [this.lng, this.lat]
+        },
+        properties: {}
     };
 };
 
@@ -15,12 +19,16 @@ s2.S2Cell.prototype.toGeoJSON = function() {
     }
     vs.push(new s2.S2LatLng(this.getVertex(0)));
     return {
-        type: 'Polygon',
-        coordinates: [
-            vs.map(function(v) {
-                return [v.lng, v.lat];
-            })
-        ]
+        type: 'Feature',
+        geometry: {
+            type: 'Polygon',
+            coordinates: [
+                vs.map(function(v) {
+                    return [v.lng, v.lat];
+                })
+            ]
+        },
+        properties: {}
     };
 };
 
@@ -31,14 +39,16 @@ s2.S2LatLngRect.prototype.toGeoJSON = function() {
     }
     vs.push(this.getVertex(0));
     return {
-        type: 'Polygon',
-        coordinates: [
-            [
+        type: 'Feature',
+        geometry: {
+            type: 'Polygon',
+            coordinates: [
                 vs.map(function(v) {
                     return [v.lng, v.lat];
                 })
             ]
-        ]
+        },
+        properties: {}
     };
 };
 
