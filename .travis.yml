@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - "6.1"
 before_install:
+- if ! [ -x "$(command -v aws)" ]; then curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; unzip awscliv2.zip ; sudo ./aws/install ; fi
+- aws sts get-caller-identity
 - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
 - node --version
 - npm --version
@@ -11,9 +13,6 @@ install:
 - sudo apt-get -q install g++-4.7
 - export CXX=g++-4.7
 - npm install --build-from-source
-before_script:
-- if ! [ -x "$(command -v aws)" ]; then curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; unzip awscliv2.zip ; sudo ./aws/install ; fi
-- aws sts get-caller-identity
 script:
 - npm test
 after_success:
